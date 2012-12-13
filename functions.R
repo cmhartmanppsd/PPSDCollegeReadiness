@@ -105,7 +105,7 @@ extract_person_annual <- function(regYr){
 																					 ifelse(lunch=='P','Paid Lunch',
 																						 			NA))))
 	tbl_person_annual$lunch <- factor(tbl_person_annual$lunch)
-	levels(tbl_person_annual$disab) <- str_trim(gsub('|', '', 
+	levels(tbl_person_annual$disab) <- str_trim(gsub('[|]', '', 
 																	levels(tbl_person_annual$disab)), side='both')
 	tbl_person_annual$disab <- factor(factor(tbl_person_annual$disab, 
 																		labels = c('None', 'Autism', 
@@ -120,7 +120,7 @@ extract_person_annual <- function(regYr){
 																							 'Speech/Language',
 																							 'Speech Only', 
 																							 'Traumatic Brain Injury',
-																							 'Visual Impairment', 'None')))
+																							 'Visual Impairment')))
 	tbl_person_annual[, c('str_name', 'apt_no', 'city', 'state')] <- 
 		apply(apply(tbl_person_annual[, c('str_name', 'apt_no', 'city', 'state')],
 								2, as.character), 2, str_trim, side='both')
