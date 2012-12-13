@@ -38,11 +38,11 @@ removeNoSASID <- function(regYr){
 }
 
 duplicateSASID <- function(regYr){
-	# Collect students with duplicate SASID
-	duplicates <- subset(regYr, duplicated(regYr$sasid)==TRUE &
-	# Used if removeNoSASID has not been previously used.
-							 								is.na(regYr$sasid)==FALSE,
-							 						 	 	select = c('studentid', 'sasid', 'schoolyear'))
+  duplicates <- subset(regYr, 
+                       regYr$sasid %in% subset(regYr$sasid, 
+                                               duplicated(regYr$sasid) &
+                                               is.na(regYr$sasid)==FALSE),
+                       select = c('studentid', 'sasid', 'schoolyear'))
 	return(duplicates)
 }
 
