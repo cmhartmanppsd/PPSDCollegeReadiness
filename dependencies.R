@@ -1,0 +1,13 @@
+# Environment Setup
+
+require(plyr)
+require(foreign)
+require(reshape2)
+require(ggplot2)
+require(scales)
+require(stringr)
+# require(ggmap)
+# setwd('~/ProvidenceCRIS')
+
+# Standard helper functions
+"%w/o%" <- function(x, y) x[!x %in% y]
