@@ -91,7 +91,9 @@ extract_person_annual <- function(regYr){
 	tbl_person_annual[,1:3] <- apply(apply(tbl_person_annual[,1:3], 2, 
 																				 as.character), 
 																	 2, str_trim, side='both')
-	tbl_person_annual$grade <- factor(regYr$grade, 
+	tbl_person_annual$grade <- ifelse(tbl_person_annual$grade==0, NA, 
+                                    tbl_person_annual$grade)
+  tbl_person_annual$grade <- factor(tbl_person_annual$grade, 
 																		labels = c(1,2,3,4,5,6,7,8,9,10,11,12,
 			 																				 'Full-day K', 
 																							 'Full-day Pre-K',
@@ -105,8 +107,10 @@ extract_person_annual <- function(regYr){
 																					 ifelse(lunch=='P','Paid Lunch',
 																						 			NA))))
 	tbl_person_annual$lunch <- factor(tbl_person_annual$lunch)
-	levels(tbl_person_annual$disab) <- str_trim(gsub('[|]', '', 
-																	levels(tbl_person_annual$disab)), side='both')
+	levels(tbl_person_annual$disab) <- gsub('[[:punct:]]|[\\|]| ', '', 
+																	        levels(tbl_person_annual$disab))
+  levels(tbl_person_annual$disab) <- gsub('NE', '', 
+                                          levels(tbl_person_annual$disab))
 	tbl_person_annual$disab <- factor(factor(tbl_person_annual$disab, 
 																		labels = c('None', 'Autism', 
 																							 'Developmental Delay', 
@@ -131,14 +135,11 @@ extract_person_annual <- function(regYr){
 
 extract_enrollment <- function(regYr){
   id_attributes <-  c('studentid', 'sasid', 'schoolyear', 'last_name', 'grade')
-  enr_attributes <- paste(rep(c('schno_Sch', 'school_Sch', 'enroll_date_Sch', 
-                                'exit_date_Sch', 'exit_type_Sch' , 
-                                'description_Sch', 'adm_Sch', 'ada_Sch'), 4),
-                          c(rep(1,8), rep(2,8), rep(3,8), rep(4,8), rep(5,8)), 
-                          sep='')
+  enr_attributes <- grep('^(schno|school|exit|enroll|adm|ada|description)', 
+                         names(regYr), value=TRUE)
   tbl_stud_enroll <- regYr[,c(id_attributes, enr_attributes)] 
-  by_school <- list(mode='any', length=5)
-  for(i in 1:5){
+  by_school <- list(mode='any', length=length(enr_attributes)/8)
+  for(i in 1:length(by_school)){
     tempSch <- tbl_stud_enroll[, c(id_attributes, 
                                    grep(paste('*_Sch', i, '$', sep=''), 
                                         names(tbl_stud_enroll), 
