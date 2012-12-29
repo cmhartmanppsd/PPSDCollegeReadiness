@@ -109,9 +109,11 @@ extract_person_annual <- function(regYr){
 	tbl_person_annual$lunch <- factor(tbl_person_annual$lunch)
 	levels(tbl_person_annual$disab) <- gsub('[[:punct:]]|[\\|]| ', '', 
 																	        levels(tbl_person_annual$disab))
-  levels(tbl_person_annual$disab) <- gsub('NE', '', 
+  levels(tbl_person_annual$disab) <- gsub('NE|^[B-Z]$', '', 
                                           levels(tbl_person_annual$disab))
-	tbl_person_annual$disab <- factor(factor(tbl_person_annual$disab, 
+	# Play with a tryCatch here to add NE to those that need it, and if nothing
+  # works to just exit gracefully without factorizing the disability category.
+  tbl_person_annual$disab <- factor(factor(tbl_person_annual$disab, 
 																		labels = c('None', 'Autism', 
 																							 'Developmental Delay', 
 																							 'Emotional Disturbance', 
@@ -149,6 +151,12 @@ extract_enrollment <- function(regYr){
   }
   tbl_stud_enroll <- do.call(rbind, by_school)
   tbl_stud_enroll <- subset(tbl_stud_enroll, !is.na(schno))
+  tbl_stud_enroll[grep('[[:punct:]]', tbl_stud_enroll$exit_date),'exit_date'] <- 
+    difftime(as.Date(tbl_stud_enroll[grep('[[:punct:]]', 
+                                          tbl_stud_enroll$exit_date), 
+                                    'exit_date'], format="%m/%d/%Y"), 
+             "1582-10-14", units='secs')
+  tbl_stud_enroll$exit_date <- as.double(tbl_stud_enroll$exit_date)
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
     lapply(lapply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], as.POSIXct, 
                   origin='1582/10/14'), # origin for SPSS dates
