@@ -161,6 +161,10 @@ extract_enrollment <- function(regYr){
   # Something below breaks in 2010_2011 that has to be fixed.
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
     apply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], 2, as.character)
+  # I don't know why this throws an error sometimes. It seems like it should
+  # work even if there are no wrongly formatted dates. However, since it does 
+  # throw an error related to lacking an origin, I put a try() wrapper around
+  # the code first and only execute it if I know it won't fail.
   if(class(try(difftime(as.Date(tbl_stud_enroll[grep('[[:punct:]]', 
                                                  tbl_stud_enroll$exit_date), 
                                                  'exit_date'], 
