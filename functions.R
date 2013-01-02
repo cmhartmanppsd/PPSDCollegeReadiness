@@ -62,10 +62,16 @@ extract_person <- function(regYr){
 	if(class(tbl_person$race)=='factor'){
 		levels(tbl_person$race) <- str_trim(levels(tbl_person$race), side='both')
 	}
-	tbl_person$race <- factor(tbl_person$race, labels = c('Asian', 'Black', 
-																												'Hispanic',
-													 															'Native American', 
-																												'White'))
+	if(length(unique(tbl_person$race))==5){
+	  tbl_person$race <- factor(tbl_person$race, exclude=c("",NA), 
+	                            labels = c('Asian', 'Black', 'Hispanic',
+                                         'Native American', 'White'))
+	}else{
+	  tbl_person$race <- factor(tbl_person$race, exclude=c("",NA),
+                              labels = c('Asian', 'Black', 'Hispanic', 
+                                         'Multi Racial', 'Native American', 
+	                                       'Pacific Islander', 'White'))
+	}
 	tbl_person$sex <- ifelse(!tbl_person$sex %in% c('F','M'), NA, tbl_person$sex)	
 	tbl_person$sex <- factor(tbl_person$sex, labels = c('Female', 'Male'))
 	if(!class(tbl_person$dob) %in% c('POSIXct', 'POSIXlt', 'date', 'datetime')){
@@ -151,11 +157,23 @@ extract_enrollment <- function(regYr){
   }
   tbl_stud_enroll <- do.call(rbind, by_school)
   tbl_stud_enroll <- subset(tbl_stud_enroll, !is.na(schno))
-  tbl_stud_enroll[grep('[[:punct:]]', tbl_stud_enroll$exit_date),'exit_date'] <- 
-    difftime(as.Date(tbl_stud_enroll[grep('[[:punct:]]', 
-                                          tbl_stud_enroll$exit_date), 
-                                    'exit_date'], format="%m/%d/%Y"), 
-             "1582-10-14", units='secs')
+  
+  # Something below breaks in 2010_2011 that has to be fixed.
+  tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
+    apply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], 2, as.character)
+  if(class(try(difftime(as.Date(tbl_stud_enroll[grep('[[:punct:]]', 
+                                                 tbl_stud_enroll$exit_date), 
+                                                 'exit_date'], 
+                                 format="%m/%d/%Y"), 
+                "1582-10-14", units='secs'), silent=TRUE))!="try-error"){
+    tbl_stud_enroll[grep('[[:punct:]]', 
+                         tbl_stud_enroll$exit_date),'exit_date'] <- 
+      difftime(as.Date(tbl_stud_enroll[grep('[[:punct:]]', 
+                                            tbl_stud_enroll$exit_date), 
+                                       'exit_date'], 
+                       format="%m/%d/%Y"), 
+               "1582-10-14", units='secs')
+  }
   tbl_stud_enroll$exit_date <- as.double(tbl_stud_enroll$exit_date)
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
     lapply(lapply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], as.POSIXct, 
