@@ -187,6 +187,13 @@ extract_enrollment <- function(regYr){
 	return(tbl_stud_enroll)
 }
 
+extract_student_achievement <- function(regYr){
+  id_attributes <-  c('studentid', 'sasid', 'schoolyear', 'last_name', 'grade')
+  achievement_attributes <- c('reaal', 'reascsc', 'matal', 'matscsc', 'wrial',
+                              'wriscsc', 'scial', 'sciscsc'd)
+}
+  
+
 build_tables <- function(regYr, year){
   if(exists('executedAt')==TRUE){
     logAt <- paste('logs/', executedAt, 'build.log', sep='')
