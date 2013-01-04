@@ -3,7 +3,7 @@ clean_schoolyear <- function(regYr, year){
   # so the file is "long" when merged rather than wide.
   
   # rm most appended yrs.
-  names(regYr) <- gsub(paste('_',
+  names(regYr) <- gsub(paste('_{0,1}',
                              substr(as.character(year-1),3,4), 
                              substr(as.character(year),3,4),
                              sep=''), '', names(regYr))
@@ -178,7 +178,8 @@ extract_enrollment <- function(regYr){
                        format="%m/%d/%Y"), 
                "1582-10-14", units='secs')
   }
-  tbl_stud_enroll$exit_date <- as.double(tbl_stud_enroll$exit_date)
+  tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
+  	lapply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], as.double)
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
     lapply(lapply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], as.POSIXct, 
                   origin='1582/10/14'), # origin for SPSS dates
@@ -190,7 +191,37 @@ extract_enrollment <- function(regYr){
 extract_student_achievement <- function(regYr){
   id_attributes <-  c('studentid', 'sasid', 'schoolyear', 'last_name', 'grade')
   achievement_attributes <- c('reaal', 'reascsc', 'matal', 'matscsc', 'wrial',
-                              'wriscsc', 'scial', 'sciscsc'd)
+                              'wriscsc', 'testgrade_N')
+  tbl_student_achievement <- regYr[, c(id_attributes, achievement_attributes)]
+  tbl_student_achievement$grade <- ifelse(tbl_student_achievement$grade==0, NA, 
+                                          tbl_student_achievement$grade)
+  
+  levels(tbl_student_achievement$testgrade_N) <- 
+    str_trim(levels(tbl_student_achievement$testgrade_N), side='both')
+  tbl_student_achievement$testgrade_N <- 
+    with(tbl_student_achievement, ifelse(as.character(testgrade_N)=="", NA, 
+                                         as.character(testgrade_N)))
+  tbl_student_achievement$testgrade_N <- 
+    factor(tbl_student_achievement$testgrade_N, exclude=c("",NA), 
+           labels= c(3, 4, 5, 6, 7, 8, 11))
+  tbl_student_achievement <- subset(tbl_student_achievement, 
+                                    !is.na(testgrade_N))
+  lvls <- as.numeric(as.character(levels(tbl_student_achievement$testgrade_N)))
+  tbl_student_achievement$contentgrade_N <- 
+    as.numeric(as.character(tbl_student_achievement$testgrade_N)) - 1
+  tbl_student_achievement[, c('reascsc', 'matscsc')] <- 
+    lapply(lapply(tbl_student_achievement[, c('reascsc', 'matscsc')], 
+                  as.character),
+           as.numeric)
+  tbl_student_achievement <- ddply(tbl_student_achievement, .(contentgrade_N), 
+                                   mutate, 
+                                   reanormal = (reascsc - mean(reascsc, 
+                                                               na.rm=TRUE)) /
+                                                sd(reascsc, na.rm=TRUE),
+                                   matnormal = (matscsc - mean(matscsc, 
+                                                               na.rm=TRUE)) /
+                                                sd(matscsc, na.rm=TRUE))
+  return(tbl_student_achievement)
 }
   
 
@@ -229,8 +260,12 @@ build_tables <- function(regYr, year){
 	buildLog <- capture.output(head(tbl_enrollment)[1:10])
 	cat('tbl_enrollment', buildLog, year, '\n\n', file=logAt, sep='\n', 
 			append=TRUE)
+  tbl_achievement <- extract_student_achievement(regYr)
+  buildLog <- capture.output(head(tbl_achievement)[1:10])
+  cat('tbl_achievement', buildLog, year, '\n\n', file=logAt, sep='\n', 
+      append=TRUE)
 	tables <- list(person=tbl_person, person_annual=tbl_person_annual, 
-                 enrollment=tbl_enrollment, missingSASID=noSASID, 
-								 dupes=duplicates)
+                 enrollment=tbl_enrollment, achievement=tbl_achievement, 
+                 missingSASID=noSASID, dupes=duplicates)
 	return(tables)
 }
