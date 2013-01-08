@@ -202,8 +202,9 @@ extract_student_achievement <- function(regYr){
     with(tbl_student_achievement, ifelse(as.character(testgrade_N)=="", NA, 
                                          as.character(testgrade_N)))
   tbl_student_achievement$testgrade_N <- 
-    factor(tbl_student_achievement$testgrade_N, exclude=c("",NA), 
-           labels= c(3, 4, 5, 6, 7, 8, 11))
+    with(tbl_student_achievement, factor(testgrade_N, exclude=c("",NA), 
+                                  labels = 
+            sort(as.numeric(unique(testgrade_N)[!is.na(unique(testgrade_N))]))))
   tbl_student_achievement <- subset(tbl_student_achievement, 
                                     !is.na(testgrade_N))
   lvls <- as.numeric(as.character(levels(tbl_student_achievement$testgrade_N)))
@@ -213,14 +214,14 @@ extract_student_achievement <- function(regYr){
     lapply(lapply(tbl_student_achievement[, c('reascsc', 'matscsc')], 
                   as.character),
            as.numeric)
-  tbl_student_achievement <- ddply(tbl_student_achievement, .(contentgrade_N), 
-                                   mutate, 
-                                   reanormal = (reascsc - mean(reascsc, 
-                                                               na.rm=TRUE)) /
-                                                sd(reascsc, na.rm=TRUE),
-                                   matnormal = (matscsc - mean(matscsc, 
-                                                               na.rm=TRUE)) /
-                                                sd(matscsc, na.rm=TRUE))
+  tbl_student_achievement <- 
+    ddply(tbl_student_achievement, .(contentgrade_N), mutate, 
+          reanormal = ifelse(!is.na(reascsc), (reascsc - mean(reascsc, 
+                                                              na.rm=TRUE)) /
+                                               sd(reascsc, na.rm=TRUE), reascsc),
+          matnormal = ifelse(!is.na(matscsc), (matscsc - mean(matscsc, 
+                                                              na.rm=TRUE)) /
+                                              sd(matscsc, na.rm=TRUE), matscsc))
   return(tbl_student_achievement)
 }
   
