@@ -147,7 +147,7 @@ extract_enrollment <- function(regYr){
                          names(regYr), value=TRUE)
   tbl_stud_enroll <- regYr[,c(id_attributes, enr_attributes)] 
   by_school <- list(mode='any', length=length(enr_attributes)/8)
-  for(i in 1:length(by_school)){
+  for(i in 1:by_school$length){
     tempSch <- tbl_stud_enroll[, c(id_attributes, 
                                    grep(paste('*_Sch', i, '$', sep=''), 
                                         names(tbl_stud_enroll), 
@@ -186,6 +186,24 @@ extract_enrollment <- function(regYr){
            as.Date, format='%Y-%m-%d')
   row.names(tbl_stud_enroll) <- NULL
 	return(tbl_stud_enroll)
+}
+
+extract_course <- function(regYr){
+  id_attributes <-  c('studentid', 'sasid', 'schoolyear', 'last_name', 'grade')
+  course_attributes <- grep('^(cum|teacher|courseno|coursedesc)', 
+                         names(regYr), value=TRUE)
+  tbl_course <- regYr[,c(id_attributes, course_attributes)] 
+  by_course <- list(mode='any', length=length(course_attributes)/7)
+  for(i in 1:by_course$length){
+    tempSch <- tbl_course[, c(id_attributes, 
+                              grep(sprintf("%02d",i), 
+                                   names(tbl_course), 
+                                   value=TRUE))]
+    names(tempSch) <- gsub(sprintf("%02d", i), '', names(tempSch))
+    by_course[[i]] <- tempSch
+  }
+  tbl_course <- do.call(rbind, by_course)
+  tbl_course <- subset(tbl_course, !is.na(courseno))  
 }
 
 extract_student_achievement <- function(regYr){
