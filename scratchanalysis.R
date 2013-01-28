@@ -76,7 +76,7 @@ tmp_enroll$grad_date <- as.Date(tmp_enroll$grad_date, origin='1970-01-01')
 
 ##############
 
-tapply(test, test$sasid, function(x) subset(x, x$counts==max(x$counts)))
+#nsc_test <- read.csv('/Volumes/ProvidenceFiles/NSC Data Nov. 2012.csv')
 ################
 
 multiRace <- subset(test, grepl('[.]', test$sasid))
