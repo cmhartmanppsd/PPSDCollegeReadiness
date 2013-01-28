@@ -4,7 +4,7 @@ setwd('/Users/jason/R Projects/PPSDColllegeReadiness/')
 
 source('dependencies.R')
 source('functions.R')
-# source('load.R')
+source('load.R')
 
 executedAt <- paste(Sys.time())
 tables2004_2005 <- build_tables(reg0405, 2005)
