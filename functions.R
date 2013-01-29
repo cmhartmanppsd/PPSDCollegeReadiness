@@ -281,7 +281,6 @@ modal_person_attribute <- function(df, attribute){
   mode <- mode[, c('sasid', attribute)]
   result <- rbind(mode, resolved)
   return(result)
-  
 }
 
 
