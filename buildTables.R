@@ -45,3 +45,37 @@ graduated$graduated <- with(graduated, ifelse(exit_type==15, 'Y','N'))
 graduated$grad_date <- with(graduated, ifelse(graduated=='Y', exit_date, NA))
 graduated$grad_date <- as.Date(graduated$grad_date, origin='1970-01-01')
 graduated <- graduated[,c('sasid', 'graduated', 'grad_date')]
+
+# Build cannonical dob
+dob <- modal_person_attribute(rbind(tables2005_2006$person, 
+                                    tables2006_2007$person, 
+                                    tables2007_2008$person,
+                                    tables2008_2009$person, 
+                                    tables2009_2010$person,
+                                    tables2010_2011$person), 'dob')
+
+# Build cannonical student_lang
+student_lang <- modal_person_attribute(rbind(tables2005_2006$person, 
+                                             tables2006_2007$person, 
+                                             tables2007_2008$person,
+                                             tables2008_2009$person, 
+                                             tables2009_2010$person,
+                                             tables2010_2011$person), 
+                                       'student_lang')
+
+# Build cannonical parent_lang
+parent_lang <- modal_person_attribute(rbind(tables2005_2006$person, 
+                                            tables2006_2007$person, 
+                                            tables2007_2008$person,
+                                            tables2008_2009$person, 
+                                            tables2009_2010$person,
+                                            tables2010_2011$person), 
+                                      'parent_lang')
+
+
+person <- rbind(tables2005_2006$person, tables2006_2007$person, 
+                tables2007_2008$person, tables2008_2009$person, 
+                tables2009_2010$person)[,c('sasid', 'studentid')]
+
+person <- merge(merge(merge(merge(merge(merge(person, race), sex), graduated), 
+                            dob), student_lang), parent_lang)
