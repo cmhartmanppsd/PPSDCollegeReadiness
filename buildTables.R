@@ -72,10 +72,18 @@ parent_lang <- modal_person_attribute(rbind(tables2005_2006$person,
                                             tables2010_2011$person), 
                                       'parent_lang')
 
+# First HS
+first_hs <- select_hs(rbind(tables2005_2006$enrollment, 
+                            tables2006_2007$enrollment, 
+                            tables2007_2008$enrollment, 
+                            tables2008_2009$enrollment, 
+                            tables2009_2010$enrollment, 
+                            tables2010_2011$enrollment), 'first')
+
 
 person <- rbind(tables2005_2006$person, tables2006_2007$person, 
                 tables2007_2008$person, tables2008_2009$person, 
                 tables2009_2010$person)[,c('sasid', 'studentid')]
 
-person <- merge(merge(merge(merge(merge(merge(person, race), sex), graduated), 
-                            dob), student_lang), parent_lang)
+person <- merge(merge(merge(merge(merge(person, race), sex), graduated), 
+                      student_lang), parent_lang)
