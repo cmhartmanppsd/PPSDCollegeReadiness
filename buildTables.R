@@ -45,6 +45,7 @@ graduated$graduated <- with(graduated, ifelse(exit_type==15, 'Y','N'))
 graduated$grad_date <- with(graduated, ifelse(graduated=='Y', exit_date, NA))
 graduated$grad_date <- as.Date(graduated$grad_date, origin='1970-01-01')
 graduated <- graduated[,c('sasid', 'graduated', 'grad_date')]
+graduated <- subset(graduated, !is.na(grad_date))
 
 # Build cannonical dob
 dob <- modal_person_attribute(rbind(tables2005_2006$person, 
@@ -72,18 +73,71 @@ parent_lang <- modal_person_attribute(rbind(tables2005_2006$person,
                                             tables2010_2011$person), 
                                       'parent_lang')
 
-# First HS
+# first HS
 first_hs <- select_hs(rbind(tables2005_2006$enrollment, 
                             tables2006_2007$enrollment, 
                             tables2007_2008$enrollment, 
                             tables2008_2009$enrollment, 
                             tables2009_2010$enrollment, 
                             tables2010_2011$enrollment), 'first')
+names(first_hs)[-1] <- paste(names(first_hs)[-1], '_first',sep='')
 
+# last HS
+last_hs <- select_hs(rbind(tables2005_2006$enrollment, 
+                            tables2006_2007$enrollment, 
+                            tables2007_2008$enrollment, 
+                            tables2008_2009$enrollment, 
+                            tables2009_2010$enrollment, 
+                            tables2010_2011$enrollment), 'last')
+
+names(last_hs)[-1] <- paste(names(last_hs)[-1], '_last',sep='')
+
+# long HS
+long_hs <- select_hs(rbind(tables2005_2006$enrollment, 
+                            tables2006_2007$enrollment, 
+                            tables2007_2008$enrollment, 
+                            tables2008_2009$enrollment, 
+                            tables2009_2010$enrollment, 
+                            tables2010_2011$enrollment), 'long')
+long_hs[,schoolyear:=NULL]
+long_hs[,grade:=NULL]
+long_hs[,exit_type:=NULL]
+
+names(long_hs)[-1] <- paste(names(long_hs)[-1], '_long',sep='')
 
 person <- rbind(tables2005_2006$person, tables2006_2007$person, 
                 tables2007_2008$person, tables2008_2009$person, 
                 tables2009_2010$person)[,c('sasid', 'studentid')]
+person <- subset(person, !duplicated(sasid))
+person <- merge(person, race)
+person <- merge(person, sex)
+person <- merge(person, student_lang)
+person <- merge(person, parent_lang)
 
-person <- merge(merge(merge(merge(merge(person, race), sex), graduated), 
-                      student_lang), parent_lang)
+# High School Cohorts
+hsdata <- merge(person, first_hs)
+hsdata <- merge(hsdata, long_hs)
+hsdata <- merge(hsdata, last_hs)
+
+hsdata$graduated <- with(hsdata, ifelse(exit_type_last==15, 'Y','N'))
+
+hsdata$still_enrl <- with(hsdata, ifelse(exit_type_last %in% 
+                                           c(31, 30), 'Y', 'N'))
+
+hsdata$transfer_out <- with(hsdata, ifelse(exit_type_last %in% 
+                                             c(seq(1,14,1), 17), 'Y', 'N'))
+
+hsdata$ged <- with(hsdata, ifelse(exit_type_last==23, 'Y','N'))
+
+hsdata$dropout <- with(hsdata, ifelse(exit_type_last %in% c(21, 20, 25), 'Y', 
+                                      'N')) 
+
+hsdata$disappear <- with(hsdata, ifelse(exit_type_last==97, 'Y', 'N')) 
+
+hsgrad2007 <- subset(hsdata, (schoolyear_first=='2007_2008' & grade_first==9) | (schoolyear_first=='2008_2009' & grade_first==10) | (schoolyear_first=='2009_2010' & grade_first==11) | (schoolyear_first=='2010_2011' & grade_first==12))
+
+hsgrad2007 <- subset(hsgrad2007, transfer_out=='N')
+
+test <-merge(hsgrad2007, tables2006_2007$achievement, all.x=TRUE)
+
+# graduated$grad_date <- with(graduated, ifelse(graduated=='Y', exit_date, NA))
