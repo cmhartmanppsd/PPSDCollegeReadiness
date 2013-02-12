@@ -1,0 +1,37 @@
+
+
+```{r}
+require(stringr)
+achievement <- rbind(tables2005_2006$achievement,
+                     tables2006_2007$achievement,
+                     tables2007_2008$achievement,
+                     tables2008_2009$achievement,
+                     tables2009_2010$achievement,
+                     tables2010_2011$achievement)
+achievement <- subset(achievement, grade==11)
+levels(achievement$matal) <- str_trim(as.character(levels(achievement$matal)), 
+                                      side='both')
+levels(achievement$reaal) <- str_trim(as.character(levels(achievement$reaal)), 
+                                      side='both')
+achievement$matal <- as.character(achievement$matal)
+achievement$reaal <- as.character(achievement$reaal)
+#achievement <- subset(achievement, matal=='1' | reaal=='1')
+achievement <- subset(achievement, matal!=1 & reaal!=1)
+achievement$matal <- ifelse(achievement$matal %in% c('2','3','4'),
+                            achievement$matal, NA)
+achievement$reaal <- ifelse(achievement$reaal %in% c('2','3','4'), 
+                            achievement$reaal, NA)
+achievement <- subset(achievement, !is.na(reaal) & !is.na(matal))
+
+
+nsc <- read.csv('/Volumes/ProvidenceFiles/NSC Data Nov. 2012.csv')
+names(nsc)[1] <- 'studentid'
+nsc$studentid <- gsub('_','',nsc$studentid)
+nsc <- arrange(subset(nsc, COLLEGE_SEQUENCE==1), studentid)
+nsc <- subset(nsc, !duplicated(studentid))
+achievement$studentid <- as.character(achievement$studentid)
+college_going <- merge(achievement, nsc, by='studentid', all.x=TRUE, all.y=FALSE)
+college_going <- arrange(college_going, studentid)
+college_going <- subset(college_going, !duplicated(studentid))
+prop.table(table(college_going$COLLEGE_SEQUENCE, useNA='ifany'))
+```
