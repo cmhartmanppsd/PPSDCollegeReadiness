@@ -82,3 +82,5 @@ tmp_enroll$grad_date <- as.Date(tmp_enroll$grad_date, origin='1970-01-01')
 multiRace <- subset(test, grepl('[.]', test$sasid))
 #duplicated removes the trues to get the first observation
 
+## Grades
+
