@@ -6,6 +6,7 @@ require(reshape2)
 require(ggplot2)
 require(scales)
 require(stringr)
+require(data.table)
 # require(ggmap)
 # setwd('~/ProvidenceCRIS')
 
