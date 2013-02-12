@@ -189,7 +189,7 @@ extract_enrollment <- function(regYr){
 }
 
 extract_course <- function(regYr){
-  id_attributes <-  c('studentid', 'sasid', 'schoolyear', 'last_name', 'grade')
+  id_attributes <-  c('studentid', 'sasid', 'schoolyear', 'grade')
   course_attributes <- grep('^(cum|teacher|courseno|coursedesc)', 
                          names(regYr), value=TRUE)
   tbl_course <- regYr[,c(id_attributes, course_attributes)] 
@@ -203,7 +203,22 @@ extract_course <- function(regYr){
     by_course[[i]] <- tempSch
   }
   tbl_course <- do.call(rbind, by_course)
-  tbl_course <- subset(tbl_course, !is.na(courseno))  
+  tbl_course <- subset(tbl_course, !is.na(courseno)) 
+  row.names(tbl_course) <- NULL
+  tbl_course <- melt(tbl_course, id.vars=c(id_attributes, 'courseno', 
+                                           'coursedesc', 'teacher'),
+                     value.name='course_grade')
+  tbl_course$course_grade <- str_trim(tbl_course$course_grade, side='both')
+  require(car)
+  tbl_course$gpa <- recode(as.character(tbl_course$course_grade), 
+                           "'A+' = 4.33; 'A' = 4.00; 'A-' = 3.67; 'B+' = 3.33;
+                            'B' = 3.00; 'B-' = 2.67; 'C+' = 2.33; 'C' =2.00; 
+                            'C-' = 1.67; 'D+' =1.33; 'D' = 1.00; 'D-' = 0.67;
+                            'E+' = 0; 'E' = 0; 'E-' = 0; 'F+' = 0; 'F' = 0; 
+                            else=NA")
+  
+  
+  return(tbl_course)
 }
 
 extract_student_achievement <- function(regYr){
@@ -292,7 +307,8 @@ select_hs <- function(df, type="first"){
   if(type=="first"){
     hs <- dt[grade %in% c(9,10,11,12), .SD[which.min(enroll_date)], 
              by=key(dt)][]
-#     test <- dt[grade %in% c(9,10,11,12), list(enroll_date=min(enroll_date, na.rm=TRUE)), by=key(dt)] 
+#     test <- dt[grade %in% c(9,10,11,12), 
+#                list(enroll_date=min(enroll_date, na.rm=TRUE)), by=key(dt)] 
 #     setkeyv(test, c('sasid','enroll_date'))
 #     setkeyv(dt, c('sasid', 'enroll_date'))
 #     test <- test[dt]
@@ -354,8 +370,12 @@ build_tables <- function(regYr, year){
   buildLog <- capture.output(head(tbl_achievement)[1:10])
   cat('tbl_achievement', buildLog, year, '\n\n', file=logAt, sep='\n', 
       append=TRUE)
+  tbl_course <- extract_course(regYr)
+  buildLog <- capture.output(head(tbl_course)[1:10])
+  cat('tbl_course', buildLog, year, '\n\n', file=logAt, sep='\n', 
+      append=TRUE)
 	tables <- list(person=tbl_person, person_annual=tbl_person_annual, 
-                 enrollment=tbl_enrollment, achievement=tbl_achievement, 
-                 missingSASID=noSASID, dupes=duplicates)
+                 enrollment=tbl_enrollment, achievement=tbl_achievement,
+                 course=tbl_course, missingSASID=noSASID, dupes=duplicates)
 	return(tables)
 }
