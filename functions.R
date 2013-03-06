@@ -216,7 +216,23 @@ extract_course <- function(regYr){
                             'C-' = 1.67; 'D+' =1.33; 'D' = 1.00; 'D-' = 0.67;
                             'E+' = 0; 'E' = 0; 'E-' = 0; 'F+' = 0; 'F' = 0; 
                             else=NA")
-  
+  math <- '(geom|alg|trig|math)'
+  engl <- '(liter|engl|read)'
+  scie <- '(sci|chem|physics|biol)'
+  soci <- 'hist|soci|gov|euro|ameri|wor)'
+  tbl_course$subject <- with(tbl_course, 
+                             ifelse(grepl(math, x=coursedesc, ignore.case=TRUE),
+                                    'math', 
+                                    ifelse(grepl(engl, x=coursedesc, 
+                                                 ignore.case=TRUE), 
+                                           'ela',
+                                            ifelse(grepl(scie, x=coursedesc,
+                                                         ignore.case=TRUE), 
+                                                   'science',
+                                                    ifelse(grepl(soci, 
+                                                                 x=coursedesc,
+                                                              ignore.case=TRUE),
+                                                           'socialstudies')))))
   
   return(tbl_course)
 }
@@ -274,6 +290,10 @@ modal_person_attribute <- function(df, attribute){
   setkeyv(mode, c('sasid',attribute))
   # Produce the maximum year value associated with each ID-attribute pairing    
   setkeyv(dt, c('sasid',attribute))
+  if(class(mode[[attribute]])!=class(dt[[attribute]]) &
+     TRUE %in% grepl('-',mode[[attribute]])){
+    mode[[attribute]] <- as.Date(mode[[attribute]], format='%Y-%m-%d')
+  }
   mode <- dt[,list(schoolyear=max(schoolyear)), by=c("sasid", attribute)][mode]
   setkeyv(mode, c('sasid', 'schoolyear'))
   # Select the last observation for each ID, which is equivalent to the highest
@@ -314,8 +334,7 @@ select_hs <- function(df, type="first"){
 #     test <- test[dt]
   }
   else if(type=="last"){
-    hs <- dt[grade %in% c(9,10,11,12), .SD[which.max(exit_date)], 
-             by=key(dt)]
+    hs <- s
   }
   else if(type=="long"){
     hs <- dt[grade %in% c(9,10,11,12), list(total_adm = sum(adm)), 
@@ -330,6 +349,34 @@ select_hs <- function(df, type="first"){
   }
   return(hs[,list(sasid, schno, school, schoolyear, grade, exit_type)])
 }
+
+age_calc <- function(dob, enddate=Sys.time(), units='months'){
+  # dob is expected to be a vector, likely a column in a data.frame
+  # enddate is expected to be a set point in time and is an atomic vector.
+  # This could be refactored to allow for vector enddates if the interested is
+  # in calculating age at the time of a measurement which is different for each
+  # observation.
+  if (!inherits(dob, "Date") | !inherits(enddate, "Date"))
+    stop("Both dob and enddate must be Date class objects")
+  start <- as.POSIXlt(dob)
+  end <- as.POSIXlt(enddate)
+  
+  years <- end$year - start$year
+  if(units=='years'){
+    result <- ifelse((end$mon < start$mon) | 
+                      ((end$mon == start$mon) & (end$mday < start$mday)),
+                      years - 1, years)    
+  }else if(units=='months'){
+    months <- (years-1) * 12
+    result <- months + start$mon
+  }else if(units=='days'){
+    result <- difftime(end, start, units='days')
+  }else{
+    stop("Unrecognized units. Please choose years, months, or days.")
+  }
+  return(result)
+}
+
 
 build_tables <- function(regYr, year){
   if(exists('executedAt')==TRUE){
