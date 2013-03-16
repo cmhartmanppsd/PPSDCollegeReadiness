@@ -202,18 +202,43 @@ hsgrad2007$race <- relevel(hsgrad2007$race, ref='White')
 hsgrad2007$schno_first <- as.factor(hsgrad2007$schno_first)
 hsgrad2007$schno_first <- relevel(hsgrad2007$schno_first, ref='164')
 
+# Mobility
+mobile8th <- with(arrange(subset(tables2006_2007$enrollment, grade==8), sasid), 
+                  data.frame(sasid=rle(sasid)$values, moves=rle(sasid)$lengths))
+mobile8th$moves <- mobile8th$moves - 1
+
+
+mobile8th$moves <- with(mobile8th, 
+                        ifelse(sasid %in% 
+                               subset(subset(arrange(tables2006_2007$enrollment,
+                                                     enroll_date), 
+                                             !duplicated(sasid)),
+                                      enroll_date>'2006-10-01')$sasid, 
+                               moves+1, moves))
+
 # Grades
 # 8th grade GPA
 eighthgpa <- aggregate(data=subset(tables2006_2007$course, grade==8), 
                       gpa ~ sasid + variable, FUN="mean")
 eighthgpa <- dcast(eighthgpa, sasid ~ variable, value.var='gpa')
+
+eightmathgpa <- subset(aggregate(data=subset(tables2006_2007$course, grade==8),
+                         gpa ~ sasid + subject, FUN="mean"), subject=='math')
+names(eightmathgpa)[3] <- 'math_gpa'
+eightmathgpa$subject <- NULL
+
 hsgrad2007 <- merge(hsgrad2007, eighthgpa, all.x=TRUE)
+hsgrad2007 <- merge(hsgrad2007, eightmathgpa, all.x=TRUE)
 hsgrad2007 <- mutate(hsgrad2007,
                      gpaeighth=rowSums(cbind(cum_qtr1, cum_qtr2, cum_qtr3, 
                                              cum_qtr4), na.rm=TRUE)/
                                apply(cbind(cum_qtr1, cum_qtr2, cum_qtr3, 
                                            cum_qtr4), 1 , 
                               function(x) length(subset(x, !is.na(x)==TRUE))))
+hsgrad2007$cum_qtr1<-NULL
+hsgrad2007$cum_qtr2<-NULL
+hsgrad2007$cum_qtr3<-NULL
+hsgrad2007$cum_qtr4<-NULL
 
 hsgrad2007$schno_first <- as.character(hsgrad2007$schno_first)
 
@@ -223,11 +248,41 @@ basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ sex + eightattend
 
 hsgrad2007$eightprediction <- predict(basemodel8thgrade, newdata=hsgrad2007, type='response')
 
+
 # 9th grade GPA
 ninthgpa <- aggregate(data=subset(tables2007_2008$course, grade==9), 
                       gpa ~ sasid + variable, FUN="mean")
 ninthgpa <- dcast(ninthgpa, sasid ~ variable, value.var='gpa')
+ninthgpa <- mutate(ninthgpa, gpa9th=rowSums(cbind(cum_qtr1, cum_qtr2, cum_qtr3, 
+                                                  cum_qtr4), na.rm=TRUE)/
+                             apply(cbind(cum_qtr1, cum_qtr2, cum_qtr3, 
+                                         cum_qtr4), 
+                                   1, 
+                             function(x) length(subset(x, !is.na(x)==TRUE))))
+
 trajectory <- melt(ninthgpa, id.vars='sasid')
+ninthmathgpa <- subset(aggregate(data=subset(tables2007_2008$course, grade==9),
+                                 gpa ~ sasid + subject, FUN="mean"), subject=='math')
+
+# Working on standardizing grades by course. This is incomplete because it standardizes by course, but values are still by quarter. I need to produce the gpa by course first and hten apply a similar function.
+
+head(subset(ddply(subset(tables2007_2008$course, grade==9), c('courseno'), mutate,
+      mathgpa_9thstd = (gpa - mean(gpa, na.rm=TRUE)) /
+                        sd(gpa, na.rm=TRUE)), subject=='math' & !is.na(gpa)))
+
+names(ninthmathgpa)[3] <- 'math_gpa9th'
+ninthmathgpa$subject <- NULL
+#hsgrad2007 <- merge(hsgrad2007, ninthmathgpa, all.x=TRUE)
+hsgrad2007 <- merge(hsgrad2007, ninthgpa, all.x=TRUE)
+quarter1model <- glm(as.numeric(as.factor(graduated))-1 ~ sex + eightattend
+                     + gpaeighth + reanormal + ageHS + I(schno_first=='164')
+                     + cum_qtr1,
+                     data=hsgrad2007, family=binomial(link='logit'))
+require(pROC)
+plot.roc(roc(hsgrad2007$graduated~hsgrad2007$eightprediction, auc=TRUE, ci=TRUE), print.auc=TRUE, ci.type='shape')
+plot.roc(roc(hsgrad2007$graduated ~ predict(quarter1model, newdata=hsgrad2007, type='response'), auc=TRUE, ci=TRUE), print.auc=TRUE, ci.type='shape')
+
+
 trajectory <- data.table(trajectory, key='sasid')
 trajectory$variable <- recode(trajectory$variable, "'cum_qtr1'=1; 'cum_qtr2'=2; 
                                                     'cum_qtr3'=3; 'cum_qtr4'=4")
