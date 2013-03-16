@@ -209,6 +209,7 @@ extract_course <- function(regYr){
                                            'coursedesc', 'teacher'),
                      value.name='course_grade')
   tbl_course$course_grade <- str_trim(tbl_course$course_grade, side='both')
+  tbl_course$coursedesc <- str_trim(tbl_course$coursedesc, side='both')
   require(car)
   tbl_course$gpa <- recode(as.character(tbl_course$course_grade), 
                            "'A+' = 4.33; 'A' = 4.00; 'A-' = 3.67; 'B+' = 3.33;
@@ -219,7 +220,7 @@ extract_course <- function(regYr){
   math <- '(geom|alg|trig|math)'
   engl <- '(liter|engl|read)'
   scie <- '(sci|chem|physics|biol)'
-  soci <- 'hist|soci|gov|euro|ameri|wor)'
+  soci <- '(hist|soci|gov|euro|ameri|worl|soc)'
   tbl_course$subject <- with(tbl_course, 
                              ifelse(grepl(math, x=coursedesc, ignore.case=TRUE),
                                     'math', 
@@ -232,7 +233,8 @@ extract_course <- function(regYr){
                                                     ifelse(grepl(soci, 
                                                                  x=coursedesc,
                                                               ignore.case=TRUE),
-                                                           'socialstudies')))))
+                                                           'socialstudies', 
+                                                           'non-core')))))
   
   return(tbl_course)
 }
@@ -334,7 +336,7 @@ select_hs <- function(df, type="first"){
 #     test <- test[dt]
   }
   else if(type=="last"){
-    hs <- s
+    hs <- dt[grade %in% c(9,10,11,12), .SD[which.max(exit_date)], by=key(dt)]
   }
   else if(type=="long"){
     hs <- dt[grade %in% c(9,10,11,12), list(total_adm = sum(adm)), 
