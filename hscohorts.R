@@ -246,7 +246,8 @@ basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ sex + eightattend
                         + gpaeighth + reanormal + ageHS + I(schno_first=='164'),
                          data=hsgrad2007, family=binomial(link='logit'))
 
-hsgrad2007$eightprediction <- predict(basemodel8thgrade, newdata=hsgrad2007, type='response')
+hsgrad2007$eightprediction <- predict(basemodel8thgrade, newdata=hsgrad2007, 
+                                      type='response')
 
 
 # 9th grade GPA
@@ -262,25 +263,50 @@ ninthgpa <- mutate(ninthgpa, gpa9th=rowSums(cbind(cum_qtr1, cum_qtr2, cum_qtr3,
 
 trajectory <- melt(ninthgpa, id.vars='sasid')
 ninthmathgpa <- subset(aggregate(data=subset(tables2007_2008$course, grade==9),
-                                 gpa ~ sasid + subject, FUN="mean"), subject=='math')
+                                 gpa ~ sasid + subject, FUN="mean"), 
+                       subject=='math')
 
-# Working on standardizing grades by course. This is incomplete because it standardizes by course, but values are still by quarter. I need to produce the gpa by course first and hten apply a similar function.
-
-head(subset(ddply(subset(tables2007_2008$course, grade==9), c('courseno'), mutate,
-      mathgpa_9thstd = (gpa - mean(gpa, na.rm=TRUE)) /
-                        sd(gpa, na.rm=TRUE)), subject=='math' & !is.na(gpa)))
-
+# Working on standardizing grades by course. This is incomplete because it 
+# standardizes by course, but values are still by quarter. I need to produce 
+# the gpa by course first and hten apply a similar function.
+head(subset(ddply(subset(tables2007_2008$course, grade==9), c('courseno'), 
+                  mutate, mathgpa_9thstd = (gpa - mean(gpa, na.rm=TRUE)) /
+                          sd(gpa, na.rm=TRUE)), subject=='math' & !is.na(gpa)))
 names(ninthmathgpa)[3] <- 'math_gpa9th'
 ninthmathgpa$subject <- NULL
+
 #hsgrad2007 <- merge(hsgrad2007, ninthmathgpa, all.x=TRUE)
 hsgrad2007 <- merge(hsgrad2007, ninthgpa, all.x=TRUE)
 quarter1model <- glm(as.numeric(as.factor(graduated))-1 ~ sex + eightattend
                      + gpaeighth + reanormal + ageHS + I(schno_first=='164')
                      + cum_qtr1,
                      data=hsgrad2007, family=binomial(link='logit'))
+hsgrad2007$qtr1predict <- predict(quarter1model, newdata=hsgrad2007, 
+                                     type='response')
+
 require(pROC)
-plot.roc(roc(hsgrad2007$graduated~hsgrad2007$eightprediction, auc=TRUE, ci=TRUE), print.auc=TRUE, ci.type='shape')
-plot.roc(roc(hsgrad2007$graduated ~ predict(quarter1model, newdata=hsgrad2007, type='response'), auc=TRUE, ci=TRUE), print.auc=TRUE, ci.type='shape')
+plot.roc(roc(hsgrad2007$graduated~hsgrad2007$eightprediction, 
+             auc=TRUE, ci=TRUE), 
+         print.auc=TRUE, ci.type='shape')
+title("ROC of the Base Eighth Grade Model")
+plot.roc(roc(hsgrad2007$graduated ~ predict(quarter1model, newdata=hsgrad2007, 
+                                            type='response'), 
+             auc=TRUE, ci=TRUE), 
+         print.auc=TRUE, ci.type='shape')
+roc.test(hsgrad2007$graduated, hsgrad2007$eightprediction, 
+         predict(quarter1model, newdata=hsgrad2007, type='response'))
+
+require(ROCR)
+plot(performance(prediction(hsgrad2007$eightprediction, hsgrad2007$graduated), 
+                'acc'), avg="vertical")
+abline(v=.45, col='red')
+title('Prediction Accuracy by Cutoff')
+text(.6, .6, "Proposed Cutoff")
+plot(performance(prediction(predict(quarter1model, newdata=hsgrad2007, 
+                                    type='response'),
+                            hsgrad2007$graduated), 'acc'), avg="vertical")
+abline(v=.45, col='red')
+title('Prediction Accuracy by Cutoff')
 
 
 trajectory <- data.table(trajectory, key='sasid')
