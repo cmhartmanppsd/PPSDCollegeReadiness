@@ -92,7 +92,7 @@ extract_person_annual <- function(regYr){
 																'city', 'state', 'zip_code', 'sum_absent',
                                 'sum_excabsent', 'sum_tardy', 'sum_on_time',
                                 'sum_suspend', 'sum_enrolled', 'sum_present',
-                                'sum_soccurin', 'sum_soccurout')
+                                'sum_soccurin', 'sum_soccurout', 'schoolyear')
 	tbl_person_annual <- regYr[, person_annual_attributes]
 	tbl_person_annual[,1:3] <- apply(apply(tbl_person_annual[,1:3], 2, 
 																				 as.character), 
