@@ -9,9 +9,7 @@ require(data.table)
 require(car)
 require(ROCR)
 require(pROC)
-
-# require(ggmap)
-# setwd('~/ProvidenceCRIS')
+require(rstudio)
 
 # Standard helper functions
 "%w/o%" <- function(x, y) x[!x %in% y]
