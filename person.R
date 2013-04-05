@@ -146,7 +146,7 @@ person <- merge(person, parent_lang)
 person <- merge(person, dob)
 
 # Comparison level for race should be White, not Asian (default alphabetical)
-person <- relevel(person$race, ref='White')
+person$race <- relevel(person$race, ref='White')
 
 
 # Because the "ever" demographics are a list of all SASIDs were characteristic
@@ -171,11 +171,26 @@ person <- merge(person, first_hs, all.x=TRUE)
 person <- merge(person, long_hs, all.x=TRUE)
 person <- merge(person, last_hs, all.x=TRUE)
 
+# There are late submissions that have not traditionally been made to the data
+# office where students graudate after the end of the school year. This is an
+# updated list of sasids and exit dates for students who actually graduated.
+# Virtually no students graduated past the 6/24/11 date of expected graduation,
+# even though it has been 2 years. Therefore, I am only focusing on updating the
+# outcomes for these additional graduates.
+
+update_grads <- read.csv("/Volumes/ProvidenceFiles/updatedexitcodes/updates.csv")
+update_grads$exit_date <- as.Date(as.character(update_grads$exit_date), 
+                                  format='%m/%d/%y')
+update_grads$sasid <- as.character(update_grads$sasid)
+
+
 # Calcuate high school outcomes, using exit_type_last to determine which
 # students who have entered high school met one of six criteria: graduated,
 # still enrolled, transferred out (of the district), transfered into a GED
 # program, dropped out of schoool, or "disappeared" (unknown enrollment or
 # completion status).
+person$exit_type_last <- ifelse(person$sasid %in% update_grads$sasid, 
+                                15, person$exit_type_last)
 person$graduated <- with(person, 
 						 ifelse(exit_type_last==15, 'Y','N'))
 person$still_enrl <- with(person, 
@@ -191,6 +206,7 @@ person$disappear <- with(person, ifelse(exit_type_last==97, 'Y', 'N'))
 # Label which students repeat 9th grade.
 repeat9th <- subset(tables2007_2008$person_annual, 
 					grade==9 & isrepeatinggr=='N')[, c('sasid', 'willrepeatgr')]
+levels(repeat9th$willrepeatgr) <- c(NA, 'N', 'Y')
 person <- merge(person, repeat9th, all.x=TRUE)					
 
 # Remove tables that won't be used in later analysis
