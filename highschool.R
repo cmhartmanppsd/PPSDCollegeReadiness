@@ -71,6 +71,17 @@ rm(eightcourseperf)
 rm(eighthgpa)
 rm(subjeighthgpa)
 
+# 9th grade quarter 1 course performance
+ninthgpa <- aggregate(data=subset(tables2007_2008$course, grade==9), 
+                      gpa ~ sasid + variable, FUN="mean")
+ninthqtrgpa <- dcast(ninthgpa, sasid ~ variable, value.var='gpa')
+ninthqtrgpa <- ninthqtrgpa[,c(1,2)]
+names(ninthqtrgpa)[2] <- 'gpa9thqtr1'
+
+hs0708 <- merge(hs0708, ninthqtrgpa, all.x=TRUE)
+hs0708$reaal <- str_trim(as.character(hs0708$reaal), side='both')
+hs0708$matal <- str_trim(as.character(hs0708$matal), side='both')
+rm(ninthqtrgpa)
 
 # For accountability purposes, students who transfer out are excluded from their
 # high school's graduation rate. This analysis will primarily exclude them as
