@@ -2,10 +2,10 @@
 # semester ninth grade data.
 
 basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ sex + 
-                         attendance8th + gpa8th + reanormal + 
+                         attendnormal + gpa8th + reanormal + 
                          I(ageHS<167) + I(schno_first=='164'),
                          data=hscohort0708, family=binomial(link='logit'))
-modelqtr1 <- glm(as.numeric(as.factor(graduated))-1 ~ sex + attendance8th + 
+modelqtr1 <- glm(as.numeric(as.factor(graduated))-1 ~ sex + attendnormal + 
                  gpa8th + reanormal + I(ageHS<167) + I(schno_first=='164') +
                  gpa9thqtr1,
                  data=hscohort0708, family=binomial(link='logit'))
@@ -14,7 +14,7 @@ hs0708$predict8th<- predict(basemodel8thgrade, newdata=hs0708, type='response')
 hs0708$predictqtr1<- predict(modelqtr1, newdata=hs0708, type='response')
 # Not sure where the NAs come from.
 
-repeat9th.glm <- glm(as.numeric(as.factor(willrepeatgr))-1 ~ sex + attendance8th
+repeat9th.glm <- glm(as.numeric(as.factor(willrepeatgr))-1 ~ sex + attendnormal
                      + gpa8th + reanormal + ageHS + I(schno_first=='164'),
                   data=hscohort0708, family=binomial(link='logit'))
 
@@ -29,7 +29,7 @@ text(.6, .6, 'Proposed Cutoff')
 with(subset(hs0708, transfer_out=='N'), 
   plot.roc(roc(graduated~predict8th, auc=TRUE, ci=TRUE), 
            print.auc=TRUE, ci.type='shape'))
-title("ROC of the Base Eighth Grade Model")
+title(main="ROC of the Base Eighth Grade Model")
 
 ggplot(data=hs0708, aes(school_first, predict8th)) + 
 geom_boxplot() + 
@@ -41,7 +41,7 @@ incomingrisk <- with(subset(hs0708, schno_first %in% c(169, 139, 164, 174,
                                                        183, 150, 173, 193, 189, 
                                                        117)),
                      subset(data.frame(prop.table(table(school_first, 
-                                                        predict8th<.45), 1)), 
+                                                        predict8th<.5), 1)), 
                             Var2==TRUE))
 incomingrisk$Var2 <- NULL
 names(incomingrisk) <- c('School', 'HighRisk')
@@ -58,9 +58,9 @@ scale_y_continuous(labels=percent_format(),
                    limits=c(0,.5), 
                    breaks=seq(0,.5,.05),
                    name='') +
-scale_x_discrete(name='High School') +
+scale_x_discrete('') +
 ggtitle('Proportion of Incoming Freshman with Low Likelihood of Graduating\n Fall 2007') +
-theme(axis.text.x = element_blank())
+theme(axis.text.x = element_text(angle=60, vjust=.5))
 
 ggplot(subset(hs0708, !is.na(graduated)), aes(predict8th, fill=graduated)) + 
 geom_bar(binwidth=.05) +  
@@ -94,8 +94,7 @@ theme(axis.text.y=element_blank(),
       plot.title = element_text(face="bold")) +
 ggtitle('Relationship Between Prediction and Graduation')
 
-plot_odds(basemodel8thgrade) + ggtitle('Logit Regression Odds Ratios with 95% Confidence Intervals')
-
+sjp.glm(basemodel8thgrade, transformTicks=TRUE, title='Graduation Based on Eighth Grade Data', axisLabels.y=c('Male', 'Attendance', 'GPA', 'NECAP Reading', 'Over-age', 'Classical High School'))
 
 
 # Paritition tree
