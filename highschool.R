@@ -90,3 +90,4 @@ rm(ninthqtrgpa)
 # are different or similar from students who do not leave Providence.
 
 hscohort0708 <- subset(hs0708, transfer_out=='N')
+hscohort0708$attendnormal <- (hscohort0708$attendance8th-mean(hscohort0708$attendance8th, na.rm=TRUE))/sd(hscohort0708$attendance8th, na.rm=TRUE)
