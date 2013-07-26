@@ -10,10 +10,23 @@ modelqtr1 <- glm(as.numeric(as.factor(graduated))-1 ~ sex + attendnormal +
                  gpa9thqtr1,
                  data=hscohort0708, family=binomial(link='logit'))
 
+modelrepeat <- glm(as.numeric(as.factor(graduated))-1 ~ sex + 
+                   attendnormal + gpa8th + reanormal + 
+                   I(ageHS<167) + I(schno_first=='164') + willrepeatgr,
+                   data=hscohort0708, family=binomial(link='logit'))
+
+modelmoves <- glm(as.numeric(as.factor(graduated))-1 ~ sex + 
+                    attendnormal + gpa8th + reanormal + 
+                    I(ageHS<167) + I(schno_first=='164') + I(moves>0),
+                  data=hscohort0708, family=binomial(link='logit'))
+
+# Some portion of students have a predicted value over 50% and then repeat and 
+# don't graduate.
+
 hs0708$predict8th<- predict(basemodel8thgrade, newdata=hs0708, type='response')
 hs0708$predictqtr1<- predict(modelqtr1, newdata=hs0708, type='response')
-# Not sure where the NAs come from.
 
+# Not sure where the NAs come from.
 repeat9th.glm <- glm(as.numeric(as.factor(willrepeatgr))-1 ~ sex + attendnormal
                      + gpa8th + reanormal + ageHS + I(schno_first=='164'),
                   data=hscohort0708, family=binomial(link='logit'))

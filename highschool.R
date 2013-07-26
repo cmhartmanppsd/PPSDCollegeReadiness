@@ -39,6 +39,13 @@ names(hs0708)[which(names(hs0708) %in% c('attendance'))] <- 'attendance8th'
 hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date('2007-09-01'), 
                                           units='months'))
 
+# Calculate mobility for students
+# Eighth Grade year
+mobile8th <- calc_moves(subset(tables2006_2007$enrollment, 
+                               sasid %in% hs0708$sasid))
+names(mobile8th)[1] <- 'sasid'
+hs0708 <- merge(hs0708, mobile8th, all.x=TRUE)h
+
 # Bring in 8th grade performance on standardized tests.
 hs0708 <- merge(hs0708, subset(tables2006_2007$achievement, testgrade_N==8 &
                                testgrade_N==grade, select=-c(schoolyear,

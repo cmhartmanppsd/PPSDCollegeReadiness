@@ -1,0 +1,101 @@
+diff --git a/cutoffeightgrade.png b/cutoffeightgrade.png
+index 86a80bf..5de8c43 100644
+Binary files a/cutoffeightgrade.png and b/cutoffeightgrade.png differ
+diff --git a/highriskbyhigh.png b/highriskbyhigh.png
+new file mode 100644
+index 0000000..8bf4001
+Binary files /dev/null and b/highriskbyhigh.png differ
+diff --git a/highschool.R b/highschool.R
+index 89c2e7d..356014a 100644
+--- a/highschool.R
++++ b/highschool.R
+@@ -39,6 +39,13 @@ names(hs0708)[which(names(hs0708) %in% c('attendance'))] <- 'attendance8th'
+ hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date('2007-09-01'), 
+                                           units='months'))
+ 
++# Calculate mobility for students
++# Eighth Grade year
++mobile8th <- calc_moves(subset(tables2006_2007$enrollment, 
++                               sasid %in% hs0708$sasid))
++names(mobile8th)[1] <- 'sasid'
++hs0708 <- merge(hs0708, mobile8th, all.x=TRUE)h
++
+ # Bring in 8th grade performance on standardized tests.
+ hs0708 <- merge(hs0708, subset(tables2006_2007$achievement, testgrade_N==8 &
+                                testgrade_N==grade, select=-c(schoolyear,
+diff --git a/logitcoeff.png b/logitcoeff.png
+index 5556ce6..ccebabe 100644
+Binary files a/logitcoeff.png and b/logitcoeff.png differ
+diff --git a/logitcoeff9th.png b/logitcoeff9th.png
+new file mode 100644
+index 0000000..fe4acf9
+Binary files /dev/null and b/logitcoeff9th.png differ
+diff --git a/mobility_scratch.R b/mobility_scratch.R
+index 5fe7770..1600be3 100644
+--- a/mobility_scratch.R
++++ b/mobility_scratch.R
+@@ -19,6 +19,20 @@ calc_moves <- function(df, sid='sasid', schid='schno'){
+   #output$id <- as.character(id)
+   output <- data.table(output, key='id')
+   for(i in 1:(length(df[[sid]])-1)){
++    # If this is the first time the student is listed (and not the very first
++    # student so that the prior student is undefined) check if enroll date is
++    # after YYYY-09-15. If so, add 1 move.
++    if(i>1 && df[sid][i,]!=df[sid][(i-1),]){
++      if(df[['enroll_date']][i]>paste(year(min(df$enroll_date, na.rm=TRUE)),
++                                      '-09-15', sep='')){
++        output[as.character(df[[sid]][i]), moves:=moves+1L]
++      }
++    }else if(i==1){
++      if(df[['enroll_date']][i]>paste(year(min(df$enroll_date, na.rm=TRUE)),
++                                      '-09-15', sep='')){
++      output[as.character(df[[sid]][i]), moves:=moves+1L]
++      }
++    }
+     # If we're looking at the same student
+     if(df[sid][i,]==df[sid][(i+1),]){
+       # And that student has less than 14 days between their exit and next
+@@ -45,6 +59,16 @@ calc_moves <- function(df, sid='sasid', schid='schno'){
+         output[as.character(df[[sid]][i]), moves:=moves+2L] 
+         # print(output)
+       }
++    }else{
++      # Should trigger if the next student number doesn't match meaning this is
++      # the last record for that student in the file.
++      if(is.na(df[['exit_date']][i])){
++        next
++      }
++      else if(df[['exit_date']][i]<paste(year(max(df$exit_date, na.rm=TRUE)),
++                                      '-06-01', sep='')){
++        output[as.character(df[[sid]][i]), moves:=moves+1L]
++      }
+     }
+   }
+   # Need to add logic for students who enter after YYYY-09-15 and leave before
+diff --git a/modelspreHS.R b/modelspreHS.R
+index 467b888..2ecaf26 100644
+--- a/modelspreHS.R
++++ b/modelspreHS.R
+@@ -10,10 +10,18 @@ modelqtr1 <- glm(as.numeric(as.factor(graduated))-1 ~ sex + attendnormal +
+                  gpa9thqtr1,
+                  data=hscohort0708, family=binomial(link='logit'))
+ 
++modelrepeat <- glm(as.numeric(as.factor(graduated))-1 ~ sex + 
++                   attendnormal + gpa8th + reanormal + 
++                   I(ageHS<167) + I(schno_first=='164') + willrepeatgr,
++                   data=hscohort0708, family=binomial(link='logit'))
++
++# Some portion of students have a predicted value over 50% and then repeat and 
++# don't graduate.
++
+ hs0708$predict8th<- predict(basemodel8thgrade, newdata=hs0708, type='response')
+ hs0708$predictqtr1<- predict(modelqtr1, newdata=hs0708, type='response')
+-# Not sure where the NAs come from.
+ 
++# Not sure where the NAs come from.
+ repeat9th.glm <- glm(as.numeric(as.factor(willrepeatgr))-1 ~ sex + attendnormal
+                      + gpa8th + reanormal + ageHS + I(schno_first=='164'),
+                   data=hscohort0708, family=binomial(link='logit'))
+diff --git a/roceightgrade.png b/roceightgrade.png
+index 423032e..5d70d68 100644
+Binary files a/roceightgrade.png and b/roceightgrade.png differ
