@@ -15,14 +15,6 @@ modelrepeat <- glm(as.numeric(as.factor(graduated))-1 ~ sex +
                    I(ageHS<167) + I(schno_first=='164') + willrepeatgr,
                    data=hscohort0708, family=binomial(link='logit'))
 
-<<<<<<< HEAD
-modelmoves <- glm(as.numeric(as.factor(graduated))-1 ~ sex + 
-                    attendnormal + gpa8th + reanormal + 
-                    I(ageHS<167) + I(schno_first=='164') + I(moves>0),
-                  data=hscohort0708, family=binomial(link='logit'))
-
-=======
->>>>>>> c9909f7c98bfb46f8362b71b95085252e02b6cb3
 # Some portion of students have a predicted value over 50% and then repeat and 
 # don't graduate.
 
@@ -121,4 +113,3 @@ plot(ctree(numGrad ~ sex + iep + attendance8th + gpa8th + reaal + suspend8th +
                      ageHS + I(schno_first=='164'), data=hs0708tree, 
            controls = ctree_control(minsplit = 50)), 
      type='simple')
-
