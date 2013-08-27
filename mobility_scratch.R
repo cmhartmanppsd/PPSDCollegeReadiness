@@ -48,6 +48,10 @@ calc_moves <- function(df,
       exitby <- as.Date(exitby, format="%Y-%m-%d")
     }
   }
+  if(!is.numeric(gap)){
+    gap <- 14
+    warning("gap was not a number, defaulting to 14 days")
+  }
 
   # Generate results data table
   output <- data.frame(id = as.character(unique(df[[sid]])),
