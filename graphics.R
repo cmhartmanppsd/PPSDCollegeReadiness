@@ -198,9 +198,26 @@ ggplot(data=attendancerisk, aes(attendance, HighRisk)) +
 
 gpa9threview <- aggregate(gpa9thqtr1~I(cut(predict8th, breaks=c(seq(0,1,.1))))+graduated, mean, data=subset(hscohort0708))
 names(gpa9threview)[1] <-'probability'
-
 gpa9thlength <- aggregate(gpa9thqtr1~I(cut(predict8th, breaks=c(seq(0,1,.1))))+graduated, length, data=subset(hscohort0708))
+gpa9thsummarystats <- hscohort0708
+gpa9thsummarystats$probgroup <- cut(gpa9thsummarystats$predict8th, breaks=c(seq(0,1,.1)))
+summarystats <- ddply(gpa9thsummarystats, "probgroup", summarize, mean=mean(gpa9thqtr1, na.rm=TRUE), sd=sd(gpa9thqtr1, na.rm=TRUE))
+names(summarystats)[1] <- 'probability'
 names(gpa9thlength)[1] <- 'probability'
 names(gpa9thlength)[3] <-'n'
 gpa9threview <- merge(gpa9threview, gpa9thlength)
-ggplot(gpa9threview, aes(probability, gpa9thqtr1, color=graduated, size=log(n))) + geom_point() + scale_y_continuous(breaks=seq(0,4,.1))
+gpa9threview <- merge(gpa9threview, summarystats)
+gpa9threview <- transform(gpa9threview, gpa_z = (gpa9thqtr1-mean)/sd,
+                                        gpa_c = gpa9thqtr1-mean)
+
+
+ggplot(subset(gpa9threview, n>10), aes(probability, gpa_c, fill=graduated)) + geom_bar(position='dodge', stat='identity') + scale_y_continuous('Centered-GPA', breaks=seq(-1,1,.1), limits=c(-1,1)) + scale_x_discrete('Probability of Graduating') + ggtitle('The Difference in First Quarter GPA among Students with Similar Entering Likelhood\n n>10')
+
+ggplot(subset(gpa9threview, n>10), 
+       aes(probability, gpa9thqtr1, color=graduated)) + 
+geom_point(size=4) + 
+scale_y_continuous('Centered-GPA', 
+                   breaks=seq(0,3,.1), 
+                   limits=c(0,3)) + 
+scale_x_discrete('Probability of Graduating') + 
+ggtitle('The Difference in First Quarter GPA among Students with Similar Entering Likelhood\n n>10')
