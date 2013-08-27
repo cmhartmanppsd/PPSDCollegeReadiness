@@ -90,6 +90,13 @@ hs0708$reaal <- str_trim(as.character(hs0708$reaal), side='both')
 hs0708$matal <- str_trim(as.character(hs0708$matal), side='both')
 rm(ninthqtrgpa)
 
+# Repeat 9th?
+repeater9th <- subset(tables2007_2008$person_annual, 
+                      grade==9 & isrepeatinggr=='N')[,c('sasid','willrepeatgr')]
+hs0708 <- merge(hs0708, repeater9th, all.x=TRUE)
+
+
+
 # For accountability purposes, students who transfer out are excluded from their
 # high school's graduation rate. This analysis will primarily exclude them as
 # well because their outcomes are unknown. Later analysis will likely predict 
