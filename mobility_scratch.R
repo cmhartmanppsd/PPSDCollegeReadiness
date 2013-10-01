@@ -109,7 +109,5 @@ calc_moves <- function(df,
       }
     }
   }
-  # Need to add logic for students who enter after YYYY-09-15 and leave before
-  # YYYY-06-01
-  output
+  return(output)
 }
