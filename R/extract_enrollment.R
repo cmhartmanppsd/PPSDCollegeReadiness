@@ -3,18 +3,19 @@ extract_enrollment <- function(regYr){
   enr_attributes <- grep('^(schno|school|exit|enroll|adm|ada|description)', 
                          names(regYr), value=TRUE)
   tbl_stud_enroll <- regYr[,c(id_attributes, enr_attributes)] 
-  by_school <- list(mode='any', length=length(enr_attributes)/8)
-  for(i in 1:by_school$length){
-    tempSch <- tbl_stud_enroll[, c(id_attributes, 
-                                   grep(paste('*_Sch', i, '$', sep=''), 
-                                        names(tbl_stud_enroll), 
-                                        value=TRUE))]
-    names(tempSch) <- gsub(paste('*_Sch', i, '$', sep=''),'', names(tempSch))
-    by_school[[i]] <- tempSch
+  by_school <- list(mode='any', length=length(enr_attributes)/9)
+  if(by_school$length>1){
+    for(i in 1:by_school$length){
+      tempSch <- tbl_stud_enroll[, c(id_attributes, 
+                                     grep(paste('*_Sch', i, '$', sep=''), 
+                                          names(tbl_stud_enroll), 
+                                          value=TRUE))]
+      names(tempSch) <- gsub(paste('*_Sch', i, '$', sep=''),'', names(tempSch))
+      by_school[[i]] <- tempSch
+    }
+    tbl_stud_enroll <- do.call(rbind, by_school)
   }
-  tbl_stud_enroll <- do.call(rbind, by_school)
   tbl_stud_enroll <- subset(tbl_stud_enroll, !is.na(schno))
-  
   # Something below breaks in 2010_2011 that has to be fixed.
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
     apply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], 2, as.character)
