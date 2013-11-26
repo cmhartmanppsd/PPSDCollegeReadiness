@@ -5,6 +5,9 @@ extract_course <- function(regYr){
                          names(regYr), value=TRUE)
   tbl_course <- regYr[,c(id_attributes, course_attributes)] 
   by_course <- list(mode='any', length=length(course_attributes)/7)
+  by_course <- list(mode='any', length=length(which(grepl('courseno',
+                                                    x = course_attributes,
+                                                    ignore.case=TRUE))))
   for(i in 1:by_course$length){
     tempSch <- tbl_course[, c(id_attributes, 
                               grep(sprintf("%02d",i), 
