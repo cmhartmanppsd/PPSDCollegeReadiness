@@ -35,22 +35,24 @@ extract_person_annual <- function(regYr){
                                           levels(tbl_person_annual$disab))
   levels(tbl_person_annual$disab) <- gsub('NE|^[B-Z]$', '', 
                                           levels(tbl_person_annual$disab))
-  # Play with a tryCatch here to add NE to those that need it, and if nothing
-  # works to just exit gracefully without factorizing the disability category.
-  tbl_person_annual$disab <- factor(factor(tbl_person_annual$disab, 
-                                    labels = c('None', 'Autism', 
-                                               'Developmental Delay', 
-                                               'Emotional Disturbance', 
-                                               'Hearing Impairment',
-                                               'Learning Disabled', 
-                                               'Multiple Disabilities',
-                                               'Mental Retardation', 
-                                               'OI', 
-                                               'Other Hearing Impairment', 
-                                               'Speech/Language',
-                                               'Speech Only', 
-                                               'Traumatic Brain Injury',
-                                               'Visual Impairment')))
+  # Disability categories are even more inconsistent in future years of data.
+  # I am putting this on hold until there is a downstream use of the disability
+  # types which have not been used fruitfully yet. I may request fresh data
+  # from Lou as a way to get around this poorly formatted information.
+  #tbl_person_annual$disab <- factor(factor(tbl_person_annual$disab, 
+  #                                  labels = c('None', 'Autism', 
+  #                                             'Developmental Delay', 
+  #                                             'Emotional Disturbance', 
+  #                                             'Hearing Impairment',
+  #                                             'Learning Disabled', 
+  #                                             'Multiple Disabilities',
+  #                                             'Mental Retardation', 
+  #                                             'OI', 
+  #                                             'Other Hearing Impairment', 
+  #                                             'Speech/Language',
+  #                                             'Speech Only', 
+  #                                             'Traumatic Brain Injury',
+  #                                             'Visual Impairment')))
   tbl_person_annual[, c('str_name', 'apt_no', 'city', 'state')] <- 
     apply(apply(tbl_person_annual[, c('str_name', 'apt_no', 'city', 'state')],
                 2, as.character), 2, str_trim, side='both')
