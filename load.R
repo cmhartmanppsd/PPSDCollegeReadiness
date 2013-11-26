@@ -37,3 +37,55 @@ reg1011 <- read.spss('/Volumes/ProvidenceFiles/MasterFiles/REG Master_1011.sav',
                      use.value.labels=TRUE,
                      trim.factor.names=TRUE,
                      use.missings=TRUE)
+
+## Newer Data
+stu2011_12 <- read.csv('/Volumes/ProvidenceFiles/REGData/Student_2011_2012.csv')
+names(stu2011_12) <- c('schoolyear', 'studentid', 'sasid', 'last_name', 
+                       'first_name', 'schno', 'school', 'grade', 'dob', 'sex', 
+                       'ed_type', 'hr', 'hr_tchr', 'street_no', 'str_name', 
+                       'apt_no', 'city', 'state', 'zip_code', 'race', 'lunch', 
+                       'lep', 'iep', 'plp', 'sec504', 'disab', 'spedprogrm', 
+                       'sum_absent', 'sum_excabsent', 'sum_tardy', 
+                       'sum_on_time','sum_suspend', 'sum_enrolled', 
+                       'sum_present', 'sum_soccurin', 'sum_soccurout', 
+                       'privacy', 'willrepeatgr', 'isrepeatinggr', 'dropout',
+                       'graduated', 'enroll_date', 'exit_date', 'exit_type', 
+                       'exit_description', 'adm', 'ada', 'is_bused', 'ripta', 
+                       'student_lang', 'parent_lang')
+
+enr2011_12 <- read.csv('/Volumes/ProvidenceFiles/REGData/Enrollment_2011_2012.csv')
+enr2011_12 <- merge(enr2011_12, stu2011_12[, c('studentid', 'sasid', 
+                                               'grade', 'last_name')],
+                    by.x = 'id', by.y = 'studentid')
+names(enr2011_12)[which(names(enr2011_12)=='id')] <- 'studentid'
+names(enr2011_12)[which(names(enr2011_12)=='schyr')] <- 'schoolyear'
+enr2011_12$enroll_date <- as.Date(enr2011_12$enroll_date, format='%m/%d/%Y')
+enr2011_12$exit_date <- as.Date(enr2011_12$exit_date, format='%m/%d/%Y')
+
+grades2011_12 <- read.csv('/Volumes/ProvidenceFiles/REGData/Marks_2011_2012.csv')
+grades2011_12 <- merge(grades2011_12, stu2011_12[, c('studentid', 'sasid', 
+                                                     'grade')],
+                       by = 'studentid')
+names(grades2011_12)[which(names(grades2011_12)=='schyr')] <- 'schoolyear'
+
+# 2012_13
+stu2012_13 <- read.csv('/Volumes/ProvidenceFiles/REGData/Student_2012_2013.csv')
+names(stu2012_13) <- c('schoolyear', 'studentid', 'sasid', 'last_name', 
+                       'first_name', 'schno', 'school', 'grade', 'dob', 'sex', 
+                       'ed_type', 'hr', 'hr_tchr', 'street_no', 'str_name', 
+                       'apt_no', 'city', 'state', 'zip_code', 'race', 'lunch', 
+                       'lep', 'iep', 'plp', 'sec504', 'disab', 'spedprogrm', 
+                       'sum_absent', 'sum_excabsent', 'sum_tardy', 
+                       'sum_on_time','sum_suspend', 'sum_enrolled', 
+                       'sum_present', 'sum_soccurin', 'sum_soccurout', 
+                       'privacy', 'willrepeatgr', 'isrepeatinggr', 'dropout',
+                       'graduated', 'enroll_date', 'exit_date', 'exit_type', 
+                       'exit_description', 'adm', 'ada', 'is_bused', 'ripta', 
+                       'student_lang', 'parent_lang', 'birth_place')
+
+grades2012_13 <- read.csv('/Volumes/ProvidenceFiles/REGData/Marks_2012_2013.csv')
+grades2012_13 <- merge(grades2012_13, stu2012_13[, c('studentid', 'sasid', 
+                                                     'grade')],
+                       by = 'studentid')
+names(grades2012_13)[which(names(grades2012_13)=='schyr')] <- 'schoolyear'
+
