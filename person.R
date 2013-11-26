@@ -204,10 +204,10 @@ person$dropout <- with(person,
 person$disappear <- with(person, ifelse(exit_type_last==97, 'Y', 'N'))
 
 # Label which students repeat 9th grade.
-repeat9th <- subset(tables2007_2008$person_annual, 
-					grade==9 & isrepeatinggr=='N')[, c('sasid', 'willrepeatgr')]
-levels(repeat9th$willrepeatgr) <- c(NA, 'N', 'Y')
-person <- merge(person, repeat9th, all.x=TRUE)					
+# repeat9th <- subset(tables2007_2008$person_annual, 
+# 					grade==9 & isrepeatinggr=='N')[, c('sasid', 'willrepeatgr')]
+# levels(repeat9th$willrepeatgr) <- c(NA, 'N', 'Y')
+# person <- merge(person, repeat9th, all.x=TRUE)					
 
 # Remove tables that won't be used in later analysis
 rm(race)
@@ -222,4 +222,4 @@ rm(late_race)
 rm(first_hs)
 rm(long_hs)
 rm(last_hs)
-rm(repeat9th)
+# rm(repeat9th)
