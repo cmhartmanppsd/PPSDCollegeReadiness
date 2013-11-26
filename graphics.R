@@ -221,3 +221,62 @@ scale_y_continuous('Centered-GPA',
                    limits=c(0,3)) + 
 scale_x_discrete('Probability of Graduating') + 
 ggtitle('The Difference in First Quarter GPA among Students with Similar Entering Likelhood\n n>10')
+
+## Grades
+courperfgraph <- merge(tables2010_2011$course[, c('studentid','sasid','schoolyear',
+                                                  'grade','gpa', 'subject')], 
+                       subset(tables2010_2011$enrollment, 
+                              schno!='164', 
+                              select=c('studentid', 'sasid', 'grade')))
+
+failures <- subset(as.data.frame(prop.table(table(courperfgraph$grade, 
+                                                  courperfgraph$gpa==0),1)), 
+                   as.character(Var1) !='5' & Var2==TRUE)
+names(failures) <- c('Grade', 'BS', 'Proportion')
+failures$BS <- NULL
+
+courperffull <- tables2010_2011$course[, c('studentid','sasid','schoolyear',
+                                            'grade','gpa', 'subject')]
+
+failuresfull <- subset(as.data.frame(
+                        prop.table(table(tables2010_2011$course$grade, 
+                                         tables2010_2011$course$gpa==0),1)), 
+                       as.character(Var1) !='5' & Var2==TRUE)
+names(failuresfull) <- c('Grade', 'BS', 'Proportion')
+failuresfull$BS <- NULL
+
+
+multiplot(ggplot(data=subset(courperffull, 
+                             grade>5 & !is.na(gpa)),
+                 aes(as.factor(grade), gpa)) +
+          geom_boxplot() +
+          scale_x_discrete('Grade') +
+          scale_y_continuous('Average Course Grade', breaks=seq(0,4.4,.2)) +
+          ggtitle('Secondary Course Performance') +
+          theme(plot.title = element_text(size=18)),
+          ggplot(failuresfull, aes(Grade, Proportion)) +
+          geom_bar(stat='identity') +
+          scale_x_discrete('Grade') +
+          scale_y_continuous('',
+                             labels= percent_format(),
+                             limits=c(0,.5),
+                             breaks=seq(0,.5,.05)) +
+          ggtitle('Proportion of Grades Below D') +
+          theme(plot.title = element_text(size=18)),
+          ggplot(data=subset(courperfgraph, 
+                             grade>5 & !is.na(gpa)),
+                 aes(as.factor(grade), gpa)) +
+          geom_boxplot() +
+          scale_x_discrete('Grade') +
+          scale_y_continuous('Average Course Grade', breaks=seq(0,4.4,.2)) +
+          ggtitle('Secondary Course Performance, no Classical') +
+          theme(plot.title = element_text(size=18)),
+          ggplot(failures, aes(Grade, Proportion)) +
+          geom_bar(stat='identity') +
+          scale_x_discrete('Grade') +
+          scale_y_continuous('',
+                             labels= percent_format(),
+                             limits=c(0,.5),
+                             breaks=seq(0,.5,.05)) +
+          ggtitle('Proportion of Grades Below D, no Classical') +
+            theme(plot.title = element_text(size=18)),cols=2)
