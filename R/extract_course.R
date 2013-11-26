@@ -1,10 +1,8 @@
 extract_course <- function(regYr){
   id_attributes <-  c('studentid', 'sasid', 'schoolyear', 'grade')
-  course_attributes <- grep('^(cum|teacher|courseno|coursedesc)', 
   course_attributes <- grep('^(cum|teacher|courseno|coursedesc|type|credits)', 
                          names(regYr), value=TRUE)
   tbl_course <- regYr[,c(id_attributes, course_attributes)] 
-  by_course <- list(mode='any', length=length(course_attributes)/7)
   by_course <- list(mode='any', length=length(which(grepl('courseno',
                                                     x = course_attributes,
                                                     ignore.case=TRUE))))
@@ -19,8 +17,6 @@ extract_course <- function(regYr){
   tbl_course <- do.call(rbind, by_course)
   tbl_course <- subset(tbl_course, !is.na(courseno)) 
   row.names(tbl_course) <- NULL
-  tbl_course <- melt(tbl_course, id.vars=c(id_attributes, 'courseno', 
-                                           'coursedesc', 'teacher'),
   quarters <- grep('^cum', names(tbl_course), value=TRUE)
   key_vars <- names(tbl_course)[which(!names(tbl_course) %in% c('course_grade',
                                                                 quarters))]
