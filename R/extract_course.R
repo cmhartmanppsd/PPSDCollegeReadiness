@@ -1,6 +1,7 @@
 extract_course <- function(regYr){
   id_attributes <-  c('studentid', 'sasid', 'schoolyear', 'grade')
   course_attributes <- grep('^(cum|teacher|courseno|coursedesc)', 
+  course_attributes <- grep('^(cum|teacher|courseno|coursedesc|type|credits)', 
                          names(regYr), value=TRUE)
   tbl_course <- regYr[,c(id_attributes, course_attributes)] 
   by_course <- list(mode='any', length=length(course_attributes)/7)
