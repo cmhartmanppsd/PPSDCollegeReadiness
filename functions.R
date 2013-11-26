@@ -209,6 +209,8 @@ extract_course <- function(regYr){
                                            'coursedesc', 'teacher'),
                      value.name='course_grade')
   tbl_course$course_grade <- str_trim(tbl_course$course_grade, side='both')
+  tbl_course$course_grade <- ifelse(tbl_course$course_grade=='', NA, 
+                                    tbl_course$course_grade)
   tbl_course$coursedesc <- str_trim(tbl_course$coursedesc, side='both')
   require(car)
   tbl_course$gpa <- recode(as.character(tbl_course$course_grade), 
