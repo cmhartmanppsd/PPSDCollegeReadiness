@@ -52,7 +52,7 @@ names(stu2011_12) <- c('schoolyear', 'studentid', 'sasid', 'last_name',
                        'graduated', 'enroll_date', 'exit_date', 'exit_type', 
                        'exit_description', 'adm', 'ada', 'is_bused', 'ripta', 
                        'student_lang', 'parent_lang')
-
+stu2011_12$dob <- as.Date(stu2011_12$dob, format='%m/%d/%Y')
 enr2011_12 <- read.csv('/Volumes/ProvidenceFiles/REGData/Enrollment_2011_2012.csv')
 enr2011_12 <- merge(enr2011_12, stu2011_12[, c('studentid', 'sasid', 
                                                'grade', 'last_name')],
@@ -82,7 +82,7 @@ names(stu2012_13) <- c('schoolyear', 'studentid', 'sasid', 'last_name',
                        'graduated', 'enroll_date', 'exit_date', 'exit_type', 
                        'exit_description', 'adm', 'ada', 'is_bused', 'ripta', 
                        'student_lang', 'parent_lang', 'birth_place')
-
+stu2012_13$dob <- as.Date(stu2012_13$dob, format='%m/%d/%Y')
 grades2012_13 <- read.csv('/Volumes/ProvidenceFiles/REGData/Marks_2012_2013.csv')
 grades2012_13 <- merge(grades2012_13, stu2012_13[, c('studentid', 'sasid', 
                                                      'grade')],
