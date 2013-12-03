@@ -9,7 +9,9 @@ grades_09_2010_2011$course_grade <- gsub(pattern="[INSU].*$",
                                          replacement=NA,
                                          x=grades_09_2010_2011$course_grade)
 
-ggplot(data=subset(grades_09_2010_2011, !is.na(course_grade)), aes(x=course_grade, fill=subject))  + geom_bar(aes(y=(..count..)/sum(..count..))) + facet_grid(subject~.)
+ggplot(data=subset(grades_09_2010_2011, !is.na(course_grade)), 
+       aes(x=course_grade, fill=subject))  + 
+geom_bar(aes(y=(..count..)/sum(..count..))) + facet_grid(subject~.)
 
 # 2011_2012
 courses11_12 <- extract_course(grades2011_12)
@@ -49,6 +51,9 @@ counts <- merge(counts, stu2012_13[,c('sasid','isrepeatinggr')], all.x=TRUE)
 fails <- subset(fails, sasid %in% subset(counts, gpa>4)$sasid)
 # Subset Counts to greater than 4 courses with grades
 counts <- subset(counts, gpa>4)
+# First Time Ninth Grade Fail versus 8th Grade Performance
+
+
 
 # How many students who are repeating fail a course?
 fails_repeaters <- as.data.frame(with(subset(fails, 

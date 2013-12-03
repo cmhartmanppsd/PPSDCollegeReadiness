@@ -16,4 +16,27 @@ tables2009_2010 <- build_tables(reg0910, 2010)
 tables2010_2011 <- build_tables(reg1011, 2011)
 ###
 
+person_attributes <- c('studentid', 'sasid', 'dob', 'first_name', 'last_name',
+                       'student_lang', 'parent_lang', 'birth_place', 'sex',
+                       'schoolyear', 'race')
+person_annual_attributes <- c('studentid', 'sasid', 'last_name', 'grade', 
+                              'lunch', 'lep', 'iep', 'plp', 'sec504', 
+                              'graduated', 'willrepeatgr', 'isrepeatinggr',
+                              "disab", "spedprogrm", "str_name", "apt_no", 
+                              "city", "state", "zip_code", "sum_absent",
+                              "sum_excabsent", "sum_tardy", "sum_on_time",
+                              "sum_suspend", "sum_enrolled", "sum_present",
+                              "sum_soccurin", "sum_soccurout", "schoolyear")
 
+tables2011_2012 <- list(person = subset(stu2011_12, 
+                                        select = person_attributes),
+                        person_annual = subset(stu2011_12,
+                                               select = person_annual_attributes),
+                        enrollment = enr2011_12,
+                        course = extract_course(grades2011_12))
+tables2012_2013 <-  list(person = subset(stu2012_13, 
+                                        select = person_attributes),
+                        person_annual = subset(stu2012_13,
+                                               select = person_annual_attributes),
+                        enrollment = enr2012_13,
+                        course = extract_course(grades2012_13))

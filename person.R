@@ -12,12 +12,18 @@ early_race <- modal_person_attribute(rbind(tables2005_2006$person,
                                            tables2006_2007$person, 
                                            tables2007_2008$person,
                                            tables2008_2009$person, 
-                                           tables2009_2010$person), 'race')
+                                           tables2009_2010$person,
+                                           tables2010_2011$person,
+                                           tables2011_2012$person,
+                                           tables2012_2013$person), 'race')
 
 # Select the most often reported race in the later period. Although there is one
 # year in the current data, this will be helpful as additional years of data are
 # added.
-late_race <- modal_person_attribute(tables2010_2011$person, 'race')
+late_race <- modal_person_attribute(rbind(tables2010_2011$person,
+                                          tables2011_2012$person,
+                                          tables2012_2013$person),
+                                    'race')
 
 # Set dates/year for the early and late period modal races.
 early_race$schoolyear <- '2009_2010'
@@ -36,7 +42,9 @@ sex <- modal_person_attribute(rbind(tables2005_2006$person,
                                     tables2007_2008$person,
                                     tables2008_2009$person, 
                                     tables2009_2010$person,
-                                    tables2010_2011$person), 'sex')
+                                    tables2010_2011$person,
+                                    tables2011_2012$person,
+                                    tables2012_2013$person), 'sex')
 
 # Select the most often reported DOB
 dob <- modal_person_attribute(rbind(tables2005_2006$person, 
@@ -44,7 +52,9 @@ dob <- modal_person_attribute(rbind(tables2005_2006$person,
                                     tables2007_2008$person,
                                     tables2008_2009$person, 
                                     tables2009_2010$person,
-                                    tables2010_2011$person), 'dob')
+                                    tables2010_2011$person,
+                                    tables2011_2012$person,
+                                    tables2012_2013$person), 'dob')
 
 # Select the most often reported student_language
 student_lang <- modal_person_attribute(rbind(tables2005_2006$person, 
@@ -52,7 +62,9 @@ student_lang <- modal_person_attribute(rbind(tables2005_2006$person,
                                              tables2007_2008$person,
                                              tables2008_2009$person, 
                                              tables2009_2010$person,
-                                             tables2010_2011$person), 
+                                             tables2010_2011$person,
+                                             tables2011_2012$person,
+                                             tables2012_2013$person), 
                                        'student_lang')
 
 # Select the most often reported parent_language
@@ -61,7 +73,9 @@ parent_lang <- modal_person_attribute(rbind(tables2005_2006$person,
                                             tables2007_2008$person,
                                             tables2008_2009$person, 
                                             tables2009_2010$person,
-                                            tables2010_2011$person), 
+                                            tables2010_2011$person,
+                                            tables2011_2012$person,
+                                            tables2012_2013$person), 
                                       'parent_lang')
 
 # Ever FRPL/LEP/SPED
@@ -75,7 +89,9 @@ annual_demos <- rbind(tables2005_2006$person_annual,
                       tables2006_2007$person_annual, 
                       tables2007_2008$person_annual,
                       tables2008_2009$person_annual, 
-                      tables2009_2010$person_annual)
+                      tables2009_2010$person_annual,
+                      tables2011_2012$person_annual,
+                      tables2012_2013$person_annual)
 
 # Select all instances where there was an LEP status of Y and remove duplicate
 # student records for when they were reported as LEP in multiple years.
@@ -99,7 +115,9 @@ first_hs <- select_hs(rbind(tables2005_2006$enrollment,
                             tables2007_2008$enrollment, 
                             tables2008_2009$enrollment, 
                             tables2009_2010$enrollment, 
-                            tables2010_2011$enrollment), 'first')
+                            tables2010_2011$enrollment,
+                            tables2011_2012$enrollment,
+                            tables2012_2013$enrollment), 'first')
 names(first_hs)[-1] <- paste(names(first_hs)[-1], '_first',sep='')
 
 # Select the last high school attended with same process as the first.
@@ -108,7 +126,9 @@ last_hs <- select_hs(rbind(tables2005_2006$enrollment,
                            tables2007_2008$enrollment, 
                            tables2008_2009$enrollment, 
                            tables2009_2010$enrollment, 
-                           tables2010_2011$enrollment), 'last')
+                           tables2010_2011$enrollment,
+                           tables2011_2012$enrollment,
+                           tables2012_2013$enrollment), 'last')
 
 names(last_hs)[-1] <- paste(names(last_hs)[-1], '_last',sep='')
 
@@ -120,7 +140,9 @@ long_hs <- select_hs(rbind(tables2005_2006$enrollment,
                            tables2007_2008$enrollment, 
                            tables2008_2009$enrollment, 
                            tables2009_2010$enrollment, 
-                           tables2010_2011$enrollment), 'long')
+                           tables2010_2011$enrollment,
+                           tables2011_2012$enrollment,
+                           tables2012_2013$enrollment), 'long')
 
 # The longest high school attended is not specifc to a schoolyear or grade.
 # Where the longest high school is not the first or last, we are not interested
@@ -135,7 +157,9 @@ names(long_hs)[-1] <- paste(names(long_hs)[-1], '_long',sep='')
 # IDs across all observed years
 person <- rbind(tables2005_2006$person, tables2006_2007$person, 
                 tables2007_2008$person, tables2008_2009$person, 
-                tables2009_2010$person)[,c('sasid', 'studentid')]
+                tables2009_2010$person, tables2010_2011$person,
+                tables2011_2012$person, tables2012_2013$person)[,c('sasid', 
+                                                                   'studentid')]
 # Remove duplicated SASIDs to ensure uniqueness by ID
 person <- subset(person, !duplicated(sasid))
 # Merge the calculated cannonical demographics
