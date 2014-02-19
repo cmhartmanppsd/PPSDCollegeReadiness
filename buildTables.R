@@ -1,10 +1,9 @@
 # Build individual year tables.
 
-setwd('/Users/jason/R Projects/PPSDColllegeReadiness/')
+# setwd('/Users/jason/R Projects/PPSDColllegeReadiness/')
 
-source('dependencies.R')
-source('functions.R')
-source('load.R')
+# source('dependencies.R')
+# source('load.R')
 
 executedAt <- paste(Sys.time())
 # tables2004_2005 <- build_tables(reg0405, 2005)
@@ -34,9 +33,23 @@ tables2011_2012 <- list(person = subset(stu2011_12,
                                                select = person_annual_attributes),
                         enrollment = enr2011_12,
                         course = extract_course(grades2011_12))
+tables2011_2012$person <- subset(tables2011_2012$person, !duplicated(tables2011_2012$person))
+tables2011_2012$person$sex <- ifelse(!tables2011_2012$person$sex %in% c('F','M'), 
+                                     NA, tables2011_2012$person$sex) 
+tables2011_2012$person$sex<- factor(tables2011_2012$person$sex, 
+                                    labels = c('Female', 'Male'))
+tables2011_2012$person_annual <- subset(tables2011_2012$person_annual, 
+                                        !duplicated(tables2011_2012$person_annual))
 tables2012_2013 <-  list(person = subset(stu2012_13, 
                                         select = person_attributes),
                         person_annual = subset(stu2012_13,
                                                select = person_annual_attributes),
                         enrollment = enr2012_13,
                         course = extract_course(grades2012_13))
+tables2012_2013$person <- subset(tables2012_2013$person, !duplicated(tables2012_2013$person))
+tables2012_2013$person$sex <- ifelse(!tables2012_2013$person$sex %in% c('F','M'), 
+                                     NA, tables2012_2013$person$sex) 
+tables2012_2013$person$sex<- factor(tables2012_2013$person$sex, 
+                                    labels = c('Female', 'Male'))
+tables2012_2013$person_annual <- subset(tables2012_2013$person_annual, 
+                                        !duplicated(tables2012_2013$person_annual))
