@@ -13,5 +13,6 @@
 .Rproj.user
 .DS_Store
 ,Rapp.history
+*.Rda
 
 *.history
