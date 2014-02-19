@@ -1,0 +1,225 @@
+Pathways to Graduation
+========================================================
+
+```{r Initialization, echo=FALSE, results='hide'}
+setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
+source('dependencies.R')
+file.sources = list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
+                          pattern='*.R$', full.names=TRUE, ignore.case=TRUE)
+invisible(sapply(file.sources, source, .GlobalEnv))
+source('load.R')
+source('buildTables.R')
+source('person.R')
+```
+We present a new visualization that will assist in understanding where and how students fall off-track on their path from middle school through high school graduation. Our first cohort of students were 8th graders in the 2006-2007 school year. 
+```{r CohortBuild}
+starting_grade <- filter(tables2006_2007$person_annual, grade == 8)
+```
+We can observe how many of these students are first-time 8th graders:
+
+```{r CohortFirstTime8th}
+# Check how many of these are first-time eighth graders
+table(starting_grade$sasid %in% filter(tables2005_2006$person_annual,
+                                       grade == 8))
+```
+
+We also observe how many students attended Providence public schools the prior year:
+```{r CohortPriorYear}
+# Check how many students were in the district the prior year
+table(starting_grade$sasid %in% tables2005_2006$person_annual$sasid)
+```
+
+```{r PredictiveModelData}
+# Build cohort for predictive model
+hs0708 <- subset(person, (schoolyear_first=='2007_2008' & grade_first==9) | 
+                         (schoolyear_first=='2008_2009' & grade_first==10) | 
+                         (schoolyear_first=='2009_2010' & grade_first==11) | 
+                         (schoolyear_first=='2010_2011' & grade_first==12))
+hs0809 <- subset(person, (schoolyear_first=='2008_2009' & grade_first==9) | 
+                         (schoolyear_first=='2009_2010' & grade_first==10) | 
+                         (schoolyear_first=='2010_2011' & grade_first==11) | 
+                         (schoolyear_first=='2011_2012' & grade_first==12))
+hs0910 <- subset(person, (schoolyear_first=='2009_2010' & grade_first==9) | 
+                         (schoolyear_first=='2010_2011' & grade_first==10) | 
+                         (schoolyear_first=='2011_2012' & grade_first==11) | 
+                         (schoolyear_first=='2012_2013' & grade_first==12))
+hs0708$sasid <- as.character(hs0708$sasid)
+hs0809$sasid <- as.character(hs0809$sasid)
+hs0910$sasid <- as.character(hs0910$sasid)
+source('attendance.R')
+attendance$sasid <- as.character(attendance$sasid)
+
+hs0708 <- left_join(hs0708, attendance %.% filter(schoolyear == '2006_2007')
+                                       %.% dplyr::select(sasid, attendance, 
+                                                         tardy, suspended))
+hs0809 <- left_join(hs0809, attendance %.% filter(schoolyear == '2007_2008')
+                                       %.% dplyr::select(sasid, attendance, 
+                                                         tardy, suspended))
+hs0910 <- left_join(hs0910, attendance %.% filter(schoolyear == '2008_2009')
+                                       %.% dplyr::select(sasid, attendance, 
+                                                         tardy, suspended))
+
+names(hs0708)[which(names(hs0708) %in% c('suspended'))] <- 'suspend8th'
+names(hs0708)[which(names(hs0708) %in% c('tardy'))] <- 'tardy8th'
+names(hs0708)[which(names(hs0708) %in% c('attendance'))] <- 'attendance8th'
+names(hs0809)[which(names(hs0809) %in% c('suspended'))] <- 'suspend8th'
+names(hs0809)[which(names(hs0809) %in% c('tardy'))] <- 'tardy8th'
+names(hs0809)[which(names(hs0809) %in% c('attendance'))] <- 'attendance8th'
+names(hs0910)[which(names(hs0910) %in% c('suspended'))] <- 'suspend8th'
+names(hs0910)[which(names(hs0910) %in% c('tardy'))] <- 'tardy8th'
+names(hs0910)[which(names(hs0910) %in% c('attendance'))] <- 'attendance8th'
+
+# Calculate age when student enters 9th grade for the first time.
+hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date('2007-09-01'), 
+                                          units='months'))
+hs0809 <- mutate(hs0809, ageHS = age_calc(dob, as.Date('2008-09-01'), 
+                                          units='months'))
+hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date('2009-09-01'), 
+                                          units='months'))
+# Calculate mobility for students
+# Eighth Grade year
+#mobile8th <-  moves_calc(subset(tables2006_2007$enrollment, 
+#                                sasid %in% hs0708$sasid))
+
+#mobile8th$sasid <- as.character(mobile8th$sasid)
+#hs0708 <- left_join(hs0708, mobile8th)
+
+# Bring in 8th grade performance on standardized tests.
+tables2006_2007$achievement$sasid <- as.character(tables2006_2007$achievement$sasid)
+tables2006_2007$achievement$studentid <- as.character(tables2006_2007$achievement$studentid)
+
+tables2007_2008$achievement$sasid <- as.character(tables2007_2008$achievement$sasid)
+tables2007_2008$achievement$studentid <- as.character(tables2007_2008$achievement$studentid)
+
+tables2008_2009$achievement$sasid <- as.character(tables2008_2009$achievement$sasid)
+tables2008_2009$achievement$studentid <- as.character(tables2008_2009$achievement$studentid)
+
+
+hs0708 <- left_join(hs0708, tables2006_2007$achievement %.% 
+                            filter(testgrade_N==8, testgrade_N==grade) %.%
+                            dplyr::select(sasid, grade, reaal, reascsc, matal, 
+                                          matscsc, testgrade_N, reanormal, 
+                                          matnormal))
+hs0809 <- left_join(hs0809, tables2007_2008$achievement %.% 
+                            filter(testgrade_N==8, testgrade_N==grade) %.%
+                            dplyr::select(sasid, grade, reaal, reascsc, matal, 
+                                          matscsc, testgrade_N, reanormal, 
+                                          matnormal))
+hs0910 <- left_join(hs0910, tables2008_2009$achievement %.% 
+                            filter(testgrade_N==8, testgrade_N==grade) %.%
+                            dplyr::select(sasid, grade, reaal, reascsc, matal, 
+                                          matscsc, testgrade_N, reanormal, 
+                                          matnormal))
+
+# Attendance normalized
+hs0708 <- mutate(hs0708, attendnormal = (attendance8th - 
+                                         mean(attendance8th, na.rm=TRUE)) / 
+                                        sd(attendance8th, na.rm=TRUE))
+hs0809 <- mutate(hs0809, attendnormal = (attendance8th - 
+                                         mean(attendance8th, na.rm=TRUE)) / 
+                                        sd(attendance8th, na.rm=TRUE))
+hs0910 <- mutate(hs0910, attendnormal = (attendance8th - 
+                                         mean(attendance8th, na.rm=TRUE)) / 
+                                        sd(attendance8th, na.rm=TRUE))
+# GPA in 8th grade calculations
+gpa0607 <- tables2006_2007$course %.% 
+           filter(grade==8) %.% 
+           group_by(sasid) %.% 
+           dplyr::summarise(gpa8th = mean(gpa))
+gpa0607$sasid <- as.character(gpa0607$sasid)
+hs0708 <- left_join(hs0708, gpa0607)
+
+gpa0708 <- tables2007_2008$course %.% 
+           filter(grade==8) %.% 
+           group_by(sasid) %.% 
+           dplyr::summarise(gpa8th = mean(gpa))
+gpa0708$sasid <- as.character(gpa0708$sasid)
+hs0809 <- left_join(hs0809, gpa0708)
+
+gpa0809 <- tables2008_2009$course %.% 
+           filter(grade==8) %.% 
+           group_by(sasid) %.% 
+           dplyr::summarise(gpa8th = mean(gpa))
+gpa0809$sasid <- as.character(gpa0809$sasid)
+hs0910 <- left_join(hs0910, gpa0809)
+
+# Course Failures
+fails0607 <- tables2006_2007$course %.% 
+             filter(grade == 8) %.%
+             group_by(sasid, courseno) %.% 
+             dplyr::summarise(gpa = mean(gpa)) %.% 
+             filter(gpa <= 1.0) %.% 
+             dplyr::summarise(fails = n())
+
+fails0708 <- tables2007_2008$course %.% 
+             filter(grade == 8) %.%
+             group_by(sasid, courseno) %.% 
+             dplyr::summarise(gpa = mean(gpa)) %.% 
+             filter(gpa <= 1.0) %.% 
+             dplyr::summarise(fails = n())
+
+fails0809 <- tables2008_2009$course %.% 
+             filter(grade == 8) %.%
+             group_by(sasid, courseno) %.% 
+             dplyr::summarise(gpa = mean(gpa)) %.% 
+             filter(gpa <= 1.0) %.% 
+             dplyr::summarise(fails = n())
+
+fails0607$sasid <- as.character(fails0607$sasid)
+fails0708$sasid <- as.character(fails0708$sasid)
+fails0809$sasid <- as.character(fails0809$sasid)
+
+hs0708 <- left_join(hs0708, fails0607)
+hs0708$fails <- with(hs0708, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
+hs0809 <- left_join(hs0809, fails0708)
+hs0809$fails <- with(hs0809, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
+hs0910 <- left_join(hs0910, fails0809)
+hs0910$fails <- with(hs0910, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
+```
+
+The model for predicting graduation based on 8th grade data is built only with students who attend a Providence Public School as their final high school prior to graduating, dropping out, or transferring to a GED program. Therefore, students whose final exit code from the Providence Public School District is a transfer to another public school, they are not included. These students are excluded because we have no way of knowing whether or not these students ultimately graduate and their graduating is impacted substantially by non-Providence schools. Although they are excluded from the model, we can predict the likelihood that these students will graduate. Because students who are mobile tend to be disproportionately disadvantaged relative to their peers, it is likely that our model for these students is *positively biased*, i.e. these students will have higher probabilities of successfully graduating than is likely true because peers with similar observable characteristics have some unobserved advantages which resulted in being less mobile.
+
+```{r RunModel}
+hscohort <- rbind(hs0708, hs0809, hs0910)
+hscohort <- filter(hscohort, transfer_out=='N')
+hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
+basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ sex + 
+                         attendnormal + gpa8th + reanormal + 
+                         I(ageHS<190),
+                         data=hscohort, family=binomial(link='logit'))
+require(lme4)
+mixedmodel8thgrade <- glmer(as.numeric(as.factor(graduated))-1 ~ sex +
+                            attendnormal + gpa8th + reanormal +
+                            I(ageHS<190) + (1 | schoolyear_first),
+                            data=hscohort, family=binomial(link='logit'))
+starting_grade <- left_join(subset(starting_grade, 
+                                   select = c('sasid', 'willrepeatgr', 
+                                              'isrepeatinggr', 'disab', 
+                                              'spedprogrm')),
+                            subset(hs0708,
+                                   select = c('sasid', 'race', 'sex', 
+                                              'parent_lang', 'lep', 'iep', 
+                                              'transfer_out', 'ged', 'dropout', 
+                                              'disappear', 'graduated', 
+                                              'attendnormal', 'attendance8th', 
+                                              'gpa8th', 'reanormal', 'reaal',
+                                              'matnormal', 'matal', 'ageHS', 
+                                              'moves', 'suspend8th')))
+starting_grade$predict8th<- predict(basemodel8thgrade, newdata = starting_grade, 
+                                    type='response')
+summary(basemodel8thgrade)
+summary(starting_grade$predict8th)
+```
+Predictive models are traditionally evaluated on their ability to correctly classify, or sort, students so that predicted outcomes match the actual outcomes. Our model outputs a probability of graduating for each student that can take on any value between 0 and 1. In order to sort students into those who are at risk of failing to graduate and those who are not, we have to select threshold probabilities above which students are not considered at risk and below which they are.
+
+Thresholds for predictive data are often set at the point with the highest *accuracy*. Accuracy is highest where the proportion of students who are correctly classified as graduating or not graduating is the greatest. Therefore, accuracy values *true positives*, identifying students who will graduate, the same as *true negatives*, identifying students who will not graduate. Beacuse we want to intervene on the behalf of students who are falling behind, accuracy alone may not be the best way to set thresholds. Instead, we want to maximize the *true negative rate*, ensuring we capture as many students who fail to graduate as possible, while maintaining the best accuracy possible. In practice, this means the best cutoff thresholds for high risk may have slightly less than the maximum accuracy.
+
+The Rhode Island Department of Education (RIDE) has been developing an Early Warning System using statewide data. They have set thresholds for high, moderate, and low risk by examining the true negative rate and accuracy. The true negative rate for high, moderate, and low risk are 0.8, 0.7, and 0.6.
+
+```{r ConfusionMatrixforPrediction}
+cutoff_matrix(starting_grade, 'predict8th', 'graduated')
+```
+
+In examining the results of our predictive model, we find that at a true negative rate of 0.8, the accuracy of our classifier is just below 72%. The maximum accuracy is approximately 73.5%, at which the true negative rate is 0.73. Therefore, we feel our data supports using the 0.8 threshold for high risk because the modest tradeoff in accuracy is more than made up by the increase in true negative rate.
+
+There are two key ways to compare the model developed in this work to the RIDE Early Warning System aggregate indicator. The first measure is *coverage*, or what proportion of total drop outs are identified by the measure. For the same reasons we are maximizing the *true negative rate*, we want to be sure that our risk thresholds identify as many of the students who ultimately fail to graduate as possible. Our model captures 38.9% of all drop outs in the 8th grade, a consderable improvement on the state's model which captures fewer than 20% of all drop outs. The state's model, however, is slightly more accurate, at approximately 80% versus 72%. We believe this model represents a better tradeoff between accuracy and coverage. Many more students would be incorrectly identified as in need of supports under the state model in order to capture a full 40% of all drop outs.
