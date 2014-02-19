@@ -1,0 +1,26 @@
+Pathways to Graduation
+========================================================
+
+We present a new visualization that will assist in understanding where and how students fall off-track on their path from middle school through high school graduation
+
+```{r}
+require(dplyr)
+starting_grade <- filter(tables2007_2008$person_annual, grade == 8)
+# Check how many of these are first-time eighth graders
+table(starting_grade$sasid %in% filter(tables2006_2007$person_annual,
+                                       grade == 8))
+# Check how many students were in the district the prior year
+table(starting_grade$sasid %in% tables2006_2007$person_annual$sasid)
+
+# Build cohort for predictive model
+source('cohort_8th_model.R')
+
+
+```
+
+You can also embed plots, for example:
+
+```{r fig.width=7, fig.height=6}
+plot(cars)
+```
+
