@@ -10,6 +10,6 @@ require(car)
 require(ROCR)
 require(pROC)
 require(rstudio)
-
+require(dplyr)
 # Standard helper functions
 "%w/o%" <- function(x, y) x[!x %in% y]
