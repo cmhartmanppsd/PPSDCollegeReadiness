@@ -45,15 +45,50 @@ fails <- aggregate(data=subset(overallgrades, grade>=6 & gpa<1.0),
 fails <- merge(fails, stu2012_13[,c('sasid','isrepeatinggr')], all.x=TRUE)
 # Gets the number of courses with grades for each student
 counts <- aggregate(data=subset(overallgrades, grade>=6),
-                    gpa ~ sasid + grade, FUN="length")
+                  gpa ~ sasid + grade, FUN="length")
 counts <- merge(counts, stu2012_13[,c('sasid','isrepeatinggr')], all.x=TRUE)
 # Subsets failures to only those with at least 4 courses with grades
 fails <- subset(fails, sasid %in% subset(counts, gpa>4)$sasid)
 # Subset Counts to greater than 4 courses with grades
 counts <- subset(counts, gpa>4)
+
+
 # First Time Ninth Grade Fail versus 8th Grade Performance
-
-
+grades_ninth_1213 <- subset(tables2012_2013$person_annual, 
+                            grade==9 & isrepeatinggr=='N',
+                            select = c('studentid', 'sasid', 'grade', 'lunch',
+                                       'sum_absent', 'sum_tardy', 'sum_on_time',
+                                       'sum_suspend', 'sum_enrolled', 
+                                       'sum_present', 'sum_soccurin',
+                                       'sum_soccurout'))
+grades_ninth_1213 <- merge(grades_ninth_1213,
+                           person[,c('sasid', 'studentid','race', 'sex',
+                                     'student_lang', 'parent_lang', 'dob',
+                                     'lep', 'iep')], all.x=TRUE)
+grades_ninth_1213$age_9th <- age_calc(grades_ninth_1213$dob, 
+                                      as.Date('2012-09-01'),
+                                      units='months',
+                                      precise=FALSE)
+grades_ninth_1213 <- merge(grades_ninth_1213, 
+                           subset(attendance, schoolyear=='2011_2012'), 
+                           all.x=TRUE)
+grades_ninth_1213$schoolyear <- NULL
+names(grades_ninth_1213)[which(names(grades_ninth_1213) %in% c('suspended'))] <- 'suspend8th'
+names(grades_ninth_1213)[which(names(grades_ninth_1213) %in% c('tardy'))] <- 'tardy8th'
+names(grades_ninth_1213)[which(names(grades_ninth_1213) %in% c('attendance'))] <- 'attendance8th'
+grade_ninth_1213 <- merge(grades_ninth_1213, 
+                          subset(attendance, schoolyear=='2012_2013'),
+                          all.x=TRUE)
+eighthgradeperf <- aggregate(data=subset(tables2011_2012$course, 
+                                         sasid %in% grade_ninth_1213$sasid &
+                                         grade==8),
+                             gpa ~ sasid + courseno + grade + coursedesc,
+                             FUN='mean')
+eightfails <- aggregate(data=subset(eighthgradeperf, gpa<1.0),
+                        gpa ~ sasid + grade, FUN="length")
+eightfails$grade <- NULL
+names(eightfails) <- c('sasid', 'fails8th')
+grade_ninth_1213 <- merge(grade_ninth_1213, eightfails, all.x=TRUE)
 
 # How many students who are repeating fail a course?
 fails_repeaters <- as.data.frame(with(subset(fails, 
