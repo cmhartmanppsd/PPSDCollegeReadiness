@@ -111,8 +111,9 @@ moves_calc <- function(df,
   dt[, moves:= school_switch(.SD), by=sid]
   dt <- dt[,list(switches=unique(moves)), by=sid]
   output[dt, moves:=moves+switches]
+  setnames(output, "id", sid)
   # Need to combine dt with output
-  return(output)
+  return(as.data.frame(output))
 }
 #   for(i in 1:(length(df[[sid]])-1)){
 #     # If this is the first time the student is listed (and not the very first
