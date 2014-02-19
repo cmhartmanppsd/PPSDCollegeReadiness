@@ -174,6 +174,18 @@ rm(ninthgpa_0708)
 rm(subjninthgpa_0607)
 rm(subjninthgpa_0708)
 
+## 8th Grade NECAP
+hs0607 <- merge(hs0607, subset(tables2005_2006$achievement, testgrade_N==8 &
+                                 testgrade_N==grade, select=-c(schoolyear,
+                                                               last_name,
+                                                               contentgrade_N)),
+                all.x=TRUE)
+
+hs0708 <- merge(hs0708, subset(tables2006_2007$achievement, testgrade_N==8 &
+                                 testgrade_N==grade, select=-c(schoolyear,
+                                                               last_name,
+                                                               contentgrade_N)),
+                all.x=TRUE)
 
 
 # Retention
@@ -192,7 +204,8 @@ hs0607$year <- '2006_2007'
 hs0708$year <- '2007_2008'
 
 hsall_9th <- rbind(hs0607, hs0708)
-
+hsall_9th$year <- as.factor(hsall_9th$year)
 
 
 hscohort_9th <- subset(hsall_9th, transfer_out=='N')
+
