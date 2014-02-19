@@ -1,17 +1,19 @@
 cutoff_matrix <- function(df, classifier, outcome, breaks=seq(1,0,-.01)){
+  df <- subset(df, !is.na(classifier) & !is.na(outcome))
+  require(dplyr)
   results <- data.frame(cutoff=vector(mode='numeric', length=length(breaks)),
                         true_pos=vector(mode='numeric', length=length(breaks)),
                         true_neg=vector(mode='numeric', length=length(breaks)),
                         false_pos=vector(mode='numeric', length=length(breaks)),
                         false_neg=vector(mode='numeric', length=length(breaks)))
   for(i in seq(1, length(breaks))){
-    value <- breaks[i]
-    j <- data.frame(table(df[[classifier]]>value, df[[outcome]]))
-    results[i,1] <- value
-    results[i,2] <- subset(j, Var1==TRUE & Var2=='Y')$Freq                     
-    results[i,3] <- subset(j, Var1==FALSE & Var2=='N')$Freq
-    results[i,4] <- subset(j, Var1==TRUE & Var2=='N')$Freq 
-    results[i,5] <- subset(j, Var1==FALSE & Var2=='Y')$Freq
+    threshold <- breaks[i]
+    #j <- data.frame(table(df[[classifier]]>value, df[[outcome]]))
+    results[i,1] <- threshold
+    results[i,2] <- nrow(filter(df, df[[outcome]] == 'Y' & df[[classifier]] >= threshold))
+    results[i,3] <- nrow(filter(df, df[[outcome]] == 'N' & df[[classifier]] <  threshold))
+    results[i,4] <- nrow(filter(df, df[[outcome]] == 'N' & df[[classifier]] >= threshold))
+    results[i,5] <- nrow(filter(df, df[[outcome]] == 'Y' & df[[classifier]] <  threshold))
   }
   results <- mutate(results, 
                     true_neg_rate  = true_neg / (true_neg + false_neg), 
