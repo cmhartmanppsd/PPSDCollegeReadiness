@@ -11,23 +11,10 @@ hs0708 <- subset(person, (schoolyear_first=='2007_2008' & grade_first==9) |
                          (schoolyear_first=='2008_2009' & grade_first==10) | 
                          (schoolyear_first=='2009_2010' & grade_first==11) | 
                          (schoolyear_first=='2010_2011' & grade_first==12))
+hs0708$sasid <- as.character(hs0708$sasid)
+source('attendance.R')
+attendance$sasid <- as.character(attendance$sasid)
 
-# Attendance Calculations
-# Annual attendance calculated by year based on sum_present and sum_enrolled.
-attendance <- subset(ldply(list(tables2005_2006$person_annual, 
-								 								tables2006_2007$person_annual, 
-			 													tables2007_2008$person_annual, 
-			 					 								tables2008_2009$person_annual,
-			 					 								tables2009_2010$person_annual, 
-			 					 								tables2010_2011$person_annual),
-	   					             mutate, attendance = sum_present/sum_enrolled,
-	   					   		               tardy = sum_tardy/sum_enrolled,
-	   					   		               suspended = sum_suspend), 
-					           select = c('sasid', 'schoolyear', 'attendance', 'tardy', 
-					 			                'suspended'))
-
-# Add 8th grade characteristics that might be predictive of later outcomes.
-# Suspensions in 8th grade
 hs0708 <- merge(hs0708, subset(attendance, schoolyear=='2006_2007')[, 
 					                     !names(attendance) %in% c('schoolyear')], 
 				        all.x=TRUE)
@@ -41,17 +28,17 @@ hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date('2007-09-01'),
 
 # Calculate mobility for students
 # Eighth Grade year
-mobile8th <- calc_moves(subset(tables2006_2007$enrollment, 
-                               sasid %in% hs0708$sasid))
-names(mobile8th)[1] <- 'sasid'
-hs0708 <- merge(hs0708, mobile8th, all.x=TRUE)
+mobile8th <-  moves_calc(subset(tables2006_2007$enrollment, 
+                                sasid %in% hs0708$sasid))
+
+mobile8th$sasid <- as.character(mobile8th$sasid)
+hs0708 <- left_join(hs0708, mobile8th)
 
 # Bring in 8th grade performance on standardized tests.
-hs0708 <- merge(hs0708, subset(tables2006_2007$achievement, testgrade_N==8 &
+hs0708 <- left_join(hs0708, subset(tables2006_2007$achievement, testgrade_N==8 &
                                testgrade_N==grade, select=-c(schoolyear,
                                                              last_name,
-                                                             contentgrade_N)),
-                all.x=TRUE)
+                                                             contentgrade_N)))
 
 # Calculate 8th grade course performance, first by calculating gpa by student
 eighthgpa <- aggregate(data=subset(tables2006_2007$course, grade==8),
