@@ -36,11 +36,6 @@ extract_enrollment <- function(regYr){
                       units='secs'),
              enroll_date))
   }
-  
-  # I don't know why this throws an error sometimes. It seems like it should
-  # work even if there are no wrongly formatted dates. However, since it does 
-  # throw an error related to lacking an origin, I put a try() wrapper around
-  # the code first and only execute it if I know it won't fail.
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
     lapply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], as.double)
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
