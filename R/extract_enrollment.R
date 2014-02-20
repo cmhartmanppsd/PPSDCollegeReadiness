@@ -19,23 +19,28 @@ extract_enrollment <- function(regYr){
   # Something below breaks in 2010_2011 that has to be fixed.
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
     lapply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], as.character)
+  # Convert character dates like 05/29/1987 to their spss equivalent in seconds
+  if(length(grep('\\d{2}[./]\\d{2}[./]\\d{4}', tbl_stud_enroll$enroll_date))>=1){
+    tbl_stud_enroll$enroll_date <- with(tbl_stud_enroll, 
+      ifelse(grepl('\\d{2}[./]\\d{2}[./]\\d{4}', enroll_date),
+            difftime(as.Date(tbl_stud_enroll, format = '%m/%d/%Y'),
+                     '1582-10-14',
+                     units='secs'),
+            enroll_date))
+  }
+  if(length(grep('\\d{2}[./]\\d{2}[./]\\d{4}', tbl_stud_enroll$exit_date))>=1){
+    tbl_stud_enroll$enroll_date <- with(tbl_stud_enroll, 
+      ifelse(grepl('\\d{2}[./]\\d{2}[./]\\d{4}', exit_date),
+             difftime(as.Date(exit_date, format = '%m/%d/%Y'),
+                      '1582-10-14',
+                      units='secs'),
+             enroll_date))
+  }
+  
   # I don't know why this throws an error sometimes. It seems like it should
   # work even if there are no wrongly formatted dates. However, since it does 
   # throw an error related to lacking an origin, I put a try() wrapper around
   # the code first and only execute it if I know it won't fail.
-  if(class(try(difftime(as.Date(tbl_stud_enroll[grep('[[:punct:]]', 
-                                                 tbl_stud_enroll$exit_date), 
-                                                 'exit_date'], 
-                                 format="%m/%d/%Y"), 
-                "1582-10-14", units='secs'), silent=TRUE))!="try-error"){
-    tbl_stud_enroll[grep('[[:punct:]]', 
-                         tbl_stud_enroll$exit_date),'exit_date'] <- 
-      difftime(as.Date(tbl_stud_enroll[grep('[[:punct:]]', 
-                                            tbl_stud_enroll$exit_date), 
-                                       'exit_date'], 
-                       format="%m/%d/%Y"), 
-               "1582-10-14", units='secs')
-  }
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
     lapply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], as.double)
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
