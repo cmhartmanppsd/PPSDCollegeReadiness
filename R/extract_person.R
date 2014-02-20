@@ -14,15 +14,17 @@ extract_person <- function(regYr){
   if(class(tbl_person$race)=='factor'){
     levels(tbl_person$race) <- str_trim(levels(tbl_person$race), side='both')
   }
-  if(length(unique(tbl_person$race))==5){
+  if(length(unique(tbl_person$race)) == 5){
     tbl_person$race <- factor(tbl_person$race, exclude=c("",NA), 
                               labels = c('Asian', 'Black', 'Hispanic',
                                          'Native American', 'White'))
-  }else{
+  }else if(length(unique(tbl_person$race)) == 7){
     tbl_person$race <- factor(tbl_person$race, exclude=c("",NA),
                               labels = c('Asian', 'Black', 'Hispanic', 
                                          'Multi Racial', 'Native American', 
                                          'Pacific Islander', 'White'))
+  }else{
+    warning('Wrong number of racial categories, inspect data.')
   }
   tbl_person$sex <- ifelse(!tbl_person$sex %in% c('F','M'), NA, tbl_person$sex) 
   tbl_person$sex <- factor(tbl_person$sex, labels = c('Female', 'Male'))
