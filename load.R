@@ -7,37 +7,43 @@ reg0405 <- read.spss('/Volumes/ProvidenceFiles/MasterFiles/REG Master_0405.sav',
                      use.value.labels=TRUE,
                      trim.factor.names=TRUE,
                      use.missings=TRUE)
+reg0405$sasid_0405 <- as.character(reg0405$sasid_0405)
 reg0506 <- read.spss('/Volumes/ProvidenceFiles/MasterFiles/REG Master_0506.sav',
                      to.data.frame=TRUE,
                      use.value.labels=TRUE,
                      trim.factor.names=TRUE,
                      use.missings=TRUE)
+reg0506$sasid_0506 <- as.character(reg0506$sasid_0506)
 reg0607 <- read.spss('/Volumes/ProvidenceFiles/MasterFiles/REG Master_0607.sav',
                      to.data.frame=TRUE,
                      use.value.labels=TRUE,
                      trim.factor.names=TRUE,
                      use.missings=TRUE)
+reg0607$sasid_0607 <- as.character(reg0607$sasid_0607)
 reg0708 <- read.spss('/Volumes/ProvidenceFiles/MasterFiles/REG Master_0708.sav',
                      to.data.frame=TRUE,
                      use.value.labels=TRUE,
                      trim.factor.names=TRUE,
                      use.missings=TRUE)
+reg0708$sasid_0708 <- as.character(reg0708$sasid_0708)
 reg0809 <- read.spss('/Volumes/ProvidenceFiles/MasterFiles/REG Master_0809.sav',
                      to.data.frame=TRUE,
                      use.value.labels=TRUE,
                      trim.factor.names=TRUE,
                      use.missings=TRUE)
+reg0809$sasid_0809 <- as.character(reg0809$sasid_0809)
 reg0910 <- read.spss('/Volumes/ProvidenceFiles/MasterFiles/REG Master_0910.sav',
                      to.data.frame=TRUE,
                      use.value.labels=TRUE,
                      trim.factor.names=TRUE,
                      use.missings=TRUE)
+reg0910$sasid_0910 <- as.character(reg0910$sasid_0910)
 reg1011 <- read.spss('/Volumes/ProvidenceFiles/MasterFiles/REG Master_1011.sav',
                      to.data.frame=TRUE,
                      use.value.labels=TRUE,
                      trim.factor.names=TRUE,
                      use.missings=TRUE)
-
+reg1011$sasid_1011 <- as.character(reg1011$sasid_1011)
 ## Newer Data
 stu2011_12 <- read.csv('/Volumes/ProvidenceFiles/REGData/Student_2011_2012.csv')
 names(stu2011_12) <- c('schoolyear', 'studentid', 'sasid', 'last_name', 
