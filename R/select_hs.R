@@ -23,5 +23,6 @@ select_hs <- function(df, type="first"){
   else{
     stop(paste("Unrecognized type=", type))
   }
-  return(hs[,list(sasid, schno, school, schoolyear, grade, exit_type)])
+  return(as.data.frame(hs[,list(sasid, schno, school, schoolyear, 
+                                grade, exit_type)]))
 }
