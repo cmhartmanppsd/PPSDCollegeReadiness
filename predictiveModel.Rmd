@@ -1,7 +1,8 @@
 Pathways to Graduation
 ========================================================
 
-```{r Initialization, echo=FALSE, results='hide'}
+```{r Initialization}
+#, echo=FALSE, results='hide'}
 setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
 source('dependencies.R')
 file.sources = list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
@@ -20,13 +21,18 @@ We can observe how many of these students are first-time 8th graders:
 ```{r CohortFirstTime8th}
 # Check how many of these are first-time eighth graders
 table(starting_grade$sasid %in% filter(tables2005_2006$person_annual,
-                                       grade == 8))
+                                       grade == 8)$sasid)
 ```
 
 We also observe how many students attended Providence public schools the prior year:
 ```{r CohortPriorYear}
 # Check how many students were in the district the prior year
 table(starting_grade$sasid %in% tables2005_2006$person_annual$sasid)
+```
+How many students who were PPSD 8th graders who attend high school in PPSD the following year?
+```{r CohortFutureYear}
+prop.table(table(starting_grade$sasid %in% filter(tables2007_2008$person_annual, 
+                                                  grade == 9)$sasid))
 ```
 
 ```{r PredictiveModelData}
@@ -125,21 +131,21 @@ hs0910 <- mutate(hs0910, attendnormal = (attendance8th -
 gpa0607 <- tables2006_2007$course %.% 
            filter(grade==8) %.% 
            group_by(sasid) %.% 
-           dplyr::summarise(gpa8th = mean(gpa))
+           dplyr::summarise(gpa8th = mean(gpa, na.rm=TRUE))
 gpa0607$sasid <- as.character(gpa0607$sasid)
 hs0708 <- left_join(hs0708, gpa0607)
 
 gpa0708 <- tables2007_2008$course %.% 
            filter(grade==8) %.% 
            group_by(sasid) %.% 
-           dplyr::summarise(gpa8th = mean(gpa))
+           dplyr::summarise(gpa8th = mean(gpa, na.rm=TRUE))
 gpa0708$sasid <- as.character(gpa0708$sasid)
 hs0809 <- left_join(hs0809, gpa0708)
 
 gpa0809 <- tables2008_2009$course %.% 
            filter(grade==8) %.% 
            group_by(sasid) %.% 
-           dplyr::summarise(gpa8th = mean(gpa))
+           dplyr::summarise(gpa8th = mean(gpa, na.rm=TRUE))
 gpa0809$sasid <- as.character(gpa0809$sasid)
 hs0910 <- left_join(hs0910, gpa0809)
 
@@ -147,21 +153,21 @@ hs0910 <- left_join(hs0910, gpa0809)
 fails0607 <- tables2006_2007$course %.% 
              filter(grade == 8) %.%
              group_by(sasid, courseno) %.% 
-             dplyr::summarise(gpa = mean(gpa)) %.% 
+             dplyr::summarise(gpa = mean(gpa, na.rm=TRUE)) %.% 
              filter(gpa <= 1.0) %.% 
              dplyr::summarise(fails = n())
 
 fails0708 <- tables2007_2008$course %.% 
              filter(grade == 8) %.%
              group_by(sasid, courseno) %.% 
-             dplyr::summarise(gpa = mean(gpa)) %.% 
+             dplyr::summarise(gpa = mean(gpa, na.rm=TRUE)) %.% 
              filter(gpa <= 1.0) %.% 
              dplyr::summarise(fails = n())
 
 fails0809 <- tables2008_2009$course %.% 
              filter(grade == 8) %.%
              group_by(sasid, courseno) %.% 
-             dplyr::summarise(gpa = mean(gpa)) %.% 
+             dplyr::summarise(gpa = mean(gpa, na.rm=TRUE)) %.% 
              filter(gpa <= 1.0) %.% 
              dplyr::summarise(fails = n())
 
@@ -183,13 +189,13 @@ The model for predicting graduation based on 8th grade data is built only with s
 hscohort <- rbind(hs0708, hs0809, hs0910)
 hscohort <- filter(hscohort, transfer_out=='N')
 hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
-basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ sex + 
-                         attendnormal + gpa8th + reanormal + 
+basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ 
+                         attendnormal + gpa8th + reanormal + matnormal +
                          I(ageHS<190),
                          data=hscohort, family=binomial(link='logit'))
 require(lme4)
-mixedmodel8thgrade <- glmer(as.numeric(as.factor(graduated))-1 ~ sex +
-                            attendnormal + gpa8th + reanormal +
+mixedmodel8thgrade <- glmer(as.numeric(as.factor(graduated))-1 ~ 
+                            attendnormal + gpa8th + reanormal + matnormal +
                             I(ageHS<190) + (1 | schoolyear_first),
                             data=hscohort, family=binomial(link='logit'))
 starting_grade <- left_join(subset(starting_grade, 
