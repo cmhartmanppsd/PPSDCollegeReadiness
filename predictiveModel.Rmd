@@ -210,7 +210,7 @@ starting_grade <- left_join(subset(starting_grade,
                                               'attendnormal', 'attendance8th', 
                                               'gpa8th', 'reanormal', 'reaal',
                                               'matnormal', 'matal', 'ageHS', 
-                                              'moves', 'suspend8th')))
+                                              'suspend8th')))
 starting_grade$predict8th<- predict(basemodel8thgrade, newdata = starting_grade, 
                                     type='response')
 summary(basemodel8thgrade)
