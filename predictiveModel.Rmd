@@ -229,3 +229,79 @@ cutoff_matrix(starting_grade, 'predict8th', 'graduated')
 In examining the results of our predictive model, we find that at a true negative rate of 0.8, the accuracy of our classifier is 71%. The maximum accuracy is approximately 73.5%, at which the true negative rate is 0.69. Therefore, we feel our data supports using the 0.8 threshold for high risk because the modest tradeoff in accuracy is more than made up by the increase in true negative rate.
 
 There are two key ways to compare the model developed in this work to the RIDE Early Warning System aggregate indicator. The first measure is *coverage*, or what proportion of total drop outs are identified by the measure. For the same reasons we are maximizing the *true negative rate*, we want to be sure that our risk thresholds identify as many of the students who ultimately fail to graduate as possible. Our model captures 37% of all drop outs in the 8th grade, a consderable improvement on the state's model which captures fewer than 20% of all drop outs. The state's model, however, is slightly more accurate, at approximately 80% versus 71%. We believe this model represents a better tradeoff between accuracy and coverage. Many more students would be incorrectly identified as in need of supports under the state model in order to capture 37% of all drop outs.
+
+```{r FirstQuarter9thGrade}
+# First Quarter Grades
+gpa_qtr1_0708 <- tables2007_2008$course %.% 
+                 filter(grade == 9 & sasid %in% hscohort$sasid) %.% 
+                 group_by(sasid, variable) %.% 
+                 summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
+                 filter(variable == 'cum_qtr1') %.%
+                 select(sasid, gpa_qtr1_9th)
+gpa_qtr1_0809 <- tables2008_2009$course %.% 
+                 filter(grade == 9 & sasid %in% hscohort$sasid) %.% 
+                 group_by(sasid, variable) %.% 
+                 summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
+                 filter(variable == 'cum_qtr1') %.%
+                 select(sasid, gpa_qtr1_9th)
+gpa_qtr1_0910 <- tables2009_2010$course %.% 
+                 filter(grade == 9 & sasid %in% hscohort$sasid) %.% 
+                 group_by(sasid, variable) %.% 
+                 summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
+                 filter(variable == 'cum_qtr1') %.%
+                 select(sasid, gpa_qtr1_9th)
+
+# First Quarter Course Failures
+fails_qtr1_0708 <- tables2007_2008$course %.% 
+                   filter(grade == 9 & sasid %in% hscohort$sasid) %.%
+                   group_by(sasid, variable, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
+                   summarize(fails_qtr1 = n())
+
+fails_qtr1_0809 <- tables2008_2009$course %.% 
+                   filter(grade == 9 & sasid %in% hscohort$sasid & 
+                          !sasid %in% gpa_qtr1_0708) %.%
+                   group_by(sasid, variable, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
+                   summarize(fails_qtr1 = n())
+
+fails_qtr1_0910 <- tables2009_2010$course %.% 
+                   filter(grade == 9 & sasid %in% hscohort$sasid &
+                          !sasid %in% gpa_qtr1_0809) %.%
+                   group_by(sasid, variable, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
+                   summarize(fails_qtr1 = n())
+
+
+hscohort <- left_join(hscohort, 
+                      rbind(gpa_qtr1_0708, gpa_qtr1_0809, gpa_qtr1_0910) %.%
+                      select(sasid, fails_qtr1))
+
+hscohort <- left_join(hscohort, 
+                      rbind(fails_qtr1_0708, fails_qtr1_0809, 
+                            fails_qtr1_0910) %.%
+                      select(sasid, fails_qtr1))
+
+```
+
+```{r NinthGradeModel}
+hs0708 <- subset(person, (schoolyear_first=='2007_2008' & grade_first==9) | 
+                         (schoolyear_first=='2008_2009' & grade_first==10) | 
+                         (schoolyear_first=='2009_2010' & grade_first==11) | 
+                         (schoolyear_first=='2010_2011' & grade_first==12))
+hs0809 <- subset(person, (schoolyear_first=='2008_2009' & grade_first==9) | 
+                         (schoolyear_first=='2009_2010' & grade_first==10) | 
+                         (schoolyear_first=='2010_2011' & grade_first==11) | 
+                         (schoolyear_first=='2011_2012' & grade_first==12))
+hs0910 <- subset(person, (schoolyear_first=='2009_2010' & grade_first==9) | 
+                         (schoolyear_first=='2010_2011' & grade_first==10) | 
+                         (schoolyear_first=='2011_2012' & grade_first==11) | 
+                         (schoolyear_first=='2012_2013' & grade_first==12))
+hs0708$sasid <- as.character(hs0708$sasid)
+hs0809$sasid <- as.character(hs0809$sasid)
+hs0910$sasid <- as.character(hs0910$sasid)
+
+```
