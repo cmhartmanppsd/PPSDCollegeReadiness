@@ -191,6 +191,8 @@ hscohort <- filter(hscohort, transfer_out=='N')
 hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
 basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ 
                          attendnormal + gpa8th + reanormal + matnormal +
+basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~
+                         attendnormal + gpa8th + matnormal + reanormal +
                          I(ageHS<190),
                          data=hscohort, family=binomial(link='logit'))
 require(lme4)
