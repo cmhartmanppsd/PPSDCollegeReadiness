@@ -189,8 +189,6 @@ The model for predicting graduation based on 8th grade data is built only with s
 hscohort <- rbind(hs0708, hs0809, hs0910)
 hscohort <- filter(hscohort, transfer_out=='N')
 hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
-basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ 
-                         attendnormal + gpa8th + reanormal + matnormal +
 basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~
                          attendnormal + gpa8th + matnormal + reanormal +
                          I(ageHS<190),
