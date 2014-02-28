@@ -309,14 +309,36 @@ hs0708 <- subset(person, (schoolyear_first=='2007_2008' & grade_first==9) |
                          (schoolyear_first=='2008_2009' & grade_first==10) | 
                          (schoolyear_first=='2009_2010' & grade_first==11) | 
                          (schoolyear_first=='2010_2011' & grade_first==12))
+hs0708$retained <- ifelse(hs0708$sasid %in% 
+                          filter(hs0708, 
+                                 grade_first == 9 & 
+                                 sasid %in% filter(tables2008_2009$person_annual, 
+                                                   grade == 9)$sasid)$sasid,
+                          'Y', 'N')
+
+  
 hs0809 <- subset(person, (schoolyear_first=='2008_2009' & grade_first==9) | 
                          (schoolyear_first=='2009_2010' & grade_first==10) | 
                          (schoolyear_first=='2010_2011' & grade_first==11) | 
                          (schoolyear_first=='2011_2012' & grade_first==12))
+
+hs0809$retained <- ifelse(hs0809$sasid %in% 
+                          filter(hs0809, 
+                                 grade_first == 9 & 
+                                 sasid %in% filter(tables2009_2010$person_annual, 
+                                                   grade == 9)$sasid)$sasid,
+                          'Y', 'N')
 hs0910 <- subset(person, (schoolyear_first=='2009_2010' & grade_first==9) | 
                          (schoolyear_first=='2010_2011' & grade_first==10) | 
                          (schoolyear_first=='2011_2012' & grade_first==11) | 
                          (schoolyear_first=='2012_2013' & grade_first==12))
+hs0910$retained <- ifelse(hs0910$sasid %in% 
+                          filter(hs0910, 
+                                 grade_first == 9 & 
+                                 sasid %in% filter(tables2010_2011$person_annual, 
+                                                   grade == 9)$sasid)$sasid,
+                          'Y', 'N')
+
 hs0708$sasid <- as.character(hs0708$sasid)
 hs0809$sasid <- as.character(hs0809$sasid)
 hs0910$sasid <- as.character(hs0910$sasid)
