@@ -84,11 +84,23 @@ hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date('2009-09-01'),
                                           units='months'))
 # Calculate mobility for students
 # Eighth Grade year
-#mobile8th <-  moves_calc(subset(tables2006_2007$enrollment, 
-#                                sasid %in% hs0708$sasid))
+mobile0607 <-  moves_calc(subset(tables2006_2007$enrollment, 
+                                sasid %in% hs0708$sasid))
 
-#mobile8th$sasid <- as.character(mobile8th$sasid)
-#hs0708 <- left_join(hs0708, mobile8th)
+mobile0607$sasid <- as.character(mobile0607$sasid)
+hs0708 <- left_join(hs0708, mobile0607)
+
+mobile0708 <-  moves_calc(subset(tables2007_2008$enrollment, 
+                                sasid %in% hs0809$sasid))
+
+mobile0708$sasid <- as.character(mobile0708$sasid)
+hs0809 <- left_join(hs0809, mobile0708)
+
+mobile0809 <-  moves_calc(subset(tables2008_2009$enrollment, 
+                                sasid %in% hs0910$sasid))
+
+mobile0809$sasid <- as.character(mobile0809$sasid)
+hs0910 <- left_join(hs0910, mobile0809)
 
 # Bring in 8th grade performance on standardized tests.
 tables2006_2007$achievement$sasid <- as.character(tables2006_2007$achievement$sasid)
@@ -304,4 +316,18 @@ hs0708$sasid <- as.character(hs0708$sasid)
 hs0809$sasid <- as.character(hs0809$sasid)
 hs0910$sasid <- as.character(hs0910$sasid)
 
+# Mobility Calculations
+mobile0708 <-  moves_calc(filter(tables2007_2008$enrollment, 
+                                sasid %in% hs0708$sasid))
+mobile0708$sasid <- as.character(mobile0708$sasid)
+hs0708 <- left_join(hs0708, mobile0708)
+
+mobile0809 <-  moves_calc(filter(tables2008_2009$enrollment, 
+                                sasid %in% hs0809$sasid))
+mobile0809$sasid <- as.character(mobile0809$sasid)
+hs0809 <- left_join(hs0809, mobile0809)
+
+mobile0910 <-  moves_calc(filter(tables2009_2010$enrollment, 
+                                sasid %in% hs0910$sasid))
+mobile0910$sasid <- as.character(mobile0910$sasid)
 ```
