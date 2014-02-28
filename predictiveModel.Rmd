@@ -343,6 +343,99 @@ hs0708$sasid <- as.character(hs0708$sasid)
 hs0809$sasid <- as.character(hs0809$sasid)
 hs0910$sasid <- as.character(hs0910$sasid)
 
+# Attendance is same as previous code for cohorts except that I use the school
+# year that is the same as the grade_first value so that it represents 9th grade
+# attendance not 8th grade.
+
+hs0708 <- left_join(hs0708, attendance %.% filter(schoolyear == '2007_2008')
+                                       %.% select(sasid, attendance, tardy, 
+                                                  suspended))
+hs0809 <- left_join(hs0809, attendance %.% filter(schoolyear == '2008_2009')
+                                       %.% select(sasid, attendance, tardy, 
+                                                  suspended))
+hs0910 <- left_join(hs0910, attendance %.% filter(schoolyear == '2009_2010')
+                                       %.% select(sasid, attendance, tardy, 
+                                                  suspended))
+hs0708 <- mutate(hs0708, attendnormal = (attendance - 
+                                         mean(attendance, na.rm=TRUE)) / 
+                                        sd(attendance, na.rm=TRUE))
+hs0809 <- mutate(hs0809, attendnormal = (attendance - 
+                                         mean(attendance, na.rm=TRUE)) / 
+                                        sd(attendance, na.rm=TRUE))
+hs0910 <- mutate(hs0910, attendnormal = (attendance - 
+                                         mean(attendance, na.rm=TRUE)) / 
+                                        sd(attendance, na.rm=TRUE))
+# Calculate age when student enters 9th grade for the first time.
+hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date('2007-09-01'), 
+                                          units='months'))
+hs0809 <- mutate(hs0809, ageHS = age_calc(dob, as.Date('2008-09-01'), 
+                                          units='months'))
+hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date('2009-09-01'), 
+                                          units='months'))
+
+
+# GPA in 8th grade tables already exist
+hs0708 <- left_join(hs0708, gpa0607)
+hs0809 <- left_join(hs0809, gpa0708)
+hs0910 <- left_join(hs0910, gpa0809)
+rm(gpa0607)
+rm(gpa0708)
+rm(gpa0809)
+
+# GPA in 9th grade mimic 8th grade calculations
+gpa0708 <- tables2007_2008$course %.% 
+           filter(grade == 9) %.% 
+           group_by(sasid) %.% 
+           summarize(gpa9th = mean(gpa, na.rm=TRUE))
+gpa0708$sasid <- as.character(gpa0708$sasid)
+hs0708 <- left_join(hs0708, gpa0708)
+
+gpa0809 <- tables2008_2009$course %.% 
+           filter(grade == 9) %.% 
+           group_by(sasid) %.% 
+           summarize(gpa9th = mean(gpa, na.rm=TRUE))
+hs0809 <- left_join(hs0809, gpa0809)
+
+gpa0910 <- tables2009_2010$course %.% 
+           filter(grade==9) %.% 
+           group_by(sasid) %.% 
+           summarize(gpa9th = mean(gpa, na.rm=TRUE))
+gpa0910$sasid <- as.character(gpa0910$sasid)
+hs0910 <- left_join(hs0910, gpa0910)
+
+# Course Failures
+fails0708 <- tables2007_2008$course %.% 
+             filter(grade == 9) %.%
+             group_by(sasid, courseno) %.% 
+             summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+             filter(gpa <= 1.0) %.% 
+             summarize(fails = n())
+
+fails0809 <- tables2008_2009$course %.% 
+             filter(grade == 9) %.%
+             group_by(sasid, courseno) %.% 
+             summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+             filter(gpa <= 1.0) %.% 
+             summarize(fails = n())
+
+fails0910 <- tables2009_2010$course %.% 
+             filter(grade == 9) %.%
+             group_by(sasid, courseno) %.% 
+             summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+             filter(gpa <= 1.0) %.% 
+             summarize(fails = n())
+
+fails0708$sasid <- as.character(fails0708$sasid)
+fails0809$sasid <- as.character(fails0809$sasid)
+fails0910$sasid <- as.character(fails0910$sasid)
+
+hs0708 <- left_join(hs0708, fails0708)
+hs0708$fails <- with(hs0708, ifelse(is.na(fails) & !is.na(gpa9th), 0, fails))
+hs0809 <- left_join(hs0809, fails0809)
+hs0809$fails <- with(hs0809, ifelse(is.na(fails) & !is.na(gpa9th), 0, fails))
+hs0910 <- left_join(hs0910, fails0910)
+hs0910$fails <- with(hs0910, ifelse(is.na(fails) & !is.na(gpa9th), 0, fails))
+
 # Mobility Calculations
 mobile0708 <-  moves_calc(filter(tables2007_2008$enrollment, 
                                 sasid %in% hs0708$sasid))
@@ -357,4 +450,20 @@ hs0809 <- left_join(hs0809, mobile0809)
 mobile0910 <-  moves_calc(filter(tables2009_2010$enrollment, 
                                 sasid %in% hs0910$sasid))
 mobile0910$sasid <- as.character(mobile0910$sasid)
+hs0910 <- left_join(hs0910, mobile0910)
+```
+
+```{r Grade9Model}
+hscohort <- rbind(hs0708, hs0809, hs0910)
+hscohort <- filter(hscohort, transfer_out=='N')
+hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
+basemodel9thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ 
+                         attendnormal + gpa8th + gpa9th + fails + retained + 
+                         I(moves>1) + suspended*I(iep=='Y') + I(ageHS>190) +
+                         I(schno_first=='164'),
+                         data=hscohort, family=binomial(link='logit'))
+summary(basemodel9thgrade)
+plot(roc(graduated ~ predict(basemodel9thgrade, newdata = hscohort, 
+                                    type='response'), hscohort), print.auc=TRUE)
+
 ```
