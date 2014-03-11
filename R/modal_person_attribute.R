@@ -1,4 +1,4 @@
-modal_person_attribute <- function(df, attribute){
+modal_person_attribute_dt <- function(df, attribute){
   # df: rbind of all person tables from all years
   # attribute: vector name to calculate the modal value
   # Calculate the number of instances an attributed is associated with an id
@@ -26,4 +26,31 @@ modal_person_attribute <- function(df, attribute){
   # Remove the schoolyear to clean up the result
   result <- result[,schoolyear:=NULL]
   return(result)
+}
+
+modal_test <- data.frame(sasid = c('1000', '1001', '1000', '1000', 
+                                   '1005', '1005', rep('1006',4)),
+                         race = c('Black', 'White', 'Black', 'Hispanic', 'White', 'White',
+                                  rep('Black',2), rep('Hispanic',2)),
+                         year = c('2005_2006', '2005_2006', '2006_2007', '2007_2008',
+                                  '2009_2010', '2010_2011', '2006_2007', '2007_2008',
+                                  '2009_2010','2010_2011'))
+
+modal_person_attribute <- function(x, sid, attribute, year){
+  grouping <- lapply(list(sid, attribute), as.symbol)
+  original <- x
+  max_attributes <- x %.% 
+                    regroup(grouping) %.%
+                    summarize(count = n()) %.%
+                    filter(count == max(count))
+  recent_max <- left_join(original, max_attributes) %.%
+                regroup(list(grouping[[1]])) %.%
+                filter(!is.na(count) & count == max(count))
+  if(TRUE %in% grepl('_', recent_max[[year]])){
+    recent_max[[year]] <- gsub(pattern='[0-9]{4}_([0-9]{4})', '\\1', recent_max[[year]])
+  }
+  results <- recent_max %.% 
+             regroup(list(grouping[[1]])) %.%
+             filter(year == max(year))
+  return(results[,c(sid, attribute)])
 }
