@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>Pathways to Graduation</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>Pathways to Graduation</h1>
+
+<pre><code class="r"># , echo=FALSE, results=&#39;hide&#39;}
+setwd(&quot;/Users/jason/Dropbox/code/PPSDCollegeReadiness/&quot;)
+source(&quot;dependencies.R&quot;)
+</code></pre>
+
+<pre><code>## Loading required package: foreign
+## Loading required package: reshape2
+## Loading required package: ggplot2
+## Loading required package: scales
+## Loading required package: stringr
+## Loading required package: data.table
+## Loading required package: pROC
+## Type &#39;citation(&quot;pROC&quot;)&#39; for a citation.
+## 
+## Attaching package: &#39;pROC&#39;
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     cov, smooth, var
+## 
+## Loading required package: rstudio
+## Loading required package: plyr
+## Loading required package: dplyr
+## 
+## Attaching package: &#39;dplyr&#39;
+## 
+## The following objects are masked from &#39;package:plyr&#39;:
+## 
+##     arrange, desc, failwith, id, mutate, summarise
+## 
+## The following object is masked from &#39;package:data.table&#39;:
+## 
+##     last
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union
+</code></pre>
+
+<pre><code class="r">file.sources = list.files(&quot;/Users/jason/Dropbox/code/PPSDCollegeReadiness/R&quot;, 
+    pattern = &quot;*.R$&quot;, full.names = TRUE, ignore.case = TRUE)
+invisible(sapply(file.sources, source, .GlobalEnv))
+source(&quot;load.R&quot;)
+</code></pre>
+
+<pre><code>## Warning: /Volumes/ProvidenceFiles/MasterFiles/REG Master_0405.sav:
+## Unrecognized record type 7, subtype 18 encountered in system file
+</code></pre>
+
+<pre><code>## re-encoding from CP1252
+</code></pre>
+
+<pre><code>## Warning: /Volumes/ProvidenceFiles/MasterFiles/REG Master_0506.sav:
+## Unrecognized record type 7, subtype 18 encountered in system file
+</code></pre>
+
+<pre><code>## re-encoding from CP1252
+</code></pre>
+
+<pre><code>## Warning: /Volumes/ProvidenceFiles/MasterFiles/REG Master_0607.sav:
+## Unrecognized record type 7, subtype 18 encountered in system file
+</code></pre>
+
+<pre><code>## re-encoding from CP1252
+</code></pre>
+
+<pre><code>## Warning: /Volumes/ProvidenceFiles/MasterFiles/REG Master_0708.sav:
+## Unrecognized record type 7, subtype 18 encountered in system file
+</code></pre>
+
+<pre><code>## re-encoding from CP1252
+</code></pre>
+
+<pre><code>## Warning: /Volumes/ProvidenceFiles/MasterFiles/REG Master_0809.sav:
+## Unrecognized record type 7, subtype 18 encountered in system file
+</code></pre>
+
+<pre><code>## re-encoding from CP1252
+</code></pre>
+
+<pre><code>## Warning: /Volumes/ProvidenceFiles/MasterFiles/REG Master_0910.sav:
+## Unrecognized record type 7, subtype 18 encountered in system file
+</code></pre>
+
+<pre><code>## re-encoding from CP1252
+</code></pre>
+
+<pre><code>## Warning: /Volumes/ProvidenceFiles/MasterFiles/REG Master_1011.sav:
+## Unrecognized record type 7, subtype 18 encountered in system file
+</code></pre>
+
+<pre><code>## re-encoding from CP1252
+</code></pre>
+
+<pre><code class="r">source(&quot;buildTables.R&quot;)
+</code></pre>
+
+<pre><code>## [1] 328
+##   studentid      sasid        dob first_name last_name student_lang
+## 1   4000014 1000085228 10/30/1988       RUTH   SANTANA      SPANISH
+## 2   4000028 1000085169 09/21/1989      JAMES     REYES      SPANISH
+## 3   4000045 1000084993 05/30/1988       JOHN  OCTAVIUS       FRENCH
+## 4   4000053 1000119139 02/24/1988       JOEL    VALDEZ      SPANISH
+## 5   4000064 1000118731 03/13/1988    YOHANNY   BENZANT      SPANISH
+## 6   4000072 1000088531 02/09/1989   COURTNEY      LINK      ENGLISH
+##   parent_lang      birth_place sex schoolyear
+## 1     SPANISH     USA-NEW YORK   F  2005_2006
+## 2     SPANISH   DOMINICAN REP.   M  2005_2006
+## 3      FRENCH            HAITI   M  2005_2006
+## 4     SPANISH USA-RHODE ISLAND   M  2005_2006
+## 5     SPANISH   DOMINICAN REP.   F  2005_2006
+## 6     ENGLISH USA-RHODE ISLAND   F  2005_2006
+</code></pre>
+
+<pre><code>## Loading required package: car
+</code></pre>
+
+<pre><code>## [1] &quot;2006&quot;
+## [1] 638
+##   studentid      sasid        dob first_name last_name student_lang
+## 1   4000014 1000085228 10/30/1988       RUTH   SANTANA      SPANISH
+## 2   4000028 1000085169 09/21/1989      JAMES     REYES      SPANISH
+## 3   4000045 1000084993 05/30/1988       JOHN  OCTAVIUS       FRENCH
+## 4   4000064 1000118731 03/13/1988    YOHANNY   BENZANT      SPANISH
+## 5   4000089 1000084724 01/03/1989    LAMONTE  COPELAND      ENGLISH
+## 6   4000097 1000131570 03/19/1989  JACQUELIN   VAZQUEZ      ENGLISH
+##   parent_lang      birth_place sex schoolyear
+## 1     SPANISH     USA-NEW YORK   F  2006_2007
+## 2     SPANISH   DOMINICAN REP.   M  2006_2007
+## 3      FRENCH            HAITI   M  2006_2007
+## 4     SPANISH   DOMINICAN REP.   F  2006_2007
+## 5     ENGLISH USA-RHODE ISLAND   M  2006_2007
+## 6     ENGLISH USA-RHODE ISLAND   F  2006_2007
+## [1] &quot;2007&quot;
+## [1] 1289
+##   studentid      sasid        dob first_name last_name student_lang
+## 1   4000089 1000084724 01/03/1989    LAMONTE  COPELAND      ENGLISH
+## 2   4000301 1000088554 11/14/1989     EDWARD    SANTOS      SPANISH
+## 3   4000306 1000084665 06/23/1989     GRECIA VELASQUEZ      SPANISH
+## 4   4000354 1000182217 07/18/1989       ERIC    VALDEZ      ENGLISH
+## 5   4000360 1000116726 12/12/1989     TESHEL     WHITE      ENGLISH
+## 7   4000450 1000131155 11/11/1989      BRIAN    POMPEY      ENGLISH
+##   parent_lang      birth_place sex schoolyear
+## 1     ENGLISH USA-RHODE ISLAND   M  2007_2008
+## 2     SPANISH   DOMINICAN REP.   M  2007_2008
+## 3     SPANISH USA-RHODE ISLAND   F  2007_2008
+## 4     ENGLISH USA-RHODE ISLAND   M  2007_2008
+## 5     ENGLISH USA-RHODE ISLAND   F  2007_2008
+## 7     ENGLISH USA-RHODE ISLAND   M  2007_2008
+## [1] &quot;2008&quot;
+## [1] 1415
+##   studentid      sasid        dob first_name last_name student_lang
+## 2   4000484 1000085048 09/07/1990 JACQUELINE     LOPEZ      SPANISH
+## 3   4000495 1000088566 09/09/1990      JAMON     BROWN      ENGLISH
+## 4   4000496 1000084732 06/02/1990      RANDY    HOPPER      ENGLISH
+## 5   4000504 1000078562 12/06/1990     MAYLEE    TORRES      ENGLISH
+## 6   4000516 1000084548 11/19/1990    ANTHONY      TODD      ENGLISH
+## 7   4000524 1000089144 12/14/1990    DARLENE    RAPOSO      PORTUGU
+##   parent_lang      birth_place sex schoolyear
+## 2     SPANISH USA-RHODE ISLAND   F  2008_2009
+## 3     ENGLISH USA-RHODE ISLAND   M  2008_2009
+## 4     ENGLISH USA-RHODE ISLAND   M  2008_2009
+## 5     ENGLISH USA-RHODE ISLAND   F  2008_2009
+## 6     ENGLISH USA-RHODE ISLAND   M  2008_2009
+## 7     PORTUGU USA-RHODE ISLAND   F  2008_2009
+## [1] &quot;2009&quot;
+## [1] 1227
+##   studentid      sasid        dob  first_name last_name student_lang
+## 1   4000548 1000084873 08/30/1990      DANIEL  BERNARDO      ENGLISH
+## 2   4000582 1000160311 08/28/1990      DWAYNE    MONROE      ENGLISH
+## 3   4000624 1000096747 09/05/1990    COURTNEY    JULIUS      ENGLISH
+## 4   4000648 1000078719 12/13/1990       JULIO    ALICEA      SPANISH
+## 5   4000673 1000131207 03/29/1990      SANDRA    MORAIS      ENGLISH
+## 6   4000693 1000241449 03/04/1990 CHRISTOPHER  OLIVEIRA      ENGLISH
+##   parent_lang      birth_place sex schoolyear
+## 1     ENGLISH USA-RHODE ISLAND   M  2009_2010
+## 2     ENGLISH                    M  2009_2010
+## 3     ENGLISH USA-RHODE ISLAND   F  2009_2010
+## 4     SPANISH USA-RHODE ISLAND   M  2009_2010
+## 5     ENGLISH USA-RHODE ISLAND   F  2009_2010
+## 6  PORTUGUESE USA-RHODE ISLAND   M  2009_2010
+</code></pre>
+
+<pre><code>## Warning: NAs introduced by coercion
+</code></pre>
+
+<pre><code>## [1] &quot;2010&quot;
+## [1] 732
+##     studentid      sasid        dob first_name  last_name student_lang
+## 674   8309005 1000002055 09/14/1996     STEVEN      TRAYA      ENGLISH
+## 675   8309007 1000002056 08/25/1994      BUDDY      TRAYA      ENGLISH
+## 676   8336263 1000005102 08/23/1992     PERRIN     HAWVER      ENGLISH
+## 677   8326817 1000005852 12/22/1993     BRIANA     BRIGGS      ENGLISH
+## 678   8344027 1000006156 02/03/1994      SUADE     ROGERS      ENGLISH
+## 680   8287169 1000006310 11/09/1995       PAUL DE ANGELIS      ENGLISH
+##     parent_lang      birth_place sex schoolyear
+## 674     ENGLISH      PHILIPPINES   M  2010_2011
+## 675     ENGLISH      PHILIPPINES   M  2010_2011
+## 676     ENGLISH USA-RHODE ISLAND   M  2010_2011
+## 677     ENGLISH USA-RHODE ISLAND   F  2010_2011
+## 678     ENGLISH     USA-NEW YORK   M  2010_2011
+## 680     ENGLISH USA-RHODE ISLAND   M  2010_2011
+</code></pre>
+
+<pre><code>## Warning: invalid factor level, NA generated
+## Warning: invalid factor level, NA generated
+## Warning: invalid factor level, NA generated
+## Warning: NAs introduced by coercion
+</code></pre>
+
+<pre><code>## [1] &quot;2011&quot;
+</code></pre>
+
+<pre><code>## Warning: invalid factor level, NA generated
+## Warning: invalid factor level, NA generated
+</code></pre>
+
+<pre><code class="r">source(&quot;person.R&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;Race Complete&quot;
+## [1] &quot;Sex Complete&quot;
+## [1] &quot;dob Complete&quot;
+## [1] &quot;Student_lang Complete&quot;
+## [1] &quot;parent_lang Complete&quot;
+</code></pre>
+
+<pre><code>## Warning: invalid factor level, NA generated
+## Warning: invalid factor level, NA generated
+## Warning: invalid factor level, NA generated
+</code></pre>
+
+<pre><code>## [1] &quot;everELL Complete&quot;
+## [1] &quot;everIEP Complete&quot;
+## [1] &quot;first_hs Complete&quot;
+## [1] &quot;last_hs Complete&quot;
+## [1] &quot;long_hs Complete&quot;
+## [1] &quot;Remove duplicate sasid&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join Race&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join Sex&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join Student_Lang&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join Parent_Lang&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join dob&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join everELL&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join everIEP&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join 1st HS&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join Long HS&quot;
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code>## [1] &quot;Join Last HS&quot;
+</code></pre>
+
+<p>We present a new visualization that will assist in understanding where and how students fall off-track on their path from middle school through high school graduation. Our first cohort of students were 8th graders in the 2006-2007 school year. </p>
+
+<pre><code class="r">starting_grade &lt;- filter(tables2006_2007$person_annual, grade == 8)
+</code></pre>
+
+<p>We can observe how many of these students are first-time 8th graders:</p>
+
+<pre><code class="r"># Check how many of these are first-time eighth graders
+table(starting_grade$sasid %in% filter(tables2005_2006$person_annual, grade == 
+    8)$sasid)
+</code></pre>
+
+<pre><code>## 
+## FALSE  TRUE 
+##  2091    60
+</code></pre>
+
+<p>We also observe how many students attended Providence public schools the prior year:</p>
+
+<pre><code class="r"># Check how many students were in the district the prior year
+table(starting_grade$sasid %in% tables2005_2006$person_annual$sasid)
+</code></pre>
+
+<pre><code>## 
+## FALSE  TRUE 
+##   224  1927
+</code></pre>
+
+<p>How many students who were PPSD 8th graders who attend high school in PPSD the following year?</p>
+
+<pre><code class="r">prop.table(table(starting_grade$sasid %in% filter(tables2007_2008$person_annual, 
+    grade == 9)$sasid))
+</code></pre>
+
+<pre><code>## 
+##  FALSE   TRUE 
+## 0.1748 0.8252
+</code></pre>
+
+<pre><code class="r"># Build cohort for predictive model
+hs0708 &lt;- subset(person, (schoolyear_first == &quot;2007_2008&quot; &amp; grade_first == 9) | 
+    (schoolyear_first == &quot;2008_2009&quot; &amp; grade_first == 10) | (schoolyear_first == 
+    &quot;2009_2010&quot; &amp; grade_first == 11) | (schoolyear_first == &quot;2010_2011&quot; &amp; grade_first == 
+    12))
+hs0809 &lt;- subset(person, (schoolyear_first == &quot;2008_2009&quot; &amp; grade_first == 9) | 
+    (schoolyear_first == &quot;2009_2010&quot; &amp; grade_first == 10) | (schoolyear_first == 
+    &quot;2010_2011&quot; &amp; grade_first == 11) | (schoolyear_first == &quot;2011_2012&quot; &amp; grade_first == 
+    12))
+hs0910 &lt;- subset(person, (schoolyear_first == &quot;2009_2010&quot; &amp; grade_first == 9) | 
+    (schoolyear_first == &quot;2010_2011&quot; &amp; grade_first == 10) | (schoolyear_first == 
+    &quot;2011_2012&quot; &amp; grade_first == 11) | (schoolyear_first == &quot;2012_2013&quot; &amp; grade_first == 
+    12))
+hs0708$sasid &lt;- as.character(hs0708$sasid)
+hs0809$sasid &lt;- as.character(hs0809$sasid)
+hs0910$sasid &lt;- as.character(hs0910$sasid)
+source(&quot;attendance.R&quot;)
+</code></pre>
+
+<pre><code>## Warning: invalid factor level, NA generated
+## Warning: invalid factor level, NA generated
+## Warning: invalid factor level, NA generated
+</code></pre>
+
+<pre><code class="r">attendance$sasid &lt;- as.character(attendance$sasid)
+
+hs0708 &lt;- left_join(hs0708, attendance %.% filter(schoolyear == &quot;2006_2007&quot;) %.% 
+    dplyr::select(sasid, attendance, tardy, suspended))
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">hs0809 &lt;- left_join(hs0809, attendance %.% filter(schoolyear == &quot;2007_2008&quot;) %.% 
+    dplyr::select(sasid, attendance, tardy, suspended))
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">hs0910 &lt;- left_join(hs0910, attendance %.% filter(schoolyear == &quot;2008_2009&quot;) %.% 
+    dplyr::select(sasid, attendance, tardy, suspended))
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">
+names(hs0708)[which(names(hs0708) %in% c(&quot;suspended&quot;))] &lt;- &quot;suspend8th&quot;
+names(hs0708)[which(names(hs0708) %in% c(&quot;tardy&quot;))] &lt;- &quot;tardy8th&quot;
+names(hs0708)[which(names(hs0708) %in% c(&quot;attendance&quot;))] &lt;- &quot;attendance8th&quot;
+names(hs0809)[which(names(hs0809) %in% c(&quot;suspended&quot;))] &lt;- &quot;suspend8th&quot;
+names(hs0809)[which(names(hs0809) %in% c(&quot;tardy&quot;))] &lt;- &quot;tardy8th&quot;
+names(hs0809)[which(names(hs0809) %in% c(&quot;attendance&quot;))] &lt;- &quot;attendance8th&quot;
+names(hs0910)[which(names(hs0910) %in% c(&quot;suspended&quot;))] &lt;- &quot;suspend8th&quot;
+names(hs0910)[which(names(hs0910) %in% c(&quot;tardy&quot;))] &lt;- &quot;tardy8th&quot;
+names(hs0910)[which(names(hs0910) %in% c(&quot;attendance&quot;))] &lt;- &quot;attendance8th&quot;
+
+# Calculate age when student enters 9th grade for the first time.
+hs0708 &lt;- mutate(hs0708, ageHS = age_calc(dob, as.Date(&quot;2007-09-01&quot;), units = &quot;months&quot;))
+hs0809 &lt;- mutate(hs0809, ageHS = age_calc(dob, as.Date(&quot;2008-09-01&quot;), units = &quot;months&quot;))
+hs0910 &lt;- mutate(hs0910, ageHS = age_calc(dob, as.Date(&quot;2009-09-01&quot;), units = &quot;months&quot;))
+# Calculate mobility for students Eighth Grade year mobile8th &lt;-
+# moves_calc(subset(tables2006_2007$enrollment, sasid %in% hs0708$sasid))
+
+# mobile8th$sasid &lt;- as.character(mobile8th$sasid) hs0708 &lt;-
+# left_join(hs0708, mobile8th)
+
+# Bring in 8th grade performance on standardized tests.
+tables2006_2007$achievement$sasid &lt;- as.character(tables2006_2007$achievement$sasid)
+tables2006_2007$achievement$studentid &lt;- as.character(tables2006_2007$achievement$studentid)
+
+tables2007_2008$achievement$sasid &lt;- as.character(tables2007_2008$achievement$sasid)
+tables2007_2008$achievement$studentid &lt;- as.character(tables2007_2008$achievement$studentid)
+
+tables2008_2009$achievement$sasid &lt;- as.character(tables2008_2009$achievement$sasid)
+tables2008_2009$achievement$studentid &lt;- as.character(tables2008_2009$achievement$studentid)
+
+
+hs0708 &lt;- left_join(hs0708, tables2006_2007$achievement %.% filter(testgrade_N == 
+    8, testgrade_N == grade) %.% dplyr::select(sasid, grade, reaal, reascsc, 
+    matal, matscsc, testgrade_N, reanormal, matnormal))
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">hs0809 &lt;- left_join(hs0809, tables2007_2008$achievement %.% filter(testgrade_N == 
+    8, testgrade_N == grade) %.% dplyr::select(sasid, grade, reaal, reascsc, 
+    matal, matscsc, testgrade_N, reanormal, matnormal))
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">hs0910 &lt;- left_join(hs0910, tables2008_2009$achievement %.% filter(testgrade_N == 
+    8, testgrade_N == grade) %.% dplyr::select(sasid, grade, reaal, reascsc, 
+    matal, matscsc, testgrade_N, reanormal, matnormal))
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">
+# Attendance normalized
+hs0708 &lt;- mutate(hs0708, attendnormal = (attendance8th - mean(attendance8th, 
+    na.rm = TRUE))/sd(attendance8th, na.rm = TRUE))
+hs0809 &lt;- mutate(hs0809, attendnormal = (attendance8th - mean(attendance8th, 
+    na.rm = TRUE))/sd(attendance8th, na.rm = TRUE))
+hs0910 &lt;- mutate(hs0910, attendnormal = (attendance8th - mean(attendance8th, 
+    na.rm = TRUE))/sd(attendance8th, na.rm = TRUE))
+# GPA in 8th grade calculations
+gpa0607 &lt;- tables2006_2007$course %.% filter(grade == 8) %.% group_by(sasid) %.% 
+    dplyr::summarise(gpa8th = mean(gpa, na.rm = TRUE))
+gpa0607$sasid &lt;- as.character(gpa0607$sasid)
+hs0708 &lt;- left_join(hs0708, gpa0607)
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">
+gpa0708 &lt;- tables2007_2008$course %.% filter(grade == 8) %.% group_by(sasid) %.% 
+    dplyr::summarise(gpa8th = mean(gpa, na.rm = TRUE))
+gpa0708$sasid &lt;- as.character(gpa0708$sasid)
+hs0809 &lt;- left_join(hs0809, gpa0708)
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">
+gpa0809 &lt;- tables2008_2009$course %.% filter(grade == 8) %.% group_by(sasid) %.% 
+    dplyr::summarise(gpa8th = mean(gpa, na.rm = TRUE))
+gpa0809$sasid &lt;- as.character(gpa0809$sasid)
+hs0910 &lt;- left_join(hs0910, gpa0809)
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">
+# Course Failures
+fails0607 &lt;- tables2006_2007$course %.% filter(grade == 8) %.% group_by(sasid, 
+    courseno) %.% dplyr::summarise(gpa = mean(gpa, na.rm = TRUE)) %.% filter(gpa &lt;= 
+    1) %.% dplyr::summarise(fails = n())
+
+fails0708 &lt;- tables2007_2008$course %.% filter(grade == 8) %.% group_by(sasid, 
+    courseno) %.% dplyr::summarise(gpa = mean(gpa, na.rm = TRUE)) %.% filter(gpa &lt;= 
+    1) %.% dplyr::summarise(fails = n())
+
+fails0809 &lt;- tables2008_2009$course %.% filter(grade == 8) %.% group_by(sasid, 
+    courseno) %.% dplyr::summarise(gpa = mean(gpa, na.rm = TRUE)) %.% filter(gpa &lt;= 
+    1) %.% dplyr::summarise(fails = n())
+
+fails0607$sasid &lt;- as.character(fails0607$sasid)
+fails0708$sasid &lt;- as.character(fails0708$sasid)
+fails0809$sasid &lt;- as.character(fails0809$sasid)
+
+hs0708 &lt;- left_join(hs0708, fails0607)
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">hs0708$fails &lt;- with(hs0708, ifelse(is.na(fails) &amp; !is.na(gpa8th), 0, fails))
+hs0809 &lt;- left_join(hs0809, fails0708)
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">hs0809$fails &lt;- with(hs0809, ifelse(is.na(fails) &amp; !is.na(gpa8th), 0, fails))
+hs0910 &lt;- left_join(hs0910, fails0809)
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">hs0910$fails &lt;- with(hs0910, ifelse(is.na(fails) &amp; !is.na(gpa8th), 0, fails))
+</code></pre>
+
+<p>The model for predicting graduation based on 8th grade data is built only with students who attend a Providence Public School as their final high school prior to graduating, dropping out, or transferring to a GED program. Therefore, students whose final exit code from the Providence Public School District is a transfer to another public school, they are not included. These students are excluded because we have no way of knowing whether or not these students ultimately graduate and their graduating is impacted substantially by non-Providence schools. Although they are excluded from the model, we can predict the likelihood that these students will graduate. Because students who are mobile tend to be disproportionately disadvantaged relative to their peers, it is likely that our model for these students is <em>positively biased</em>, i.e. these students will have higher probabilities of successfully graduating than is likely true because peers with similar observable characteristics have some unobserved advantages which resulted in being less mobile.</p>
+
+<pre><code class="r">hscohort &lt;- rbind(hs0708, hs0809, hs0910)
+hscohort &lt;- filter(hscohort, transfer_out == &quot;N&quot;)
+hscohort$schoolyear_first &lt;- as.factor(hscohort$schoolyear_first)
+basemodel8thgrade &lt;- glm(as.numeric(as.factor(graduated)) - 1 ~ attendnormal + 
+    gpa8th + reanormal + matnormal + I(ageHS &lt; 190), data = hscohort, family = binomial(link = &quot;logit&quot;))
+</code></pre>
+
+<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+</code></pre>
+
+<pre><code class="r">require(lme4)
+</code></pre>
+
+<pre><code>## Loading required package: lme4
+## Loading required package: lattice
+## Loading required package: Matrix
+## 
+## Attaching package: &#39;lme4&#39;
+## 
+## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     fortify
+</code></pre>
+
+<pre><code class="r">mixedmodel8thgrade &lt;- glmer(as.numeric(as.factor(graduated)) - 1 ~ attendnormal + 
+    gpa8th + reanormal + matnormal + I(ageHS &lt; 190) + (1 | schoolyear_first), 
+    data = hscohort, family = binomial(link = &quot;logit&quot;))
+starting_grade &lt;- left_join(subset(starting_grade, select = c(&quot;sasid&quot;, &quot;willrepeatgr&quot;, 
+    &quot;isrepeatinggr&quot;, &quot;disab&quot;, &quot;spedprogrm&quot;)), subset(hs0708, select = c(&quot;sasid&quot;, 
+    &quot;race&quot;, &quot;sex&quot;, &quot;parent_lang&quot;, &quot;lep&quot;, &quot;iep&quot;, &quot;transfer_out&quot;, &quot;ged&quot;, &quot;dropout&quot;, 
+    &quot;disappear&quot;, &quot;graduated&quot;, &quot;attendnormal&quot;, &quot;attendance8th&quot;, &quot;gpa8th&quot;, &quot;reanormal&quot;, 
+    &quot;reaal&quot;, &quot;matnormal&quot;, &quot;matal&quot;, &quot;ageHS&quot;, &quot;suspend8th&quot;)))
+</code></pre>
+
+<pre><code>## Joining by: &quot;sasid&quot;
+</code></pre>
+
+<pre><code class="r">starting_grade$predict8th &lt;- predict(basemodel8thgrade, newdata = starting_grade, 
+    type = &quot;response&quot;)
+summary(basemodel8thgrade)
+</code></pre>
+
+<pre><code>## 
+## Call:
+## glm(formula = as.numeric(as.factor(graduated)) - 1 ~ attendnormal + 
+##     gpa8th + reanormal + matnormal + I(ageHS &lt; 190), family = binomial(link = &quot;logit&quot;), 
+##     data = hscohort)
+## 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -2.763  -0.742   0.457   0.731   3.026  
+## 
+## Coefficients:
+##                    Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)         -2.0866     0.2868   -7.28  3.5e-13 ***
+## attendnormal         1.0006     0.0763   13.11  &lt; 2e-16 ***
+## gpa8th               0.7826     0.0555   14.10  &lt; 2e-16 ***
+## reanormal            0.1098     0.0594    1.85   0.0645 .  
+## matnormal            0.1886     0.0590    3.20   0.0014 ** 
+## I(ageHS &lt; 190)TRUE   1.0416     0.2600    4.01  6.2e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 4955.6  on 3936  degrees of freedom
+## Residual deviance: 3797.8  on 3931  degrees of freedom
+##   (2095 observations deleted due to missingness)
+## AIC: 3810
+## 
+## Number of Fisher Scoring iterations: 5
+</code></pre>
+
+<pre><code class="r">summary(starting_grade$predict8th)
+</code></pre>
+
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##     0.0     0.5     0.7     0.7     0.9     1.0     522
+</code></pre>
+
+<p>Predictive models are traditionally evaluated on their ability to correctly classify, or sort, students so that predicted outcomes match the actual outcomes. Our model outputs a probability of graduating for each student that can take on any value between 0 and 1. In order to sort students into those who are at risk of failing to graduate and those who are not, we have to select threshold probabilities above which students are not considered at risk and below which they are.</p>
+
+<p>Thresholds for predictive data are often set at the point with the highest <em>accuracy</em>. Accuracy is highest where the proportion of students who are correctly classified as graduating or not graduating is the greatest. Therefore, accuracy values <em>true positives</em>, identifying students who will graduate, the same as <em>true negatives</em>, identifying students who will not graduate. Beacuse we want to intervene on the behalf of students who are falling behind, accuracy alone may not be the best way to set thresholds. Instead, we want to maximize the <em>true negative rate</em>, ensuring we capture as many students who fail to graduate as possible, while maintaining the best accuracy possible. In practice, this means the best cutoff thresholds for high risk may have slightly less than the maximum accuracy.</p>
+
+<p>The Rhode Island Department of Education (RIDE) has been developing an Early Warning System using statewide data. They have set thresholds for high, moderate, and low risk by examining the true negative rate and accuracy. The true negative rate for high, moderate, and low risk are 0.8, 0.7, and 0.6.</p>
+
+<pre><code class="r">cutoff_matrix(starting_grade, &quot;predict8th&quot;, &quot;graduated&quot;)
+</code></pre>
+
+<pre><code>##     cutoff true_pos true_neg false_pos false_neg true_neg_rate
+## 1     1.00        0      672         0       956        0.4128
+## 2     0.99        0      672         0       956        0.4128
+## 3     0.98        1      672         0       955        0.4130
+## 4     0.97       19      671         1       937        0.4173
+## 5     0.96       43      666         6       913        0.4218
+## 6     0.95       77      664         8       879        0.4303
+## 7     0.94      113      663         9       843        0.4402
+## 8     0.93      160      661        11       796        0.4537
+## 9     0.92      194      658        14       762        0.4634
+## 10    0.91      234      653        19       722        0.4749
+## 11    0.90      269      646        26       687        0.4846
+## 12    0.89      293      639        33       663        0.4908
+## 13    0.88      320      631        41       636        0.4980
+## 14    0.87      356      626        46       600        0.5106
+## 15    0.86      386      615        57       570        0.5190
+## 16    0.85      416      601        71       540        0.5267
+## 17    0.84      436      595        77       520        0.5336
+## 18    0.83      458      584        88       498        0.5397
+## 19    0.82      484      577        95       472        0.5500
+## 20    0.81      506      565       107       450        0.5567
+## 21    0.80      528      556       116       428        0.5650
+## 22    0.79      554      547       125       402        0.5764
+## 23    0.78      571      536       136       385        0.5820
+## 24    0.77      588      531       141       368        0.5907
+## 25    0.76      612      524       148       344        0.6037
+## 26    0.75      622      519       153       334        0.6084
+## 27    0.74      637      513       159       319        0.6166
+## 28    0.73      646      503       169       310        0.6187
+## 29    0.72      659      492       180       297        0.6236
+## 30    0.71      675      480       192       281        0.6307
+## 31    0.70      686      470       202       270        0.6351
+## 32    0.69      703      459       213       253        0.6447
+## 33    0.68      712      452       220       244        0.6494
+## 34    0.67      722      446       226       234        0.6559
+## 35    0.66      731      439       233       225        0.6611
+## 36    0.65      747      428       244       209        0.6719
+## 37    0.64      756      421       251       200        0.6779
+## 38    0.63      772      413       259       184        0.6918
+## 39    0.62      779      404       268       177        0.6954
+## 40    0.61      783      395       277       173        0.6954
+## 41    0.60      791      389       283       165        0.7022
+## 42    0.59      801      381       291       155        0.7108
+## 43    0.58      810      372       300       146        0.7181
+## 44    0.57      817      364       308       139        0.7237
+## 45    0.56      821      357       315       135        0.7256
+## 46    0.55      826      352       320       130        0.7303
+## 47    0.54      830      342       330       126        0.7308
+## 48    0.53      833      335       337       123        0.7314
+## 49    0.52      838      332       340       118        0.7378
+## 50    0.51      847      325       347       109        0.7488
+## 51    0.50      855      318       354       101        0.7589
+## 52    0.49      858      310       362        98        0.7598
+## 53    0.48      863      299       373        93        0.7628
+## 54    0.47      869      291       381        87        0.7698
+## 55    0.46      871      286       386        85        0.7709
+## 56    0.45      876      282       390        80        0.7790
+## 57    0.44      881      274       398        75        0.7851
+## 58    0.43      883      268       404        73        0.7859
+## 59    0.42      888      261       411        68        0.7933
+## 60    0.41      890      255       417        66        0.7944
+## 61    0.40      893      245       427        63        0.7955
+## 62    0.39      899      237       435        57        0.8061
+## 63    0.38      904      234       438        52        0.8182
+## 64    0.37      910      228       444        46        0.8321
+## 65    0.36      913      218       454        43        0.8352
+## 66    0.35      915      210       462        41        0.8367
+## 67    0.34      916      204       468        40        0.8361
+## 68    0.33      921      199       473        35        0.8504
+## 69    0.32      925      195       477        31        0.8628
+## 70    0.31      926      187       485        30        0.8618
+## 71    0.30      929      179       493        27        0.8689
+## 72    0.29      931      173       499        25        0.8737
+## 73    0.28      933      167       505        23        0.8789
+## 74    0.27      935      161       511        21        0.8846
+## 75    0.26      935      159       513        21        0.8833
+## 76    0.25      938      151       521        18        0.8935
+## 77    0.24      942      145       527        14        0.9119
+## 78    0.23      942      142       530        14        0.9103
+## 79    0.22      944      138       534        12        0.9200
+## 80    0.21      945      127       545        11        0.9203
+## 81    0.20      946      119       553        10        0.9225
+## 82    0.19      948      114       558         8        0.9344
+## 83    0.18      948      109       563         8        0.9316
+## 84    0.17      948      103       569         8        0.9279
+## 85    0.16      950      101       571         6        0.9439
+## 86    0.15      950       97       575         6        0.9417
+## 87    0.14      951       93       579         5        0.9490
+## 88    0.13      951       90       582         5        0.9474
+## 89    0.12      952       85       587         4        0.9551
+## 90    0.11      952       78       594         4        0.9512
+## 91    0.10      952       70       602         4        0.9459
+## 92    0.09      952       63       609         4        0.9403
+## 93    0.08      952       54       618         4        0.9310
+## 94    0.07      953       48       624         3        0.9412
+## 95    0.06      954       38       634         2        0.9500
+## 96    0.05      955       35       637         1        0.9722
+## 97    0.04      955       27       645         1        0.9643
+## 98    0.03      955       18       654         1        0.9474
+## 99    0.02      955       11       661         1        0.9167
+## 100   0.01      956        2       670         0        1.0000
+## 101   0.00      956        0       672         0           NaN
+##     true_pos_rate false_pos_rate false_neg_rate accuracy
+## 1             NaN            NaN        0.58722   0.4128
+## 2             NaN            NaN        0.58722   0.4128
+## 3          1.0000        0.00000        0.58697   0.4134
+## 4          0.9500        0.05000        0.58271   0.4238
+## 5          0.8776        0.12245        0.57821   0.4355
+## 6          0.9059        0.09412        0.56967   0.4552
+## 7          0.9262        0.07377        0.55976   0.4767
+## 8          0.9357        0.06433        0.54633   0.5043
+## 9          0.9327        0.06731        0.53662   0.5233
+## 10         0.9249        0.07510        0.52509   0.5448
+## 11         0.9119        0.08814        0.51538   0.5620
+## 12         0.8988        0.10123        0.50922   0.5725
+## 13         0.8864        0.11357        0.50197   0.5842
+## 14         0.8856        0.11443        0.48940   0.6032
+## 15         0.8713        0.12867        0.48101   0.6149
+## 16         0.8542        0.14579        0.47327   0.6247
+## 17         0.8499        0.15010        0.46637   0.6333
+## 18         0.8388        0.16117        0.46026   0.6400
+## 19         0.8359        0.16408        0.44995   0.6517
+## 20         0.8254        0.17455        0.44335   0.6579
+## 21         0.8199        0.18012        0.43496   0.6658
+## 22         0.8159        0.18409        0.42360   0.6763
+## 23         0.8076        0.19236        0.41802   0.6800
+## 24         0.8066        0.19342        0.40934   0.6873
+## 25         0.8053        0.19474        0.39631   0.6978
+## 26         0.8026        0.19742        0.39156   0.7009
+## 27         0.8003        0.19975        0.38341   0.7064
+## 28         0.7926        0.20736        0.38130   0.7058
+## 29         0.7855        0.21454        0.37643   0.7070
+## 30         0.7785        0.22145        0.36925   0.7095
+## 31         0.7725        0.22748        0.36486   0.7101
+## 32         0.7675        0.23253        0.35534   0.7138
+## 33         0.7639        0.23605        0.35057   0.7150
+## 34         0.7616        0.23840        0.34412   0.7174
+## 35         0.7583        0.24170        0.33886   0.7187
+## 36         0.7538        0.24622        0.32810   0.7217
+## 37         0.7507        0.24926        0.32206   0.7230
+## 38         0.7488        0.25121        0.30821   0.7279
+## 39         0.7440        0.25597        0.30465   0.7267
+## 40         0.7387        0.26132        0.30458   0.7236
+## 41         0.7365        0.26350        0.29783   0.7248
+## 42         0.7335        0.26648        0.28918   0.7260
+## 43         0.7297        0.27027        0.28185   0.7260
+## 44         0.7262        0.27378        0.27634   0.7254
+## 45         0.7227        0.27729        0.27439   0.7236
+## 46         0.7208        0.27923        0.26971   0.7236
+## 47         0.7155        0.28448        0.26923   0.7199
+## 48         0.7120        0.28803        0.26856   0.7174
+## 49         0.7114        0.28862        0.26222   0.7187
+## 50         0.7094        0.29062        0.25115   0.7199
+## 51         0.7072        0.29280        0.24105   0.7205
+## 52         0.7033        0.29672        0.24020   0.7174
+## 53         0.6982        0.30178        0.23724   0.7138
+## 54         0.6952        0.30480        0.23016   0.7125
+## 55         0.6929        0.30708        0.22911   0.7107
+## 56         0.6919        0.30806        0.22099   0.7113
+## 57         0.6888        0.31118        0.21490   0.7095
+## 58         0.6861        0.31391        0.21408   0.7070
+## 59         0.6836        0.31640        0.20669   0.7058
+## 60         0.6809        0.31905        0.20561   0.7033
+## 61         0.6765        0.32348        0.20455   0.6990
+## 62         0.6739        0.32609        0.19388   0.6978
+## 63         0.6736        0.32638        0.18182   0.6990
+## 64         0.6721        0.32792        0.16788   0.6990
+## 65         0.6679        0.33211        0.16475   0.6947
+## 66         0.6645        0.33551        0.16335   0.6910
+## 67         0.6618        0.33815        0.16393   0.6880
+## 68         0.6607        0.33931        0.14957   0.6880
+## 69         0.6598        0.34023        0.13717   0.6880
+## 70         0.6563        0.34373        0.13825   0.6837
+## 71         0.6533        0.34669        0.13107   0.6806
+## 72         0.6510        0.34895        0.12626   0.6781
+## 73         0.6488        0.35118        0.12105   0.6757
+## 74         0.6466        0.35339        0.11538   0.6732
+## 75         0.6457        0.35428        0.11667   0.6720
+## 76         0.6429        0.35709        0.10651   0.6689
+## 77         0.6413        0.35875        0.08805   0.6677
+## 78         0.6399        0.36005        0.08974   0.6658
+## 79         0.6387        0.36130        0.08000   0.6646
+## 80         0.6342        0.36577        0.07971   0.6585
+## 81         0.6311        0.36891        0.07752   0.6542
+## 82         0.6295        0.37052        0.06557   0.6523
+## 83         0.6274        0.37260        0.06838   0.6493
+## 84         0.6249        0.37508        0.07207   0.6456
+## 85         0.6246        0.37541        0.05607   0.6456
+## 86         0.6230        0.37705        0.05825   0.6431
+## 87         0.6216        0.37843        0.05102   0.6413
+## 88         0.6204        0.37965        0.05263   0.6394
+## 89         0.6186        0.38142        0.04494   0.6370
+## 90         0.6158        0.38422        0.04878   0.6327
+## 91         0.6126        0.38739        0.05405   0.6278
+## 92         0.6099        0.39013        0.05970   0.6235
+## 93         0.6064        0.39363        0.06897   0.6179
+## 94         0.6043        0.39569        0.05882   0.6149
+## 95         0.6008        0.39924        0.05000   0.6093
+## 96         0.5999        0.40013        0.02778   0.6081
+## 97         0.5969        0.40313        0.03571   0.6032
+## 98         0.5935        0.40646        0.05263   0.5977
+## 99         0.5910        0.40903        0.08333   0.5934
+## 100        0.5879        0.41205        0.00000   0.5885
+## 101        0.5872        0.41278            NaN   0.5872
+</code></pre>
+
+<p>In examining the results of our predictive model, we find that at a true negative rate of 0.8, the accuracy of our classifier is 71%. The maximum accuracy is approximately 73.5%, at which the true negative rate is 0.69. Therefore, we feel our data supports using the 0.8 threshold for high risk because the modest tradeoff in accuracy is more than made up by the increase in true negative rate.</p>
+
+<p>There are two key ways to compare the model developed in this work to the RIDE Early Warning System aggregate indicator. The first measure is <em>coverage</em>, or what proportion of total drop outs are identified by the measure. For the same reasons we are maximizing the <em>true negative rate</em>, we want to be sure that our risk thresholds identify as many of the students who ultimately fail to graduate as possible. Our model captures 37% of all drop outs in the 8th grade, a consderable improvement on the state&#39;s model which captures fewer than 20% of all drop outs. The state&#39;s model, however, is slightly more accurate, at approximately 80% versus 71%. We believe this model represents a better tradeoff between accuracy and coverage. Many more students would be incorrectly identified as in need of supports under the state model in order to capture 37% of all drop outs.</p>
+
+</body>
+
+</html>
+
