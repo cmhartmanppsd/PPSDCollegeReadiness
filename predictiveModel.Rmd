@@ -288,14 +288,14 @@ fails_qtr1_0910 <- tables2009_2010$course %.%
                    summarize(fails_qtr1 = n())
 
 
-hscohort <- left_join(hscohort, 
-                      rbind(gpa_qtr1_0708, gpa_qtr1_0809, gpa_qtr1_0910) %.%
-                      select(sasid, fails_qtr1))
-
-hscohort <- left_join(hscohort, 
-                      rbind(fails_qtr1_0708, fails_qtr1_0809, 
-                            fails_qtr1_0910) %.%
-                      select(sasid, fails_qtr1))
+# hscohort <- left_join(hscohort, 
+#                       rbind(gpa_qtr1_0708, gpa_qtr1_0809, gpa_qtr1_0910) %.%
+#                       select(sasid, fails_qtr1))
+# 
+# hscohort <- left_join(hscohort, 
+#                       rbind(fails_qtr1_0708, fails_qtr1_0809, 
+#                             fails_qtr1_0910) %.%
+#                       select(sasid, fails_qtr1))
 
 ```
 The model used to predict graduation for ninth grade students is restricted to first-time ninth grade students who do not transfer out of Providence Public Schools.
