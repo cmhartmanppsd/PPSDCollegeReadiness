@@ -21,7 +21,10 @@ early_race <- modal_person_attribute(rbind(tables2005_2006$person,
                                            tables2006_2007$person, 
                                            tables2007_2008$person,
                                            tables2008_2009$person, 
-                                           tables2009_2010$person), 'race')
+                                           tables2009_2010$person),
+                                     sid = 'sasid',
+                                     attribute = 'race',
+                                     year = 'schoolyear')
 
 # Select the most often reported race in the later period. Although there is one
 # year in the current data, this will be helpful as additional years of data are
@@ -29,7 +32,9 @@ early_race <- modal_person_attribute(rbind(tables2005_2006$person,
 late_race <- modal_person_attribute(rbind(tables2010_2011$person,
                                           tables2011_2012$person,
                                           tables2012_2013$person),
-                                    'race')
+                                    sid = 'sasid',
+                                    attribute = 'race',
+                                    year = 'schoolyear')
 
 # Set dates/year for the early and late period modal races.
 early_race$schoolyear <- '2009_2010'
@@ -40,15 +45,30 @@ late_race$schoolyear <- '2010_2011'
 # is one for a student and the early_race value is there is no late_race value.
 # This may be slower (CPU time) than other methods, but is done because it
 # reuses existing code.
-race <- modal_person_attribute(rbind(early_race, late_race), 'race')
+race <- modal_person_attribute(rbind(early_race, late_race), 
+                               sid = 'sasid',
+                               attribute = 'race',
+                               year = 'schoolyear')
 # Select the most often reported sex. 
-sex <- modal_person_attribute(all_years, 'sex')
+sex <- modal_person_attribute(all_years, 
+                              sid = 'sasid',
+                              attribute = 'sex',
+                              year = 'schoolyear')
 # Select the most often reported DOB
-dob <- modal_person_attribute(all_years, 'dob')
+dob <- modal_person_attribute(all_years, 
+                              sid = 'sasid', 
+                              attribute = 'dob', 
+                              year = 'schoolyear')
 # Select the most often reported student_language
-student_lang <- modal_person_attribute(all_years, 'student_lang')
+student_lang <- modal_person_attribute(all_years, 
+                                       sid = 'sasid',
+                                       attribute = 'student_lang',
+                                       year = 'schoolyear')
 # Select the most often reported parent_language
-parent_lang <- modal_person_attribute(all_years, 'parent_lang')
+parent_lang <- modal_person_attribute(all_years, 
+                                      sid = 'sasid',
+                                      attribute = 'parent_lang',
+                                      year = 'schoolyear')
 # Ever FRPL/LEP/SPED
 # In these three categories, the business rule is not to select the most recent
 # modal value. Rather, we report a student as having been FRPL-eligible, LEP, or
@@ -89,21 +109,13 @@ all_years_enr <- rbind(tables2005_2006$enrollment,
                        tables2012_2013$enrollment)
 all_years_enr$sasid <- as.character(all_years_enr$sasid)
 first_hs <- select_hs(all_years_enr, 'first')
-names(first_hs)[-1] <- paste(names(first_hs)[-1], '_first',sep='')
 # Select the last high school attended with same process as the first.
 last_hs <- select_hs(all_years_enr, 'last')
-names(last_hs)[-1] <- paste(names(last_hs)[-1], '_last',sep='')
 # Select the longest attended high school with same process as the others.
 # The select_hs() function looks for the greatest sum of days enrolled to find
 # the longest high school attended.
 long_hs <- select_hs(all_years_enr, 'long')
 
-# The longest high school attended is not specifc to a schoolyear or grade.
-# Where the longest high school is not the first or last, we are not interested
-# specifically in why students may have unenrolled.
-long_hs <- long_hs[, which(!names(long_hs) %in% c('schoolyear', 'grade', 
-                                                  'exit_type'))]
-names(long_hs)[-1] <- paste(names(long_hs)[-1], '_long',sep='')
 # Build the person table, with canonical values for each of the above.
 # IDs across all observed years
 person <- all_years[,c('sasid', 'studentid')]
