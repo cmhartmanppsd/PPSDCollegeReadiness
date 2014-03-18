@@ -32,9 +32,16 @@ modal_test <- data.frame(sasid = c('1000', '1001', '1000', '1000',
                                    '1005', '1005', rep('1006',4)),
                          race = c('Black', 'White', 'Black', 'Hispanic', 'White', 'White',
                                   rep('Black',2), rep('Hispanic',2)),
-                         year = c('2005_2006', '2005_2006', '2006_2007', '2007_2008',
+                         schoolyear = c('2005_2006', '2005_2006', '2006_2007', '2007_2008',
                                   '2009_2010', '2010_2011', '2006_2007', '2007_2008',
                                   '2009_2010','2010_2011'))
+modal_test <- data.frame(sasid = c('1000', '1001', '1000', '1000', 
+                                   '1005', '1005', rep('1006',4)),
+                         race = c('Black', 'White', 'Black', 'Hispanic', 'White', 'White',
+                                  rep('Black',2), rep('Hispanic',2)),
+                         year = as.numeric(c('2006', '2006', '2007', '2008',
+                                  '2010', '2011', '2007', '2008',
+                                  '2010','2011')))
 
 modal_person_attribute <- function(x, sid, attribute, year){
   grouping <- lapply(list(sid, attribute), as.symbol)
