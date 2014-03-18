@@ -61,6 +61,6 @@ extract_person_annual <- function(regYr){
   tbl_person_annual$sum_present <- with(tbl_person_annual, 
                                         ifelse(sum_present < 0, NA, sum_present))
   tbl_person_annual$sum_enrolled <- with(tbl_person_annual, 
-                                        ifelse(sum_enrolled < 0, NA, sum_present))
+                                        ifelse(sum_enrolled < 0, NA, sum_enrolled))
   return(tbl_person_annual)
 }
