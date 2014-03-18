@@ -60,6 +60,7 @@ names(stu2011_12) <- c('schoolyear', 'studentid', 'sasid', 'last_name',
                        'student_lang', 'parent_lang', 'birth_place')
 stu2011_12$dob <- as.Date(stu2011_12$dob, format='%m/%d/%Y')
 stu2011_12$schoolyear <- '2011_2012'
+stu2011_12$sum_present <- with(stu2011_12, ifelse(sum_present < 0, NA, sum_present))
 enr2011_12 <- read.csv('/Volumes/ProvidenceFiles/REGData/Enrollment_2011_2012.csv')
 enr2011_12 <- merge(enr2011_12, stu2011_12[, c('studentid', 'sasid', 
                                                'grade', 'last_name')],
@@ -93,6 +94,7 @@ names(stu2012_13) <- c('schoolyear', 'studentid', 'sasid', 'last_name',
                        'student_lang', 'parent_lang', 'birth_place')
 stu2012_13$dob <- as.Date(stu2012_13$dob, format='%m/%d/%Y')
 stu2012_13$schoolyear <- '2012_2013'
+stu2012_13$sum_present <- with(stu2012_13, ifelse(sum_present < 0, NA, sum_present))
 enr2012_13 <- read.csv('/Volumes/ProvidenceFiles/REGData/Enrollment_2012_2013.csv')
 enr2012_13 <- merge(enr2012_13, stu2012_13[, c('studentid', 'sasid', 
                                                'grade', 'last_name')],
