@@ -67,3 +67,4 @@ modal_person_attribute <- function(x, sid, attribute, year){
   return(results)
 }
 
+
