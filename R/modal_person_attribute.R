@@ -44,20 +44,26 @@ modal_test <- data.frame(sasid = c('1000', '1001', '1000', '1000',
                                   '2010','2011')))
 
 modal_person_attribute <- function(x, sid, attribute, year){
-  grouping <- lapply(list(sid, attribute), as.symbol)
-  original <- x
+  # Select only the important columns
+  x <- x[,c(sid, attribute, year)]
+  names(x) <- c('sid', 'attribute', 'year')
+  # Clean up years
+  if(TRUE %in% grepl('_', x$year)){
+    x$year <- gsub(pattern='[0-9]{4}_([0-9]{4})', '\\1', x$year)
+  }  
+  # Calculate the count for each person-attribute combo and select max
   max_attributes <- x %.% 
-                    regroup(grouping) %.%
+                    group_by(sid, attribute) %.%
                     summarize(count = n()) %.%
-                    filter(count == max(count))
-  recent_max <- left_join(original, max_attributes) %.%
-                regroup(list(grouping[[1]])) %.%
-                filter(!is.na(count) & count == max(count))
-  if(TRUE %in% grepl('_', recent_max[[year]])){
-    recent_max[[year]] <- gsub(pattern='[0-9]{4}_([0-9]{4})', '\\1', recent_max[[year]])
-  }
-  results <- recent_max %.% 
-             regroup(list(grouping[[1]])) %.%
-             filter(year == max(year))
-  return(results[,c(sid, attribute)])
+                    filter(count == max(count)) %.%
+                    select(sid, attribute)
+  # Find the max year for each person-attribute combo
+  results <- max_attributes %.% 
+             left_join(x) %.%
+             group_by(sid) %.%
+             filter(year == max(year)) %.%
+             select(sid, attribute)
+  names(results) <- c(sid, attribute)
+  return(results)
 }
+
