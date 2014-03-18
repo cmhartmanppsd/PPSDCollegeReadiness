@@ -58,5 +58,9 @@ extract_person_annual <- function(regYr){
                 2, as.character), 2, str_trim, side='both')
   tbl_person_annual$zip_code <- as.factor(sprintf('%05i', 
                                                   tbl_person_annual$zip_code))
+  tbl_person_annual$sum_present <- with(tbl_person_annual, 
+                                        ifelse(sum_present < 0, NA, sum_present))
+  tbl_person_annual$sum_enrolled <- with(tbl_person_annual, 
+                                        ifelse(sum_enrolled < 0, NA, sum_present))
   return(tbl_person_annual)
 }
