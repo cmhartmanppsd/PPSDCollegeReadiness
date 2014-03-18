@@ -1,28 +1,46 @@
 select_hs <- function(df, type="first"){
-  dt <- data.table(df, key=c('sasid'))
-  if(type=="first"){
-    hs <- dt[grade %in% c(9,10,11,12), .SD[which.min(enroll_date)], 
-             by=key(dt)][]
-#     test <- dt[grade %in% c(9,10,11,12), 
-#                list(enroll_date=min(enroll_date, na.rm=TRUE)), by=key(dt)] 
-#     setkeyv(test, c('sasid','enroll_date'))
-#     setkeyv(dt, c('sasid', 'enroll_date'))
-#     test <- test[dt]
+  if(type=='first'){
+  hs <- df %.% 
+        filter(grade %in% c(9, 10, 11, 12)) %.% 
+        group_by(sasid) %.% 
+        summarize(enroll_date = min(enroll_date))
+  hs <- left_join(hs, df %.% select(sasid, enroll_date, 
+                                    schno, school, grade, 
+                                    exit_type, schoolyear))
   }
   else if(type=="last"){
-    hs <- dt[grade %in% c(9,10,11,12), .SD[which.max(exit_date)], by=key(dt)]
+    hs <- df %.% 
+      filter(grade %in% c(9, 10, 11, 12)) %.% 
+      group_by(sasid) %.% 
+      summarize(enroll_date = max(enroll_date))
+    hs <- left_join(hs, df %.% select(sasid, enroll_date, 
+                                      schno, school, grade, 
+                                      exit_type, schoolyear))
   }
   else if(type=="long"){
-    hs <- dt[grade %in% c(9,10,11,12), list(total_adm = sum(adm)), 
-             by=c(key(dt),'schno')]
-    setkeyv(hs, c('sasid', 'schno'))
-    setkeyv(dt, c('sasid', 'schno'))
-    hs<- hs[dt[grade %in% c(9, 10, 11, 12)]][,.SD[which.max(total_adm)], 
-                                             by=sasid]
+    hs <- df %.%
+          filter(grade %in% c(9, 10, 11, 12)) %.%
+          group_by(sasid, schno, school) %.%
+          summarize(total_adm = sum(adm))
+    hs <- hs %.%
+          group_by(sasid) %.%
+          filter(rank(total_adm) == 1) %.%
+          select(sasid, schno, school)
   }
   else{
     stop(paste("Unrecognized type=", type))
   }
-  return(as.data.frame(hs[,list(sasid, schno, school, schoolyear, 
-                                grade, exit_type)]))
+  names(hs)[-1] <- paste(names(hs)[-1], '_', type,sep='')
+  return(hs)
 }
+
+# test.hs <- data.frame(sasid = c(rep(10001,4)),
+#                       schno = c(1, 1, 2, 2),
+#                       school = c('Adams', 'Adams', 'Washington', 'Washington'),
+#                       adm = c(180, 98, 82, 180),
+#                       enroll_date = as.Date(c("2000-09-01", "2001-09-01", 
+#                                               "2002-01-01", "2003-09-01"), 
+#                                             format='%Y-%m-%d'),
+#                       exit_type = c("Promoted", "Moved", 
+#                                     "Promoted", "Graduated"),
+#                       grade = c(11,11,12,12))
