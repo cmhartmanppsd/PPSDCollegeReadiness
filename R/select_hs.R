@@ -22,9 +22,9 @@ select_hs <- function(df, type="first"){
           filter(grade %in% c(9, 10, 11, 12)) %.%
           group_by(sasid, schno, school) %.%
           summarize(total_adm = sum(adm))
-    hs <- hs %.%
+    hs <- ungroup(hs) %.% 
           group_by(sasid) %.%
-          filter(rank(total_adm) == 1) %.%
+          filter(total_adm == max(total_adm)) %.%
           select(sasid, schno, school)
   }
   else{
