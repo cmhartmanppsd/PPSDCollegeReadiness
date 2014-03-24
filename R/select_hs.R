@@ -7,6 +7,9 @@ select_hs <- function(df, type="first"){
   hs <- left_join(hs, df %.% select(sasid, enroll_date, 
                                     schno, school, grade, 
                                     exit_type, schoolyear))
+  hs <- hs %.%
+        group_by(sasid) %.%
+        filter(row_number(desc(schoolyear))==1)
   }
   else if(type=="last"){
     hs <- df %.% 
@@ -16,6 +19,9 @@ select_hs <- function(df, type="first"){
     hs <- left_join(hs, df %.% select(sasid, enroll_date, 
                                       schno, school, grade, 
                                       exit_type, schoolyear))
+    hs <- hs %.%
+          group_by(sasid) %.%
+          filter(row_number(desc(schoolyear))==1)
   }
   else if(type=="long"){
     hs <- df %.%
@@ -25,6 +31,11 @@ select_hs <- function(df, type="first"){
     hs <- ungroup(hs) %.% 
           group_by(sasid) %.%
           filter(total_adm == max(total_adm)) %.%
+          select(sasid, schno, school)
+    hs <- left_join(hs, df %.% select(sasid, schno, schoolyear))
+    hs <- hs %.% 
+          group_by(sasid) %.% 
+          filter(row_number(desc(schoolyear))==1) %.%
           select(sasid, schno, school)
   }
   else{
