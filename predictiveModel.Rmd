@@ -33,6 +33,8 @@ How many students who were PPSD 8th graders who attend high school in PPSD the f
 ```{r CohortFutureYear}
 prop.table(table(starting_grade$sasid %in% filter(tables2007_2008$person_annual, 
                                                   grade == 9)$sasid))
+source('attendance.R')
+attendance$sasid <- as.character(attendance$sasid)
 ```
 
 ```{r PredictiveModelData}
