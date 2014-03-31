@@ -509,14 +509,40 @@ hs0910 <- left_join(hs0910, mobile0910)
 hscohort <- rbind(hs0708, hs0809, hs0910)
 hscohort <- filter(hscohort, transfer_out=='N')
 hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
-basemodel9thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ 
-                         attendnormal + gpa8th + gpa9th + fails + retained + 
+hscohort$graduated <- as.factor(hscohort$graduated)
+hscohort <- na.omit(hscohort)
+trainIndex <- createDataPartition(hscohort$graduated,
+                                  p = .8, list=FALSE)
+hscohort_train <- hscohort[trainIndex,]
+hscohort_test <- hscohort[-trainIndex,]
+
+model.1 <- train(graduated ~ attendnormal + gpa8th + gpa9th + fails + retained + 
                          I(moves>1) + suspended*I(iep=='Y') + I(ageHS>190) +
-                         I(schno_first=='164'),
-                         data=hscohort, family=binomial(link='logit'))
-summary(basemodel9thgrade)
-plot(roc(graduated ~ predict(basemodel9thgrade, newdata = hscohort, 
-                                    type='response'), hscohort), print.auc=TRUE)
+                         I(schno_first=='164'), 
+                 data=hscohort_train,
+                 method='glm',
+                 tuneLength = 10,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary),
+                 metric='ROC')
+
+model.2 <- train(graduated ~ attendnormal + gpa8th + gpa9th + fails + retained + 
+                         I(moves>1) + suspended*I(iep=='Y') + I(ageHS>190) +
+                         I(schno_first=='164'), 
+                 data=hscohort_train,
+                 method='ctree',
+                 tuneLength = 10,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary),
+                 metric='ROC')
+
+summary(resamples(list(glm = model.1, forrest = model.2)))
+
+#summary(basemodel9thgrade)
+# plot(roc(graduated ~ predict(basemodel9thgrade, newdata = hscohort, 
+#                                     type='response'), hscohort), print.auc=TRUE)
 
 ```
 
