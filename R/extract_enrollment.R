@@ -29,12 +29,12 @@ extract_enrollment <- function(regYr){
             enroll_date))
   }
   if(length(grep('\\d{2}[./]\\d{2}[./]\\d{4}', tbl_stud_enroll$exit_date))>=1){
-    tbl_stud_enroll$enroll_date <- with(tbl_stud_enroll, 
+    tbl_stud_enroll$exit_date <- with(tbl_stud_enroll, 
       ifelse(grepl('\\d{2}[./]\\d{2}[./]\\d{4}', exit_date),
              difftime(as.Date(exit_date, format = '%m/%d/%Y'),
                       '1582-10-14',
                       units='secs'),
-             enroll_date))
+             exit_date))
   }
   tbl_stud_enroll[, c('enroll_date', 'exit_date')] <- 
     lapply(tbl_stud_enroll[, c('enroll_date', 'exit_date')], as.double)
