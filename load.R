@@ -62,8 +62,10 @@ stu2011_12$dob <- as.Date(stu2011_12$dob, format='%m/%d/%Y')
 stu2011_12$schoolyear <- '2011_2012'
 stu2011_12$sum_present <- with(stu2011_12, ifelse(sum_present < 0, NA, sum_present))
 enr2011_12 <- read.csv('/Volumes/ProvidenceFiles/REGData/Enrollment_2011_2012.csv')
-enr2011_12 <- merge(enr2011_12, stu2011_12[, c('studentid', 'sasid', 
-                                               'grade', 'last_name')],
+enr2011_12 <- merge(enr2011_12, 
+                    subset(stu2011_12[, c('studentid', 'sasid', 'grade', 'last_name')],
+                           !duplicated(stu2011_12[, c('studentid', 'sasid', 
+                                                      'grade', 'last_name')])),
                     by.x = 'id', by.y = 'studentid')
 names(enr2011_12)[which(names(enr2011_12)=='id')] <- 'studentid'
 names(enr2011_12)[which(names(enr2011_12)=='schyr')] <- 'schoolyear'
@@ -96,8 +98,10 @@ stu2012_13$dob <- as.Date(stu2012_13$dob, format='%m/%d/%Y')
 stu2012_13$schoolyear <- '2012_2013'
 stu2012_13$sum_present <- with(stu2012_13, ifelse(sum_present < 0, NA, sum_present))
 enr2012_13 <- read.csv('/Volumes/ProvidenceFiles/REGData/Enrollment_2012_2013.csv')
-enr2012_13 <- merge(enr2012_13, stu2012_13[, c('studentid', 'sasid', 
-                                               'grade', 'last_name')],
+enr2012_13 <- merge(enr2012_13, 
+                    subset(stu2012_13[, c('studentid', 'sasid', 'grade', 'last_name')],
+                           !duplicated(stu2012_13[, c('studentid', 'sasid', 
+                                                      'grade', 'last_name')])),
                     by.x = 'id', by.y = 'studentid')
 names(enr2012_13)[which(names(enr2012_13)=='id')] <- 'studentid'
 names(enr2012_13)[which(names(enr2012_13)=='schyr')] <- 'schoolyear'
