@@ -10,11 +10,27 @@ source("dependencies.R")
 
 ```
 ## Loading required package: foreign
-## Loading required package: reshape2
+## Loading required package: plyr
+## Loading required package: dplyr
+## 
+## Attaching package: 'dplyr'
+## 
+## The following objects are masked from 'package:plyr':
+## 
+##     arrange, desc, failwith, id, mutate, summarise, summarize
+## 
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+## 
 ## Loading required package: ggplot2
+## Loading required package: reshape2
 ## Loading required package: scales
 ## Loading required package: stringr
-## Loading required package: data.table
 ## Loading required package: pROC
 ## Type 'citation("pROC")' for a citation.
 ## 
@@ -25,26 +41,13 @@ source("dependencies.R")
 ##     cov, smooth, var
 ## 
 ## Loading required package: rstudio
-## Loading required package: plyr
-## Loading required package: dplyr
+## Loading required package: data.table
 ## 
-## Attaching package: 'dplyr'
+## Attaching package: 'data.table'
 ## 
-## The following objects are masked from 'package:plyr':
-## 
-##     arrange, desc, failwith, id, mutate, summarise
-## 
-## The following object is masked from 'package:data.table':
+## The following object is masked from 'package:dplyr':
 ## 
 ##     last
-## 
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-## 
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
 ```
 
 ```r
@@ -123,20 +126,6 @@ source("buildTables.R")
 
 ```
 ## [1] 328
-##   studentid      sasid        dob first_name last_name student_lang
-## 1   4000014 1000085228 10/30/1988       RUTH   SANTANA      SPANISH
-## 2   4000028 1000085169 09/21/1989      JAMES     REYES      SPANISH
-## 3   4000045 1000084993 05/30/1988       JOHN  OCTAVIUS       FRENCH
-## 4   4000053 1000119139 02/24/1988       JOEL    VALDEZ      SPANISH
-## 5   4000064 1000118731 03/13/1988    YOHANNY   BENZANT      SPANISH
-## 6   4000072 1000088531 02/09/1989   COURTNEY      LINK      ENGLISH
-##   parent_lang      birth_place sex schoolyear
-## 1     SPANISH     USA-NEW YORK   F  2005_2006
-## 2     SPANISH   DOMINICAN REP.   M  2005_2006
-## 3      FRENCH            HAITI   M  2005_2006
-## 4     SPANISH USA-RHODE ISLAND   M  2005_2006
-## 5     SPANISH   DOMINICAN REP.   F  2005_2006
-## 6     ENGLISH USA-RHODE ISLAND   F  2005_2006
 ```
 
 ```
@@ -146,98 +135,20 @@ source("buildTables.R")
 ```
 ## [1] "2006"
 ## [1] 638
-##   studentid      sasid        dob first_name last_name student_lang
-## 1   4000014 1000085228 10/30/1988       RUTH   SANTANA      SPANISH
-## 2   4000028 1000085169 09/21/1989      JAMES     REYES      SPANISH
-## 3   4000045 1000084993 05/30/1988       JOHN  OCTAVIUS       FRENCH
-## 4   4000064 1000118731 03/13/1988    YOHANNY   BENZANT      SPANISH
-## 5   4000089 1000084724 01/03/1989    LAMONTE  COPELAND      ENGLISH
-## 6   4000097 1000131570 03/19/1989  JACQUELIN   VAZQUEZ      ENGLISH
-##   parent_lang      birth_place sex schoolyear
-## 1     SPANISH     USA-NEW YORK   F  2006_2007
-## 2     SPANISH   DOMINICAN REP.   M  2006_2007
-## 3      FRENCH            HAITI   M  2006_2007
-## 4     SPANISH   DOMINICAN REP.   F  2006_2007
-## 5     ENGLISH USA-RHODE ISLAND   M  2006_2007
-## 6     ENGLISH USA-RHODE ISLAND   F  2006_2007
 ## [1] "2007"
 ## [1] 1289
-##   studentid      sasid        dob first_name last_name student_lang
-## 1   4000089 1000084724 01/03/1989    LAMONTE  COPELAND      ENGLISH
-## 2   4000301 1000088554 11/14/1989     EDWARD    SANTOS      SPANISH
-## 3   4000306 1000084665 06/23/1989     GRECIA VELASQUEZ      SPANISH
-## 4   4000354 1000182217 07/18/1989       ERIC    VALDEZ      ENGLISH
-## 5   4000360 1000116726 12/12/1989     TESHEL     WHITE      ENGLISH
-## 7   4000450 1000131155 11/11/1989      BRIAN    POMPEY      ENGLISH
-##   parent_lang      birth_place sex schoolyear
-## 1     ENGLISH USA-RHODE ISLAND   M  2007_2008
-## 2     SPANISH   DOMINICAN REP.   M  2007_2008
-## 3     SPANISH USA-RHODE ISLAND   F  2007_2008
-## 4     ENGLISH USA-RHODE ISLAND   M  2007_2008
-## 5     ENGLISH USA-RHODE ISLAND   F  2007_2008
-## 7     ENGLISH USA-RHODE ISLAND   M  2007_2008
 ## [1] "2008"
 ## [1] 1415
-##   studentid      sasid        dob first_name last_name student_lang
-## 2   4000484 1000085048 09/07/1990 JACQUELINE     LOPEZ      SPANISH
-## 3   4000495 1000088566 09/09/1990      JAMON     BROWN      ENGLISH
-## 4   4000496 1000084732 06/02/1990      RANDY    HOPPER      ENGLISH
-## 5   4000504 1000078562 12/06/1990     MAYLEE    TORRES      ENGLISH
-## 6   4000516 1000084548 11/19/1990    ANTHONY      TODD      ENGLISH
-## 7   4000524 1000089144 12/14/1990    DARLENE    RAPOSO      PORTUGU
-##   parent_lang      birth_place sex schoolyear
-## 2     SPANISH USA-RHODE ISLAND   F  2008_2009
-## 3     ENGLISH USA-RHODE ISLAND   M  2008_2009
-## 4     ENGLISH USA-RHODE ISLAND   M  2008_2009
-## 5     ENGLISH USA-RHODE ISLAND   F  2008_2009
-## 6     ENGLISH USA-RHODE ISLAND   M  2008_2009
-## 7     PORTUGU USA-RHODE ISLAND   F  2008_2009
 ## [1] "2009"
 ## [1] 1227
-##   studentid      sasid        dob  first_name last_name student_lang
-## 1   4000548 1000084873 08/30/1990      DANIEL  BERNARDO      ENGLISH
-## 2   4000582 1000160311 08/28/1990      DWAYNE    MONROE      ENGLISH
-## 3   4000624 1000096747 09/05/1990    COURTNEY    JULIUS      ENGLISH
-## 4   4000648 1000078719 12/13/1990       JULIO    ALICEA      SPANISH
-## 5   4000673 1000131207 03/29/1990      SANDRA    MORAIS      ENGLISH
-## 6   4000693 1000241449 03/04/1990 CHRISTOPHER  OLIVEIRA      ENGLISH
-##   parent_lang      birth_place sex schoolyear
-## 1     ENGLISH USA-RHODE ISLAND   M  2009_2010
-## 2     ENGLISH                    M  2009_2010
-## 3     ENGLISH USA-RHODE ISLAND   F  2009_2010
-## 4     SPANISH USA-RHODE ISLAND   M  2009_2010
-## 5     ENGLISH USA-RHODE ISLAND   F  2009_2010
-## 6  PORTUGUESE USA-RHODE ISLAND   M  2009_2010
-```
-
-```
-## Warning: NAs introduced by coercion
-```
-
-```
 ## [1] "2010"
 ## [1] 732
-##     studentid      sasid        dob first_name  last_name student_lang
-## 674   8309005 1000002055 09/14/1996     STEVEN      TRAYA      ENGLISH
-## 675   8309007 1000002056 08/25/1994      BUDDY      TRAYA      ENGLISH
-## 676   8336263 1000005102 08/23/1992     PERRIN     HAWVER      ENGLISH
-## 677   8326817 1000005852 12/22/1993     BRIANA     BRIGGS      ENGLISH
-## 678   8344027 1000006156 02/03/1994      SUADE     ROGERS      ENGLISH
-## 680   8287169 1000006310 11/09/1995       PAUL DE ANGELIS      ENGLISH
-##     parent_lang      birth_place sex schoolyear
-## 674     ENGLISH      PHILIPPINES   M  2010_2011
-## 675     ENGLISH      PHILIPPINES   M  2010_2011
-## 676     ENGLISH USA-RHODE ISLAND   M  2010_2011
-## 677     ENGLISH USA-RHODE ISLAND   F  2010_2011
-## 678     ENGLISH     USA-NEW YORK   M  2010_2011
-## 680     ENGLISH USA-RHODE ISLAND   M  2010_2011
 ```
 
 ```
 ## Warning: invalid factor level, NA generated
 ## Warning: invalid factor level, NA generated
 ## Warning: invalid factor level, NA generated
-## Warning: NAs introduced by coercion
 ```
 
 ```
@@ -254,11 +165,13 @@ source("person.R")
 ```
 
 ```
-## [1] "Race Complete"
-## [1] "Sex Complete"
-## [1] "dob Complete"
-## [1] "Student_lang Complete"
-## [1] "parent_lang Complete"
+## Joining by: c("sid", "attribute")
+## Joining by: c("sid", "attribute")
+## Joining by: c("sid", "attribute")
+## Joining by: c("sid", "attribute")
+## Joining by: c("sid", "attribute")
+## Joining by: c("sid", "attribute")
+## Joining by: c("sid", "attribute")
 ```
 
 ```
@@ -268,92 +181,33 @@ source("person.R")
 ```
 
 ```
-## [1] "everELL Complete"
-## [1] "everIEP Complete"
-## [1] "first_hs Complete"
-## [1] "last_hs Complete"
-## [1] "long_hs Complete"
-## [1] "Remove duplicate sasid"
-```
-
-```
+## Joining by: c("sasid", "enroll_date")
+## Joining by: c("sasid", "enroll_date")
+## Joining by: c("sasid", "schno")
+## Joining by: "sasid"
+## Joining by: "sasid"
+## Joining by: "sasid"
+## Joining by: "sasid"
+## Joining by: "sasid"
+## Joining by: "sasid"
+## Joining by: "sasid"
+## Joining by: "sasid"
+## Joining by: "sasid"
 ## Joining by: "sasid"
 ```
 
-```
-## [1] "Join Race"
-```
-
-```
-## Joining by: "sasid"
+```r
+source("attendance.R")
 ```
 
 ```
-## [1] "Join Sex"
+## Warning: invalid factor level, NA generated
+## Warning: invalid factor level, NA generated
+## Warning: invalid factor level, NA generated
 ```
 
-```
-## Joining by: "sasid"
-```
-
-```
-## [1] "Join Student_Lang"
-```
-
-```
-## Joining by: "sasid"
-```
-
-```
-## [1] "Join Parent_Lang"
-```
-
-```
-## Joining by: "sasid"
-```
-
-```
-## [1] "Join dob"
-```
-
-```
-## Joining by: "sasid"
-```
-
-```
-## [1] "Join everELL"
-```
-
-```
-## Joining by: "sasid"
-```
-
-```
-## [1] "Join everIEP"
-```
-
-```
-## Joining by: "sasid"
-```
-
-```
-## [1] "Join 1st HS"
-```
-
-```
-## Joining by: "sasid"
-```
-
-```
-## [1] "Join Long HS"
-```
-
-```
-## Joining by: "sasid"
-```
-
-```
-## [1] "Join Last HS"
+```r
+attendance$sasid <- as.character(attendance$sasid)
 ```
 
 We present a new visualization that will assist in understanding where and how students fall off-track on their path from middle school through high school graduation. Our first cohort of students were 8th graders in the 2006-2007 school year. 
@@ -423,17 +277,6 @@ hs0910 <- subset(person, (schoolyear_first == "2009_2010" & grade_first == 9) |
 hs0708$sasid <- as.character(hs0708$sasid)
 hs0809$sasid <- as.character(hs0809$sasid)
 hs0910$sasid <- as.character(hs0910$sasid)
-source("attendance.R")
-```
-
-```
-## Warning: invalid factor level, NA generated
-## Warning: invalid factor level, NA generated
-## Warning: invalid factor level, NA generated
-```
-
-```r
-attendance$sasid <- as.character(attendance$sasid)
 
 hs0708 <- left_join(hs0708, attendance %.% filter(schoolyear == "2006_2007") %.% 
     dplyr::select(sasid, attendance, tardy, suspended))
@@ -477,11 +320,42 @@ names(hs0910)[which(names(hs0910) %in% c("attendance"))] <- "attendance8th"
 hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date("2007-09-01"), units = "months"))
 hs0809 <- mutate(hs0809, ageHS = age_calc(dob, as.Date("2008-09-01"), units = "months"))
 hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date("2009-09-01"), units = "months"))
-# Calculate mobility for students Eighth Grade year mobile8th <-
-# moves_calc(subset(tables2006_2007$enrollment, sasid %in% hs0708$sasid))
+# Calculate mobility for students Eighth Grade year
+mobile0607 <- moves_calc(subset(tables2006_2007$enrollment, sasid %in% hs0708$sasid))
 
-# mobile8th$sasid <- as.character(mobile8th$sasid) hs0708 <-
-# left_join(hs0708, mobile8th)
+mobile0607$sasid <- as.character(mobile0607$sasid)
+hs0708 <- left_join(hs0708, mobile0607)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+
+mobile0708 <- moves_calc(subset(tables2007_2008$enrollment, sasid %in% hs0809$sasid))
+
+mobile0708$sasid <- as.character(mobile0708$sasid)
+hs0809 <- left_join(hs0809, mobile0708)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+
+mobile0809 <- moves_calc(subset(tables2008_2009$enrollment, sasid %in% hs0910$sasid))
+
+mobile0809$sasid <- as.character(mobile0809$sasid)
+hs0910 <- left_join(hs0910, mobile0809)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
 
 # Bring in 8th grade performance on standardized tests.
 tables2006_2007$achievement$sasid <- as.character(tables2006_2007$achievement$sasid)
@@ -624,14 +498,7 @@ hscohort <- rbind(hs0708, hs0809, hs0910)
 hscohort <- filter(hscohort, transfer_out == "N")
 hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
 basemodel8thgrade <- glm(as.numeric(as.factor(graduated)) - 1 ~ attendnormal + 
-    gpa8th + reanormal + matnormal + I(ageHS < 190), data = hscohort, family = binomial(link = "logit"))
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```r
+    gpa8th + matnormal + reanormal + I(ageHS < 190), data = hscohort, family = binomial(link = "logit"))
 require(lme4)
 ```
 
@@ -672,30 +539,30 @@ summary(basemodel8thgrade)
 ## 
 ## Call:
 ## glm(formula = as.numeric(as.factor(graduated)) - 1 ~ attendnormal + 
-##     gpa8th + reanormal + matnormal + I(ageHS < 190), family = binomial(link = "logit"), 
+##     gpa8th + matnormal + reanormal + I(ageHS < 190), family = binomial(link = "logit"), 
 ##     data = hscohort)
 ## 
 ## Deviance Residuals: 
 ##    Min      1Q  Median      3Q     Max  
-## -2.763  -0.742   0.457   0.731   3.026  
+## -2.693  -0.619   0.426   0.696   2.978  
 ## 
 ## Coefficients:
 ##                    Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)         -2.0866     0.2868   -7.28  3.5e-13 ***
-## attendnormal         1.0006     0.0763   13.11  < 2e-16 ***
-## gpa8th               0.7826     0.0555   14.10  < 2e-16 ***
-## reanormal            0.1098     0.0594    1.85   0.0645 .  
-## matnormal            0.1886     0.0590    3.20   0.0014 ** 
-## I(ageHS < 190)TRUE   1.0416     0.2600    4.01  6.2e-05 ***
+## (Intercept)         -2.1645     0.2926   -7.40  1.4e-13 ***
+## attendnormal         0.9902     0.0704   14.06  < 2e-16 ***
+## gpa8th               0.8485     0.0580   14.64  < 2e-16 ***
+## matnormal            0.1362     0.0609    2.24    0.025 *  
+## reanormal            0.1325     0.0618    2.15    0.032 *  
+## I(ageHS < 190)TRUE   1.0828     0.2638    4.10  4.1e-05 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 4955.6  on 3936  degrees of freedom
-## Residual deviance: 3797.8  on 3931  degrees of freedom
-##   (2095 observations deleted due to missingness)
-## AIC: 3810
+##     Null deviance: 4849.1  on 3911  degrees of freedom
+## Residual deviance: 3582.9  on 3906  degrees of freedom
+##   (1969 observations deleted due to missingness)
+## AIC: 3595
 ## 
 ## Number of Fisher Scoring iterations: 5
 ```
@@ -706,7 +573,7 @@ summary(starting_grade$predict8th)
 
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-##     0.0     0.5     0.7     0.7     0.9     1.0     522
+##     0.0     0.5     0.8     0.7     0.9     1.0     522
 ```
 
 Predictive models are traditionally evaluated on their ability to correctly classify, or sort, students so that predicted outcomes match the actual outcomes. Our model outputs a probability of graduating for each student that can take on any value between 0 and 1. In order to sort students into those who are at risk of failing to graduate and those who are not, we have to select threshold probabilities above which students are not considered at risk and below which they are.
@@ -722,212 +589,801 @@ cutoff_matrix(starting_grade, "predict8th", "graduated")
 
 ```
 ##     cutoff true_pos true_neg false_pos false_neg true_neg_rate
-## 1     1.00        0      672         0       956        0.4128
-## 2     0.99        0      672         0       956        0.4128
-## 3     0.98        1      672         0       955        0.4130
-## 4     0.97       19      671         1       937        0.4173
-## 5     0.96       43      666         6       913        0.4218
-## 6     0.95       77      664         8       879        0.4303
-## 7     0.94      113      663         9       843        0.4402
-## 8     0.93      160      661        11       796        0.4537
-## 9     0.92      194      658        14       762        0.4634
-## 10    0.91      234      653        19       722        0.4749
-## 11    0.90      269      646        26       687        0.4846
-## 12    0.89      293      639        33       663        0.4908
-## 13    0.88      320      631        41       636        0.4980
-## 14    0.87      356      626        46       600        0.5106
-## 15    0.86      386      615        57       570        0.5190
-## 16    0.85      416      601        71       540        0.5267
-## 17    0.84      436      595        77       520        0.5336
-## 18    0.83      458      584        88       498        0.5397
-## 19    0.82      484      577        95       472        0.5500
-## 20    0.81      506      565       107       450        0.5567
-## 21    0.80      528      556       116       428        0.5650
-## 22    0.79      554      547       125       402        0.5764
-## 23    0.78      571      536       136       385        0.5820
-## 24    0.77      588      531       141       368        0.5907
-## 25    0.76      612      524       148       344        0.6037
-## 26    0.75      622      519       153       334        0.6084
-## 27    0.74      637      513       159       319        0.6166
-## 28    0.73      646      503       169       310        0.6187
-## 29    0.72      659      492       180       297        0.6236
-## 30    0.71      675      480       192       281        0.6307
-## 31    0.70      686      470       202       270        0.6351
-## 32    0.69      703      459       213       253        0.6447
-## 33    0.68      712      452       220       244        0.6494
-## 34    0.67      722      446       226       234        0.6559
-## 35    0.66      731      439       233       225        0.6611
-## 36    0.65      747      428       244       209        0.6719
-## 37    0.64      756      421       251       200        0.6779
-## 38    0.63      772      413       259       184        0.6918
-## 39    0.62      779      404       268       177        0.6954
-## 40    0.61      783      395       277       173        0.6954
-## 41    0.60      791      389       283       165        0.7022
-## 42    0.59      801      381       291       155        0.7108
-## 43    0.58      810      372       300       146        0.7181
-## 44    0.57      817      364       308       139        0.7237
-## 45    0.56      821      357       315       135        0.7256
-## 46    0.55      826      352       320       130        0.7303
-## 47    0.54      830      342       330       126        0.7308
-## 48    0.53      833      335       337       123        0.7314
-## 49    0.52      838      332       340       118        0.7378
-## 50    0.51      847      325       347       109        0.7488
-## 51    0.50      855      318       354       101        0.7589
-## 52    0.49      858      310       362        98        0.7598
-## 53    0.48      863      299       373        93        0.7628
-## 54    0.47      869      291       381        87        0.7698
-## 55    0.46      871      286       386        85        0.7709
-## 56    0.45      876      282       390        80        0.7790
-## 57    0.44      881      274       398        75        0.7851
-## 58    0.43      883      268       404        73        0.7859
-## 59    0.42      888      261       411        68        0.7933
-## 60    0.41      890      255       417        66        0.7944
-## 61    0.40      893      245       427        63        0.7955
-## 62    0.39      899      237       435        57        0.8061
-## 63    0.38      904      234       438        52        0.8182
-## 64    0.37      910      228       444        46        0.8321
-## 65    0.36      913      218       454        43        0.8352
-## 66    0.35      915      210       462        41        0.8367
-## 67    0.34      916      204       468        40        0.8361
-## 68    0.33      921      199       473        35        0.8504
-## 69    0.32      925      195       477        31        0.8628
-## 70    0.31      926      187       485        30        0.8618
-## 71    0.30      929      179       493        27        0.8689
-## 72    0.29      931      173       499        25        0.8737
-## 73    0.28      933      167       505        23        0.8789
-## 74    0.27      935      161       511        21        0.8846
-## 75    0.26      935      159       513        21        0.8833
-## 76    0.25      938      151       521        18        0.8935
-## 77    0.24      942      145       527        14        0.9119
-## 78    0.23      942      142       530        14        0.9103
-## 79    0.22      944      138       534        12        0.9200
-## 80    0.21      945      127       545        11        0.9203
-## 81    0.20      946      119       553        10        0.9225
-## 82    0.19      948      114       558         8        0.9344
-## 83    0.18      948      109       563         8        0.9316
-## 84    0.17      948      103       569         8        0.9279
-## 85    0.16      950      101       571         6        0.9439
-## 86    0.15      950       97       575         6        0.9417
-## 87    0.14      951       93       579         5        0.9490
-## 88    0.13      951       90       582         5        0.9474
-## 89    0.12      952       85       587         4        0.9551
-## 90    0.11      952       78       594         4        0.9512
-## 91    0.10      952       70       602         4        0.9459
-## 92    0.09      952       63       609         4        0.9403
-## 93    0.08      952       54       618         4        0.9310
-## 94    0.07      953       48       624         3        0.9412
-## 95    0.06      954       38       634         2        0.9500
-## 96    0.05      955       35       637         1        0.9722
-## 97    0.04      955       27       645         1        0.9643
-## 98    0.03      955       18       654         1        0.9474
-## 99    0.02      955       11       661         1        0.9167
-## 100   0.01      956        2       670         0        1.0000
-## 101   0.00      956        0       672         0           NaN
+## 1     1.00        0      642         0       987        0.3941
+## 2     0.99        0      642         0       987        0.3941
+## 3     0.98        5      641         1       982        0.3949
+## 4     0.97       34      636         6       953        0.4003
+## 5     0.96       63      636         6       924        0.4077
+## 6     0.95      107      633         9       880        0.4184
+## 7     0.94      158      631        11       829        0.4322
+## 8     0.93      197      627        15       790        0.4425
+## 9     0.92      238      623        19       749        0.4541
+## 10    0.91      277      613        29       710        0.4633
+## 11    0.90      305      605        37       682        0.4701
+## 12    0.89      331      601        41       656        0.4781
+## 13    0.88      375      593        49       612        0.4921
+## 14    0.87      412      583        59       575        0.5035
+## 15    0.86      435      574        68       552        0.5098
+## 16    0.85      459      569        73       528        0.5187
+## 17    0.84      482      561        81       505        0.5263
+## 18    0.83      513      551        91       474        0.5376
+## 19    0.82      539      538       104       448        0.5456
+## 20    0.81      565      525       117       422        0.5544
+## 21    0.80      584      519       123       403        0.5629
+## 22    0.79      600      513       129       387        0.5700
+## 23    0.78      619      507       135       368        0.5794
+## 24    0.77      638      501       141       349        0.5894
+## 25    0.76      651      496       146       336        0.5962
+## 26    0.75      663      490       152       324        0.6020
+## 27    0.74      676      478       164       311        0.6058
+## 28    0.73      696      462       180       291        0.6135
+## 29    0.72      708      455       187       279        0.6199
+## 30    0.71      719      450       192       268        0.6267
+## 31    0.70      734      440       202       253        0.6349
+## 32    0.69      746      432       210       241        0.6419
+## 33    0.68      751      427       215       236        0.6440
+## 34    0.67      764      416       226       223        0.6510
+## 35    0.66      783      406       236       204        0.6656
+## 36    0.65      791      398       244       196        0.6700
+## 37    0.64      802      392       250       185        0.6794
+## 38    0.63      810      386       256       177        0.6856
+## 39    0.62      821      377       265       166        0.6943
+## 40    0.61      828      370       272       159        0.6994
+## 41    0.60      836      366       276       151        0.7079
+## 42    0.59      842      357       285       145        0.7112
+## 43    0.58      845      351       291       142        0.7120
+## 44    0.57      849      345       297       138        0.7143
+## 45    0.56      858      336       306       129        0.7226
+## 46    0.55      862      328       314       125        0.7241
+## 47    0.54      868      326       316       119        0.7326
+## 48    0.53      870      316       326       117        0.7298
+## 49    0.52      879      310       332       108        0.7416
+## 50    0.51      882      304       338       105        0.7433
+## 51    0.50      889      293       349        98        0.7494
+## 52    0.49      892      287       355        95        0.7513
+## 53    0.48      900      282       360        87        0.7642
+## 54    0.47      903      278       364        84        0.7680
+## 55    0.46      908      271       371        79        0.7743
+## 56    0.45      911      266       376        76        0.7778
+## 57    0.44      916      260       382        71        0.7855
+## 58    0.43      921      252       390        66        0.7925
+## 59    0.42      924      245       397        63        0.7955
+## 60    0.41      929      241       401        58        0.8060
+## 61    0.40      932      233       409        55        0.8090
+## 62    0.39      937      228       414        50        0.8201
+## 63    0.38      941      222       420        46        0.8284
+## 64    0.37      945      213       429        42        0.8353
+## 65    0.36      948      207       435        39        0.8415
+## 66    0.35      954      202       440        33        0.8596
+## 67    0.34      957      198       444        30        0.8684
+## 68    0.33      958      192       450        29        0.8688
+## 69    0.32      959      186       456        28        0.8692
+## 70    0.31      960      183       459        27        0.8714
+## 71    0.30      961      175       467        26        0.8706
+## 72    0.29      963      172       470        24        0.8776
+## 73    0.28      967      164       478        20        0.8913
+## 74    0.27      968      156       486        19        0.8914
+## 75    0.26      971      153       489        16        0.9053
+## 76    0.25      971      148       494        16        0.9024
+## 77    0.24      973      143       499        14        0.9108
+## 78    0.23      975      136       506        12        0.9189
+## 79    0.22      976      131       511        11        0.9225
+## 80    0.21      976      125       517        11        0.9191
+## 81    0.20      979      115       527         8        0.9350
+## 82    0.19      979      110       532         8        0.9322
+## 83    0.18      979      105       537         8        0.9292
+## 84    0.17      981      102       540         6        0.9444
+## 85    0.16      981       98       544         6        0.9423
+## 86    0.15      981       93       549         6        0.9394
+## 87    0.14      982       91       551         5        0.9479
+## 88    0.13      983       86       556         4        0.9556
+## 89    0.12      983       81       561         4        0.9529
+## 90    0.11      983       71       571         4        0.9467
+## 91    0.10      983       66       576         4        0.9429
+## 92    0.09      983       61       581         4        0.9385
+## 93    0.08      983       52       590         4        0.9286
+## 94    0.07      984       44       598         3        0.9362
+## 95    0.06      985       38       604         2        0.9500
+## 96    0.05      986       33       609         1        0.9706
+## 97    0.04      986       25       617         1        0.9615
+## 98    0.03      986       18       624         1        0.9474
+## 99    0.02      986       10       632         1        0.9091
+## 100   0.01      987        2       640         0        1.0000
+## 101   0.00      987        0       642         0           NaN
 ##     true_pos_rate false_pos_rate false_neg_rate accuracy
-## 1             NaN            NaN        0.58722   0.4128
-## 2             NaN            NaN        0.58722   0.4128
-## 3          1.0000        0.00000        0.58697   0.4134
-## 4          0.9500        0.05000        0.58271   0.4238
-## 5          0.8776        0.12245        0.57821   0.4355
-## 6          0.9059        0.09412        0.56967   0.4552
-## 7          0.9262        0.07377        0.55976   0.4767
-## 8          0.9357        0.06433        0.54633   0.5043
-## 9          0.9327        0.06731        0.53662   0.5233
-## 10         0.9249        0.07510        0.52509   0.5448
-## 11         0.9119        0.08814        0.51538   0.5620
-## 12         0.8988        0.10123        0.50922   0.5725
-## 13         0.8864        0.11357        0.50197   0.5842
-## 14         0.8856        0.11443        0.48940   0.6032
-## 15         0.8713        0.12867        0.48101   0.6149
-## 16         0.8542        0.14579        0.47327   0.6247
-## 17         0.8499        0.15010        0.46637   0.6333
-## 18         0.8388        0.16117        0.46026   0.6400
-## 19         0.8359        0.16408        0.44995   0.6517
-## 20         0.8254        0.17455        0.44335   0.6579
-## 21         0.8199        0.18012        0.43496   0.6658
-## 22         0.8159        0.18409        0.42360   0.6763
-## 23         0.8076        0.19236        0.41802   0.6800
-## 24         0.8066        0.19342        0.40934   0.6873
-## 25         0.8053        0.19474        0.39631   0.6978
-## 26         0.8026        0.19742        0.39156   0.7009
-## 27         0.8003        0.19975        0.38341   0.7064
-## 28         0.7926        0.20736        0.38130   0.7058
-## 29         0.7855        0.21454        0.37643   0.7070
-## 30         0.7785        0.22145        0.36925   0.7095
-## 31         0.7725        0.22748        0.36486   0.7101
-## 32         0.7675        0.23253        0.35534   0.7138
-## 33         0.7639        0.23605        0.35057   0.7150
-## 34         0.7616        0.23840        0.34412   0.7174
-## 35         0.7583        0.24170        0.33886   0.7187
-## 36         0.7538        0.24622        0.32810   0.7217
-## 37         0.7507        0.24926        0.32206   0.7230
-## 38         0.7488        0.25121        0.30821   0.7279
-## 39         0.7440        0.25597        0.30465   0.7267
-## 40         0.7387        0.26132        0.30458   0.7236
-## 41         0.7365        0.26350        0.29783   0.7248
-## 42         0.7335        0.26648        0.28918   0.7260
-## 43         0.7297        0.27027        0.28185   0.7260
-## 44         0.7262        0.27378        0.27634   0.7254
-## 45         0.7227        0.27729        0.27439   0.7236
-## 46         0.7208        0.27923        0.26971   0.7236
-## 47         0.7155        0.28448        0.26923   0.7199
-## 48         0.7120        0.28803        0.26856   0.7174
-## 49         0.7114        0.28862        0.26222   0.7187
-## 50         0.7094        0.29062        0.25115   0.7199
-## 51         0.7072        0.29280        0.24105   0.7205
-## 52         0.7033        0.29672        0.24020   0.7174
-## 53         0.6982        0.30178        0.23724   0.7138
-## 54         0.6952        0.30480        0.23016   0.7125
-## 55         0.6929        0.30708        0.22911   0.7107
-## 56         0.6919        0.30806        0.22099   0.7113
-## 57         0.6888        0.31118        0.21490   0.7095
-## 58         0.6861        0.31391        0.21408   0.7070
-## 59         0.6836        0.31640        0.20669   0.7058
-## 60         0.6809        0.31905        0.20561   0.7033
-## 61         0.6765        0.32348        0.20455   0.6990
-## 62         0.6739        0.32609        0.19388   0.6978
-## 63         0.6736        0.32638        0.18182   0.6990
-## 64         0.6721        0.32792        0.16788   0.6990
-## 65         0.6679        0.33211        0.16475   0.6947
-## 66         0.6645        0.33551        0.16335   0.6910
-## 67         0.6618        0.33815        0.16393   0.6880
-## 68         0.6607        0.33931        0.14957   0.6880
-## 69         0.6598        0.34023        0.13717   0.6880
-## 70         0.6563        0.34373        0.13825   0.6837
-## 71         0.6533        0.34669        0.13107   0.6806
-## 72         0.6510        0.34895        0.12626   0.6781
-## 73         0.6488        0.35118        0.12105   0.6757
-## 74         0.6466        0.35339        0.11538   0.6732
-## 75         0.6457        0.35428        0.11667   0.6720
-## 76         0.6429        0.35709        0.10651   0.6689
-## 77         0.6413        0.35875        0.08805   0.6677
-## 78         0.6399        0.36005        0.08974   0.6658
-## 79         0.6387        0.36130        0.08000   0.6646
-## 80         0.6342        0.36577        0.07971   0.6585
-## 81         0.6311        0.36891        0.07752   0.6542
-## 82         0.6295        0.37052        0.06557   0.6523
-## 83         0.6274        0.37260        0.06838   0.6493
-## 84         0.6249        0.37508        0.07207   0.6456
-## 85         0.6246        0.37541        0.05607   0.6456
-## 86         0.6230        0.37705        0.05825   0.6431
-## 87         0.6216        0.37843        0.05102   0.6413
-## 88         0.6204        0.37965        0.05263   0.6394
-## 89         0.6186        0.38142        0.04494   0.6370
-## 90         0.6158        0.38422        0.04878   0.6327
-## 91         0.6126        0.38739        0.05405   0.6278
-## 92         0.6099        0.39013        0.05970   0.6235
-## 93         0.6064        0.39363        0.06897   0.6179
-## 94         0.6043        0.39569        0.05882   0.6149
-## 95         0.6008        0.39924        0.05000   0.6093
-## 96         0.5999        0.40013        0.02778   0.6081
-## 97         0.5969        0.40313        0.03571   0.6032
-## 98         0.5935        0.40646        0.05263   0.5977
-## 99         0.5910        0.40903        0.08333   0.5934
-## 100        0.5879        0.41205        0.00000   0.5885
-## 101        0.5872        0.41278            NaN   0.5872
+## 1             NaN            NaN        0.60589   0.3941
+## 2             NaN            NaN        0.60589   0.3941
+## 3          0.8333        0.16667        0.60505   0.3966
+## 4          0.8500        0.15000        0.59975   0.4113
+## 5          0.9130        0.08696        0.59231   0.4291
+## 6          0.9224        0.07759        0.58163   0.4543
+## 7          0.9349        0.06509        0.56781   0.4843
+## 8          0.9292        0.07075        0.55752   0.5058
+## 9          0.9261        0.07393        0.54592   0.5285
+## 10         0.9052        0.09477        0.53666   0.5463
+## 11         0.8918        0.10819        0.52991   0.5586
+## 12         0.8898        0.11022        0.52188   0.5721
+## 13         0.8844        0.11557        0.50788   0.5942
+## 14         0.8747        0.12527        0.49655   0.6108
+## 15         0.8648        0.13519        0.49023   0.6194
+## 16         0.8628        0.13722        0.48131   0.6311
+## 17         0.8561        0.14387        0.47373   0.6403
+## 18         0.8493        0.15066        0.46244   0.6532
+## 19         0.8383        0.16174        0.45436   0.6611
+## 20         0.8284        0.17155        0.44562   0.6691
+## 21         0.8260        0.17397        0.43709   0.6771
+## 22         0.8230        0.17695        0.43000   0.6832
+## 23         0.8210        0.17905        0.42057   0.6912
+## 24         0.8190        0.18100        0.41059   0.6992
+## 25         0.8168        0.18319        0.40385   0.7041
+## 26         0.8135        0.18650        0.39803   0.7078
+## 27         0.8048        0.19524        0.39417   0.7084
+## 28         0.7945        0.20548        0.38645   0.7109
+## 29         0.7911        0.20894        0.38011   0.7139
+## 30         0.7892        0.21076        0.37326   0.7176
+## 31         0.7842        0.21581        0.36508   0.7207
+## 32         0.7803        0.21967        0.35810   0.7231
+## 33         0.7774        0.22257        0.35596   0.7231
+## 34         0.7717        0.22828        0.34898   0.7244
+## 35         0.7684        0.23160        0.33443   0.7299
+## 36         0.7643        0.23575        0.32997   0.7299
+## 37         0.7624        0.23764        0.32062   0.7330
+## 38         0.7598        0.24015        0.31439   0.7342
+## 39         0.7560        0.24401        0.30571   0.7354
+## 40         0.7527        0.24727        0.30057   0.7354
+## 41         0.7518        0.24820        0.29207   0.7379
+## 42         0.7471        0.25288        0.28884   0.7360
+## 43         0.7438        0.25616        0.28803   0.7342
+## 44         0.7408        0.25916        0.28571   0.7330
+## 45         0.7371        0.26289        0.27742   0.7330
+## 46         0.7330        0.26701        0.27594   0.7305
+## 47         0.7331        0.26689        0.26742   0.7330
+## 48         0.7274        0.27258        0.27021   0.7281
+## 49         0.7258        0.27415        0.25837   0.7299
+## 50         0.7230        0.27705        0.25672   0.7281
+## 51         0.7181        0.28191        0.25064   0.7256
+## 52         0.7153        0.28468        0.24869   0.7238
+## 53         0.7143        0.28571        0.23577   0.7256
+## 54         0.7127        0.28729        0.23204   0.7250
+## 55         0.7099        0.29007        0.22571   0.7238
+## 56         0.7078        0.29215        0.22222   0.7225
+## 57         0.7057        0.29430        0.21450   0.7219
+## 58         0.7025        0.29748        0.20755   0.7201
+## 59         0.6995        0.30053        0.20455   0.7176
+## 60         0.6985        0.30150        0.19398   0.7182
+## 61         0.6950        0.30500        0.19097   0.7152
+## 62         0.6936        0.30644        0.17986   0.7152
+## 63         0.6914        0.30860        0.17164   0.7139
+## 64         0.6878        0.31223        0.16471   0.7109
+## 65         0.6855        0.31453        0.15854   0.7090
+## 66         0.6844        0.31564        0.14043   0.7096
+## 67         0.6831        0.31692        0.13158   0.7090
+## 68         0.6804        0.31960        0.13122   0.7060
+## 69         0.6777        0.32226        0.13084   0.7029
+## 70         0.6765        0.32347        0.12857   0.7017
+## 71         0.6730        0.32703        0.12935   0.6974
+## 72         0.6720        0.32798        0.12245   0.6967
+## 73         0.6692        0.33080        0.10870   0.6943
+## 74         0.6657        0.33425        0.10857   0.6900
+## 75         0.6651        0.33493        0.09467   0.6900
+## 76         0.6628        0.33720        0.09756   0.6869
+## 77         0.6610        0.33899        0.08917   0.6851
+## 78         0.6583        0.34166        0.08108   0.6820
+## 79         0.6564        0.34364        0.07746   0.6796
+## 80         0.6537        0.34628        0.08088   0.6759
+## 81         0.6501        0.34993        0.06504   0.6716
+## 82         0.6479        0.35208        0.06780   0.6685
+## 83         0.6458        0.35422        0.07080   0.6654
+## 84         0.6450        0.35503        0.05556   0.6648
+## 85         0.6433        0.35672        0.05769   0.6624
+## 86         0.6412        0.35882        0.06061   0.6593
+## 87         0.6406        0.35943        0.05208   0.6587
+## 88         0.6387        0.36127        0.04444   0.6562
+## 89         0.6367        0.36334        0.04706   0.6532
+## 90         0.6326        0.36744        0.05333   0.6470
+## 91         0.6305        0.36947        0.05714   0.6440
+## 92         0.6285        0.37148        0.06154   0.6409
+## 93         0.6249        0.37508        0.07143   0.6354
+## 94         0.6220        0.37800        0.06383   0.6311
+## 95         0.6199        0.38011        0.05000   0.6280
+## 96         0.6182        0.38182        0.02941   0.6255
+## 97         0.6151        0.38490        0.03846   0.6206
+## 98         0.6124        0.38758        0.05263   0.6163
+## 99         0.6094        0.39061        0.09091   0.6114
+## 100        0.6066        0.39336        0.00000   0.6071
+## 101        0.6059        0.39411            NaN   0.6059
 ```
 
 
 In examining the results of our predictive model, we find that at a true negative rate of 0.8, the accuracy of our classifier is 71%. The maximum accuracy is approximately 73.5%, at which the true negative rate is 0.69. Therefore, we feel our data supports using the 0.8 threshold for high risk because the modest tradeoff in accuracy is more than made up by the increase in true negative rate.
 
 There are two key ways to compare the model developed in this work to the RIDE Early Warning System aggregate indicator. The first measure is *coverage*, or what proportion of total drop outs are identified by the measure. For the same reasons we are maximizing the *true negative rate*, we want to be sure that our risk thresholds identify as many of the students who ultimately fail to graduate as possible. Our model captures 37% of all drop outs in the 8th grade, a consderable improvement on the state's model which captures fewer than 20% of all drop outs. The state's model, however, is slightly more accurate, at approximately 80% versus 71%. We believe this model represents a better tradeoff between accuracy and coverage. Many more students would be incorrectly identified as in need of supports under the state model in order to capture 37% of all drop outs.
+
+
+```r
+# First Quarter Grades
+gpa_qtr1_0708 <- tables2007_2008$course %.% filter(grade == 9 & sasid %in% hscohort$sasid) %.% 
+    group_by(sasid, variable) %.% summarize(gpa_qtr1_9th = mean(gpa, na.rm = TRUE)) %.% 
+    filter(variable == "cum_qtr1") %.% select(sasid, gpa_qtr1_9th)
+gpa_qtr1_0809 <- tables2008_2009$course %.% filter(grade == 9 & sasid %in% hscohort$sasid) %.% 
+    group_by(sasid, variable) %.% summarize(gpa_qtr1_9th = mean(gpa, na.rm = TRUE)) %.% 
+    filter(variable == "cum_qtr1") %.% select(sasid, gpa_qtr1_9th)
+gpa_qtr1_0910 <- tables2009_2010$course %.% filter(grade == 9 & sasid %in% hscohort$sasid) %.% 
+    group_by(sasid, variable) %.% summarize(gpa_qtr1_9th = mean(gpa, na.rm = TRUE)) %.% 
+    filter(variable == "cum_qtr1") %.% select(sasid, gpa_qtr1_9th)
+
+# First Quarter Course Failures
+fails_qtr1_0708 <- tables2007_2008$course %.% filter(grade == 9 & sasid %in% 
+    hscohort$sasid) %.% group_by(sasid, variable, courseno) %.% summarize(gpa = mean(gpa, 
+    na.rm = TRUE)) %.% filter(gpa <= 1 & variable == "cum_qtr1") %.% summarize(fails_qtr1 = n())
+
+fails_qtr1_0809 <- tables2008_2009$course %.% filter(grade == 9 & sasid %in% 
+    hscohort$sasid & !sasid %in% gpa_qtr1_0708) %.% group_by(sasid, variable, 
+    courseno) %.% summarize(gpa = mean(gpa, na.rm = TRUE)) %.% filter(gpa <= 
+    1 & variable == "cum_qtr1") %.% summarize(fails_qtr1 = n())
+
+fails_qtr1_0910 <- tables2009_2010$course %.% filter(grade == 9 & sasid %in% 
+    hscohort$sasid & !sasid %in% gpa_qtr1_0809) %.% group_by(sasid, variable, 
+    courseno) %.% summarize(gpa = mean(gpa, na.rm = TRUE)) %.% filter(gpa <= 
+    1 & variable == "cum_qtr1") %.% summarize(fails_qtr1 = n())
+
+
+# hscohort <- left_join(hscohort, rbind(gpa_qtr1_0708, gpa_qtr1_0809,
+# gpa_qtr1_0910) %.% select(sasid, fails_qtr1)) hscohort <-
+# left_join(hscohort, rbind(fails_qtr1_0708, fails_qtr1_0809,
+# fails_qtr1_0910) %.% select(sasid, fails_qtr1))
+```
+
+The model used to predict graduation for ninth grade students is restricted to first-time ninth grade students who do not transfer out of Providence Public Schools.
+
+Because of the exclusion of students who transfer out, we may be concerned that we are biasing our model since students who transfer out may represent more vulnerable students who are less likely to graduate than their peers. A quick check to see if this is accurate is to examine whether students who transfer out are dramatically different in key ways from those who remain. (I could do a more extensive chart here) One of the key early indicators of likelihood to graduate is 9th grade retention. There is a massive differential in graduation rates between students who are retained versus those who are not (approximately 15% versus nearly 60%).
+
+However, students who transfer out are only retained at moderately higher rates which is unlikely to represent any true relationship. For example, for first-time high school freshman in 2007-2008, 14% of students who remained in Providence Public schools for the entirety of their high school enrollment were retained in 9th grade compared to ~16.5% of those who transfer out of Providence Public Schools.
+
+
+```r
+hs0708 <- subset(person, (schoolyear_first == "2007_2008" & grade_first == 9) | 
+    (schoolyear_first == "2008_2009" & grade_first == 10) | (schoolyear_first == 
+    "2009_2010" & grade_first == 11) | (schoolyear_first == "2010_2011" & grade_first == 
+    12))
+hs0708$retained <- ifelse(hs0708$sasid %in% filter(hs0708, grade_first == 9 & 
+    sasid %in% filter(tables2008_2009$person_annual, grade == 9)$sasid)$sasid, 
+    "Y", "N")
+
+
+hs0809 <- subset(person, (schoolyear_first == "2008_2009" & grade_first == 9) | 
+    (schoolyear_first == "2009_2010" & grade_first == 10) | (schoolyear_first == 
+    "2010_2011" & grade_first == 11) | (schoolyear_first == "2011_2012" & grade_first == 
+    12))
+
+hs0809$retained <- ifelse(hs0809$sasid %in% filter(hs0809, grade_first == 9 & 
+    sasid %in% filter(tables2009_2010$person_annual, grade == 9)$sasid)$sasid, 
+    "Y", "N")
+hs0910 <- subset(person, (schoolyear_first == "2009_2010" & grade_first == 9) | 
+    (schoolyear_first == "2010_2011" & grade_first == 10) | (schoolyear_first == 
+    "2011_2012" & grade_first == 11) | (schoolyear_first == "2012_2013" & grade_first == 
+    12))
+hs0910$retained <- ifelse(hs0910$sasid %in% filter(hs0910, grade_first == 9 & 
+    sasid %in% filter(tables2010_2011$person_annual, grade == 9)$sasid)$sasid, 
+    "Y", "N")
+
+hs0708$sasid <- as.character(hs0708$sasid)
+hs0809$sasid <- as.character(hs0809$sasid)
+hs0910$sasid <- as.character(hs0910$sasid)
+
+# Attendance is same as previous code for cohorts except that I use the
+# school year that is the same as the grade_first value so that it
+# represents 9th grade attendance not 8th grade.
+
+hs0708 <- left_join(hs0708, attendance %.% filter(schoolyear == "2007_2008") %.% 
+    select(sasid, attendance, tardy, suspended))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0809 <- left_join(hs0809, attendance %.% filter(schoolyear == "2008_2009") %.% 
+    select(sasid, attendance, tardy, suspended))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0910 <- left_join(hs0910, attendance %.% filter(schoolyear == "2009_2010") %.% 
+    select(sasid, attendance, tardy, suspended))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0708 <- mutate(hs0708, attendnormal = (attendance - mean(attendance, na.rm = TRUE))/sd(attendance, 
+    na.rm = TRUE))
+hs0809 <- mutate(hs0809, attendnormal = (attendance - mean(attendance, na.rm = TRUE))/sd(attendance, 
+    na.rm = TRUE))
+hs0910 <- mutate(hs0910, attendnormal = (attendance - mean(attendance, na.rm = TRUE))/sd(attendance, 
+    na.rm = TRUE))
+# Calculate age when student enters 9th grade for the first time.
+hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date("2007-09-01"), units = "months"))
+hs0809 <- mutate(hs0809, ageHS = age_calc(dob, as.Date("2008-09-01"), units = "months"))
+hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date("2009-09-01"), units = "months"))
+
+
+# GPA in 8th grade tables already exist
+hs0708 <- left_join(hs0708, gpa0607)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0809 <- left_join(hs0809, gpa0708)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0910 <- left_join(hs0910, gpa0809)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+rm(gpa0607)
+rm(gpa0708)
+rm(gpa0809)
+
+# GPA in 9th grade mimic 8th grade calculations
+gpa0708 <- tables2007_2008$course %.% filter(grade == 9) %.% group_by(sasid) %.% 
+    summarize(gpa9th = mean(gpa, na.rm = TRUE))
+gpa0708$sasid <- as.character(gpa0708$sasid)
+hs0708 <- left_join(hs0708, gpa0708)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+
+gpa0809 <- tables2008_2009$course %.% filter(grade == 9) %.% group_by(sasid) %.% 
+    summarize(gpa9th = mean(gpa, na.rm = TRUE))
+hs0809 <- left_join(hs0809, gpa0809)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+
+gpa0910 <- tables2009_2010$course %.% filter(grade == 9) %.% group_by(sasid) %.% 
+    summarize(gpa9th = mean(gpa, na.rm = TRUE))
+gpa0910$sasid <- as.character(gpa0910$sasid)
+hs0910 <- left_join(hs0910, gpa0910)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+
+# Course Failures
+fails0708 <- tables2007_2008$course %.% filter(grade == 9) %.% group_by(sasid, 
+    courseno) %.% summarize(gpa = mean(gpa, na.rm = TRUE)) %.% filter(gpa <= 
+    1) %.% summarize(fails = n())
+
+fails0809 <- tables2008_2009$course %.% filter(grade == 9) %.% group_by(sasid, 
+    courseno) %.% summarize(gpa = mean(gpa, na.rm = TRUE)) %.% filter(gpa <= 
+    1) %.% summarize(fails = n())
+
+fails0910 <- tables2009_2010$course %.% filter(grade == 9) %.% group_by(sasid, 
+    courseno) %.% summarize(gpa = mean(gpa, na.rm = TRUE)) %.% filter(gpa <= 
+    1) %.% summarize(fails = n())
+
+fails0708$sasid <- as.character(fails0708$sasid)
+fails0809$sasid <- as.character(fails0809$sasid)
+fails0910$sasid <- as.character(fails0910$sasid)
+
+hs0708 <- left_join(hs0708, fails0708)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0708$fails <- with(hs0708, ifelse(is.na(fails) & !is.na(gpa9th), 0, fails))
+hs0809 <- left_join(hs0809, fails0809)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0809$fails <- with(hs0809, ifelse(is.na(fails) & !is.na(gpa9th), 0, fails))
+hs0910 <- left_join(hs0910, fails0910)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0910$fails <- with(hs0910, ifelse(is.na(fails) & !is.na(gpa9th), 0, fails))
+
+# Mobility Calculations
+mobile0708 <- moves_calc(filter(tables2007_2008$enrollment, sasid %in% hs0708$sasid))
+mobile0708$sasid <- as.character(mobile0708$sasid)
+hs0708 <- left_join(hs0708, mobile0708)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+
+mobile0809 <- moves_calc(filter(tables2008_2009$enrollment, sasid %in% hs0809$sasid))
+mobile0809$sasid <- as.character(mobile0809$sasid)
+hs0809 <- left_join(hs0809, mobile0809)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+
+mobile0910 <- moves_calc(filter(tables2009_2010$enrollment, sasid %in% hs0910$sasid))
+mobile0910$sasid <- as.character(mobile0910$sasid)
+hs0910 <- left_join(hs0910, mobile0910)
+```
+
+```
+## Joining by: "sasid"
+```
+
+
+
+```r
+# descriminate outcome analysis range of scores for suspensions cluster use
+# outcome for differentiation in the independent variable k-means clustering
+# -- try the 5 credits model
+hscohort <- rbind(hs0708, hs0809, hs0910)
+hscohort <- filter(hscohort, transfer_out == "N")
+hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
+basemodel9thgrade <- glm(as.numeric(as.factor(graduated)) - 1 ~ attendnormal + 
+    gpa8th + gpa9th + fails + retained + I(moves > 1) + suspended * I(iep == 
+    "Y") + I(ageHS > 190) + I(schno_first == "164"), data = hscohort, family = binomial(link = "logit"))
+summary(basemodel9thgrade)
+```
+
+```
+## 
+## Call:
+## glm(formula = as.numeric(as.factor(graduated)) - 1 ~ attendnormal + 
+##     gpa8th + gpa9th + fails + retained + I(moves > 1) + suspended * 
+##     I(iep == "Y") + I(ageHS > 190) + I(schno_first == "164"), 
+##     family = binomial(link = "logit"), data = hscohort)
+## 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -2.784  -0.414   0.358   0.616   2.773  
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  -0.5286     0.2883   -1.83   0.0667 .  
+## attendnormal                  0.8896     0.0944    9.42  < 2e-16 ***
+## gpa8th                        0.4883     0.0679    7.19  6.6e-13 ***
+## gpa9th                        0.3885     0.1044    3.72   0.0002 ***
+## fails                        -0.0887     0.0425   -2.09   0.0370 *  
+## retainedY                    -0.8971     0.1358   -6.61  4.0e-11 ***
+## I(moves > 1)TRUE             -0.4150     0.2920   -1.42   0.1553    
+## suspended                    -0.0874     0.0288   -3.03   0.0024 ** 
+## I(iep == "Y")TRUE            -0.2948     0.1197   -2.46   0.0138 *  
+## I(ageHS > 190)TRUE           -1.3325     0.2546   -5.23  1.7e-07 ***
+## I(schno_first == "164")TRUE   0.5091     0.2388    2.13   0.0330 *  
+## suspended:I(iep == "Y")TRUE   0.1055     0.0484    2.18   0.0293 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 4854.4  on 3869  degrees of freedom
+## Residual deviance: 3119.0  on 3858  degrees of freedom
+##   (2010 observations deleted due to missingness)
+## AIC: 3143
+## 
+## Number of Fisher Scoring iterations: 5
+```
+
+```r
+plot(roc(graduated ~ predict(basemodel9thgrade, newdata = hscohort, type = "response"), 
+    hscohort), print.auc = TRUE)
+```
+
+![plot of chunk Grade9Model](figure/Grade9Model.png) 
+
+```
+## 
+## Call:
+## roc.formula(formula = graduated ~ predict(basemodel9thgrade,     newdata = hscohort, type = "response"), data = hscohort)
+## 
+## Data: predict(basemodel9thgrade, newdata = hscohort, type = "response") in 1240 controls (graduated N) < 2630 cases (graduated Y).
+## Area under the curve: 0.873
+```
+
+
+
+
+```r
+hs0607 <- subset(person, (schoolyear_first == "2006_2007" & grade_first == 9) | 
+    (schoolyear_first == "2007_2008" & grade_first == 10) | (schoolyear_first == 
+    "2008_2009" & grade_first == 11) | (schoolyear_first == "2009_2010" & grade_first == 
+    12))
+hs0708 <- subset(person, (schoolyear_first == "2007_2008" & grade_first == 9) | 
+    (schoolyear_first == "2008_2009" & grade_first == 10) | (schoolyear_first == 
+    "2009_2010" & grade_first == 11) | (schoolyear_first == "2010_2011" & grade_first == 
+    12))
+hs0809 <- subset(person, (schoolyear_first == "2008_2009" & grade_first == 9) | 
+    (schoolyear_first == "2009_2010" & grade_first == 10) | (schoolyear_first == 
+    "2010_2011" & grade_first == 11) | (schoolyear_first == "2011_2012" & grade_first == 
+    12))
+hs0910 <- subset(person, (schoolyear_first == "2009_2010" & grade_first == 9) | 
+    (schoolyear_first == "2010_2011" & grade_first == 10) | (schoolyear_first == 
+    "2011_2012" & grade_first == 11) | (schoolyear_first == "2012_2013" & grade_first == 
+    12))
+
+# Repeated 9th grade
+hs0607 <- left_join(hs0607, retained_calc(x = annual_demos, sid = "sasid", grade = "grade", 
+    grade_value = 9))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+names(hs0607)[length(names(hs0607))] <- "retained9th"
+hs0708 <- left_join(hs0708, retained_calc(x = annual_demos, sid = "sasid", grade = "grade", 
+    grade_value = 9))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+names(hs0708)[length(names(hs0708))] <- "retained9th"
+
+hs0809 <- left_join(hs0809, retained_calc(x = annual_demos, sid = "sasid", grade = "grade", 
+    grade_value = 9))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+names(hs0809)[length(names(hs0809))] <- "retained9th"
+
+hs0910 <- left_join(hs0910, retained_calc(x = annual_demos, sid = "sasid", grade = "grade", 
+    grade_value = 9))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+names(hs0910)[length(names(hs0910))] <- "retained9th"
+
+# Repeated 10th grade
+hs0607 <- left_join(hs0607, retained_calc(x = annual_demos, sid = "sasid", grade = "grade", 
+    grade_value = 10))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+names(hs0607)[length(names(hs0607))] <- "retained10th"
+hs0708 <- left_join(hs0708, retained_calc(x = annual_demos, sid = "sasid", grade = "grade", 
+    grade_value = 10))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+names(hs0708)[length(names(hs0708))] <- "retained10th"
+
+hs0809 <- left_join(hs0809, retained_calc(x = annual_demos, sid = "sasid", grade = "grade", 
+    grade_value = 10))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+names(hs0809)[length(names(hs0809))] <- "retained10th"
+
+hs0910 <- left_join(hs0910, retained_calc(x = annual_demos, sid = "sasid", grade = "grade", 
+    grade_value = 10))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+names(hs0910)[length(names(hs0910))] <- "retained10th"
+
+
+
+hs0607$sasid <- as.character(hs0607$sasid)
+hs0708$sasid <- as.character(hs0708$sasid)
+hs0809$sasid <- as.character(hs0809$sasid)
+hs0910$sasid <- as.character(hs0910$sasid)
+
+# Attendance is for the second year in the system... but this may not be
+# 10th grade for students who were not promoted...
+
+hs0607 <- left_join(hs0607, attendance %.% filter(grade == 10) %.% group_by(sasid) %.% 
+    filter(row_number(desc(schoolyear)) == 1) %.% select(sasid, attendance, 
+    tardy, suspended))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0708 <- left_join(hs0708, attendance %.% filter(grade == 10) %.% group_by(sasid) %.% 
+    filter(row_number(desc(schoolyear)) == 1) %.% select(sasid, attendance, 
+    tardy, suspended))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0809 <- left_join(hs0809, attendance %.% filter(grade == 10) %.% group_by(sasid) %.% 
+    filter(row_number(desc(schoolyear)) == 1) %.% select(sasid, attendance, 
+    tardy, suspended))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hs0910 <- left_join(hs0910, attendance %.% filter(grade == 10) %.% group_by(sasid) %.% 
+    filter(row_number(desc(schoolyear)) == 1) %.% select(sasid, attendance, 
+    tardy, suspended))
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+
+hs0607 <- mutate(hs0607, attendnormal = scale(attendance))
+hs0708 <- mutate(hs0708, attendnormal = scale(attendance))
+hs0809 <- mutate(hs0809, attendnormal = scale(attendance))
+hs0910 <- mutate(hs0910, attendnormal = scale(attendance))
+
+# Calculate age when student enters 9th grade for the first time.
+hs0607 <- mutate(hs0607, ageHS = age_calc(dob, as.Date("2006-09-01"), units = "months"))
+hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date("2007-09-01"), units = "months"))
+hs0809 <- mutate(hs0809, ageHS = age_calc(dob, as.Date("2008-09-01"), units = "months"))
+hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date("2009-09-01"), units = "months"))
+
+# GPA tables
+gpa <- rbind(tables2007_2008$course, tables2008_2009$course, tables2009_2010$course, 
+    tables2010_2011$course, tables2011_2012$course) %.% filter(grade == 10) %.% 
+    group_by(sasid, schoolyear) %.% summarize(gpa10th = mean(gpa, na.rm = TRUE)) %.% 
+    filter(row_number(desc(schoolyear)) == 1) %.% select(sasid, gpa10th)
+
+fails <- rbind(tables2007_2008$course, tables2008_2009$course, tables2009_2010$course, 
+    tables2010_2011$course, tables2011_2012$course) %.% filter(grade == 10) %.% 
+    group_by(sasid) %.% filter(schoolyear == min(schoolyear)) %.% group_by(sasid, 
+    courseno) %.% summarize(gpa10th = mean(gpa, na.rm = TRUE)) %.% filter(gpa10th <= 
+    1) %.% group_by(sasid) %.% summarize(fails = n()) %.% select(sasid, fails)
+
+# Mobility Calculations
+mobile0607 <- moves_calc(filter(tables2007_2008$enrollment, grade == 10))
+mobile0607$schoolyear <- "2007_2008"
+mobile0708 <- moves_calc(filter(tables2008_2009$enrollment, grade == 10))
+mobile0708$schoolyear <- "2008_2009"
+mobile0809 <- moves_calc(filter(tables2009_2010$enrollment, grade == 10))
+mobile0809$schoolyear <- "2009_2010"
+mobile0910 <- moves_calc(filter(tables2010_2011$enrollment, grade == 10))
+mobile0910$schoolyear <- "2010_2011"
+mobile1011 <- moves_calc(filter(tables2011_2012$enrollment, grade == 10))
+```
+
+```
+## Warning: the condition has length > 1 and only the first element will be used
+## Warning: no non-missing arguments to min; returning Inf
+## Warning: no non-missing arguments to min; returning Inf
+```
+
+```
+## Error: argument is of length zero
+```
+
+```r
+mobile1011$schoolyear <- "2011_2012"
+```
+
+```
+## Error: object 'mobile1011' not found
+```
+
+```r
+
+mobile <- rbind(mobile0607, mobile0708, mobile0809, mobile0910, mobile1011) %.% 
+    group_by(sasid) %.% filter(schoolyear == min(schoolyear))
+```
+
+```
+## Error: object 'mobile1011' not found
+```
+
+```r
+# mobile0708 <- moves_calc(filter(tables2007_2 008$enrollment, sasid %in%
+# hs0708$sasid)) mobile0708$sasid <- as.character(mobile0708$sasid) hs0708
+# <- left_join(hs0708, mobile0708) mobile0809 <-
+# moves_calc(filter(tables2008_2009$enrollment, sasid %in% hs0809$sasid))
+# mobile0809$sasid <- as.character(mobile0809$sasid) hs0809 <-
+# left_join(hs0809, mobile0809) mobile0910 <-
+# moves_calc(filter(tables2009_2010$enrollment, sasid %in% hs0910$sasid))
+# mobile0910$sasid <- as.character(mobile0910$sasid) hs0910 <-
+# left_join(hs0910, mobile0910)
+```
+
+
+
+```r
+hscohort <- rbind(hs0607, hs0708, hs0809, hs0910)
+hscohort <- left_join(hscohort, gpa)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hscohort <- left_join(hscohort, fails)
+```
+
+```
+## Joining by: "sasid"
+```
+
+```r
+hsochort <- filter(hscohort, transfer_out == "N")
+basemodel10thgrade <- glm(as.numeric(as.factor(graduated)) - 1 ~ attendnormal + 
+    gpa10th + retained9th + retained10th + fails + suspended * I(iep == "Y") + 
+    I(ageHS > 190) + I(schno_first == "164"), data = hscohort, family = binomial(link = "logit"))
+```
+
