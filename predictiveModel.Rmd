@@ -179,6 +179,19 @@ The model for predicting graduation based on 8th grade data is built only with s
 hscohort <- rbind(hs0708, hs0809, hs0910)
 hscohort <- filter(hscohort, transfer_out=='N')
 hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
+# hscohort$graduated <- ifelse(hscohort$graduated == 'Y', 1, 
+#                              ifelse(hscohort$graduated == 'N', 0, NA))
+hscohort$graduated <- as.factor(hscohort$graduated)
+hscohort <- na.omit(hscohort)
+# hscohort$testgrade_N <- NULL
+# hscohort$transfer_out <- NULL
+# hscohort$still_enrl <- NULL
+# hscohort$ged <- NULL
+# hscohort$dropout <- NULL
+# hscohort$disappear <- NULL
+# hscohort$exit_type_last <-NULL
+# hscohort$exit_type_first <-NULL
+# hscohort$grade_first <-NULL
 ```
 Predictive models are traditionally evaluated on their ability to correctly classify, or sort, students so that predicted outcomes match the actual outcomes. Our model outputs a probability of graduating for each student that can take on any value between 0 and 1. In order to sort students into those who are at risk of failing to graduate and those who are not, we have to select threshold probabilities above which students are not considered at risk and below which they are.
 
