@@ -10,4 +10,4 @@ attendance <- rbind(tables2005_2006$person_annual,
               mutate(attendance = sum_present/sum_enrolled,
                      tardy = sum_tardy/sum_enrolled,
                      suspended = sum_suspend) %.%
-              select(sasid, schoolyear, attendance, tardy, suspended)
+              select(sasid, schoolyear, grade, attendance, tardy, suspended)
