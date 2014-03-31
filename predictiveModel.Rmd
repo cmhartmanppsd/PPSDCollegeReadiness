@@ -251,6 +251,8 @@ confusionMatrix(m1_predict_class, hscohort_test$graduated, positive='Y')
 confusionMatrix(m2_predict_class, hscohort_test$graduated, positive='Y')
 ```
 
+**Need to update this section with the new numbers**
+
 In examining the results of our predictive model, we find that at a true negative rate of 0.8, the accuracy of our classifier is 71%. The maximum accuracy is approximately 73.5%, at which the true negative rate is 0.69. Therefore, we feel our data supports using the 0.8 threshold for high risk because the modest tradeoff in accuracy is more than made up by the increase in true negative rate.
 
 There are two key ways to compare the model developed in this work to the RIDE Early Warning System aggregate indicator. The first measure is *coverage*, or what proportion of total drop outs are identified by the measure. For the same reasons we are maximizing the *true negative rate*, we want to be sure that our risk thresholds identify as many of the students who ultimately fail to graduate as possible. Our model captures 37% of all drop outs in the 8th grade, a consderable improvement on the state's model which captures fewer than 20% of all drop outs. The state's model, however, is slightly more accurate, at approximately 80% versus 71%. We believe this model represents a better tradeoff between accuracy and coverage. Many more students would be incorrectly identified as in need of supports under the state model in order to capture 37% of all drop outs.
