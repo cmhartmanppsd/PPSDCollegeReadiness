@@ -257,6 +257,15 @@ In examining the results of our predictive model, we find that at a true negativ
 
 There are two key ways to compare the model developed in this work to the RIDE Early Warning System aggregate indicator. The first measure is *coverage*, or what proportion of total drop outs are identified by the measure. For the same reasons we are maximizing the *true negative rate*, we want to be sure that our risk thresholds identify as many of the students who ultimately fail to graduate as possible. Our model captures 37% of all drop outs in the 8th grade, a consderable improvement on the state's model which captures fewer than 20% of all drop outs. The state's model, however, is slightly more accurate, at approximately 80% versus 71%. We believe this model represents a better tradeoff between accuracy and coverage. Many more students would be incorrectly identified as in need of supports under the state model in order to capture 37% of all drop outs.
 
+## Ninth Grade Model
+
+The model used to predict graduation for ninth grade students is restricted to first-time ninth grade students who do not transfer out of Providence Public Schools.
+
+Because of the exclusion of students who transfer out, we may be concerned that we are biasing our model since students who transfer out may represent more vulnerable students who are less likely to graduate than their peers. A quick check to see if this is accurate is to examine whether students who transfer out are dramatically different in key ways from those who remain. (I could do a more extensive chart here) One of the key early indicators of likelihood to graduate is 9th grade retention. There is a massive differential in graduation rates between students who are retained versus those who are not (approximately 15% versus nearly 60%).
+
+However, students who transfer out are only retained at moderately higher rates which is unlikely to represent any true relationship. For example, for first-time high school freshman in 2007-2008, 14% of students who remained in Providence Public schools for the entirety of their high school enrollment were retained in 9th grade compared to ~16.5% of those who transfer out of Providence Public Schools.
+
+
 ```{r FirstQuarter9thGrade}
 # First Quarter Grades
 gpa_qtr1_0708 <- tables2007_2008$course %.% 
