@@ -32,8 +32,6 @@ hs0910 <- subset(person, (schoolyear_first=='2009_2010' & grade_first==9) |
 hs0708$sasid <- as.character(hs0708$sasid)
 hs0809$sasid <- as.character(hs0809$sasid)
 hs0910$sasid <- as.character(hs0910$sasid)
-source('attendance.R')
-attendance$sasid <- as.character(attendance$sasid)
 
 hs0708 <- left_join(hs0708, attendance %.% filter(schoolyear == '2006_2007')
                                        %.% dplyr::select(sasid, attendance, 
@@ -181,32 +179,6 @@ The model for predicting graduation based on 8th grade data is built only with s
 hscohort <- rbind(hs0708, hs0809, hs0910)
 hscohort <- filter(hscohort, transfer_out=='N')
 hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
-basemodel8thgrade <- glm(as.numeric(as.factor(graduated))-1 ~
-                         attendnormal + gpa8th + matnormal + reanormal +
-                         I(ageHS<190),
-                         data=hscohort, family=binomial(link='logit'))
-require(lme4)
-mixedmodel8thgrade <- glmer(as.numeric(as.factor(graduated))-1 ~ 
-                            attendnormal + gpa8th + reanormal + matnormal +
-                            I(ageHS<190) + (1 | schoolyear_first),
-                            data=hscohort, family=binomial(link='logit'))
-starting_grade <- left_join(subset(starting_grade, 
-                                   select = c('sasid', 'willrepeatgr', 
-                                              'isrepeatinggr', 'disab', 
-                                              'spedprogrm')),
-                            subset(hs0708,
-                                   select = c('sasid', 'race', 'sex', 
-                                              'parent_lang', 'lep', 'iep', 
-                                              'transfer_out', 'ged', 'dropout', 
-                                              'disappear', 'graduated', 
-                                              'attendnormal', 'attendance8th', 
-                                              'gpa8th', 'reanormal', 'reaal',
-                                              'matnormal', 'matal', 'ageHS', 
-                                              'suspend8th')))
-starting_grade$predict8th<- predict(basemodel8thgrade, newdata = starting_grade, 
-                                    type='response')
-summary(basemodel8thgrade)
-summary(starting_grade$predict8th)
 ```
 Predictive models are traditionally evaluated on their ability to correctly classify, or sort, students so that predicted outcomes match the actual outcomes. Our model outputs a probability of graduating for each student that can take on any value between 0 and 1. In order to sort students into those who are at risk of failing to graduate and those who are not, we have to select threshold probabilities above which students are not considered at risk and below which they are.
 
