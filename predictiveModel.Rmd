@@ -1,17 +1,17 @@
 Pathways to Graduation
 ========================================================
 
-```{r Initialization}
-#, echo=FALSE, results='hide'}
+```{r Initialization, echo=FALSE, results='hide'}
 setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
 source('dependencies.R')
+require(sjPlot)
 file.sources = list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
                           pattern='*.R$', full.names=TRUE, ignore.case=TRUE)
 invisible(sapply(file.sources, source, .GlobalEnv))
-source('load.R')
-source('buildTables.R')
-source('person.R')
-source('attendance.R')
+invisible(source('load.R'))
+invisible(source('buildTables.R'))
+invisible(source('person.R'))
+invisible(source('attendance.R'))
 attendance$sasid <- as.character(attendance$sasid)
 ```
 
