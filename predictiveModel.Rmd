@@ -171,12 +171,87 @@ hs0809 <- left_join(hs0809, fails0708)
 hs0809$fails <- with(hs0809, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
 hs0910 <- left_join(hs0910, fails0809)
 hs0910$fails <- with(hs0910, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
+hscohort <- rbind(hs0708, hs0809, hs0910)
+```
+## Eighth Grade Model
+### Defining the Sample
+The goal of each model is to maximize the applicability of the model to maximize the number of future non-graduates as at-risk while minimizing model complexity and overall inaccuracy. The Eighth Grade Model (8GM) for predicting high school readiness uses data from students only collected in the eighth grade year. It is preferable to use only one year of data prior to entering high school to ensure the largest possible sample. Requiring additional years of data will lead to more students with an "incomplete" record containing all of the elements required to predict their probability of graduating. Defining the sample cohort for each model necessarily excludes some students because of incompleteness. 
+
+Each cohort must have enough time to complete high school from eighth grade in order to model graduation probabilities. Our model does not specify graduation as needing to happen "on-time", or 4 years after first entering high school. However, in Providence, few students graduate in 5 or 6 years (reference TK). Therefore, we use three cohorts of students for the 8GM starting with students who enter high school in the 2007-2008 school year (expected graduation 2010-2011) through students who enter high school in the 2010-2011 school year (expected graduation 2012-2013). These are the three most recent cohorts of PPSD graduates [^cohort definition]. 
+
+[cohort definition]: We define the graduating class for each cohort based on the National Governor's Association for cohort-adjusted graduation rates. For example, students who enter PPSD for the first time in 9th grade in the 2007-2008 school year, 10th grade in the 2008-2009 school year, 11th grade in the 2009-2010 school year, and 12th grade in the 2010-2011 school year are all part of the high school 2007-2008 cohort.
+
+In the three most recent cohorts, there were 7,506 students. However, many of these students are excluded from the 8GM. The first exclusion comes from students who did not attend 8th grade in a PPSD school. As a result, these students do not have data from 8th grade available to the district prior to entering high school. 
+
+There are two ways to understand the coverage of the 8GM. First, we want to understand what proportion of all students will the model be based upon. There are three ways students are excluded from the model.
+
+1. Does the 8th grade student attend high school in Providence?
+2. Did the student attrite from the data set, e.g. transfer out of the district before recording their ultimate high school outcome?
+3. Does the student have a complete set of 8th grade data required by the model?
+
+The first two questions are easily answered prior to model selection, while the third will be specific to each model. In Table 1, we show the proportion of 8th grade students who attend Providence high schools and the proportion of 8th grade students who do not transfer out by cohort.
+
+| High School Cohort | High School Attendance        || Attrition           || Remaining ||
+|                    |  In PPSD (%) | Out of PPSD (%) | Yes (%)     | No (%) |  (%) | (N) |
+| :----------        | :-------:    | :-----------:   |  :-----:    | :--:   | :--: | :-: |
+| 2007-2008          | 84.2      | 15.8            | 17.3    | 82.7   | 69.7   | 1499 |
+| 2008-2009          | 86.6      | 13.4            | 16.7    | 83.3   | 72.1   | 1496 |
+| 2009-2010          | 85.2      | 14.8            | 19.9    | 80.1   | 68.2   | 1245 | 
+
+As demonstrated in Table 1, approximately 85% of all 8th grade PPSD students will attend at least some of high school in the district. Therefore, a large portion of these students will remain in the district to benefit from early identification of risk. 
+
+The model for predicting graduation based on 8th grade data is built only with students who attend a Providence Public School as their final high school prior to graduating, dropping out, or transferring to a GED program (non-attrition). These students are excluded because we have no way of knowing whether or not these students ultimately graduate and their graduating is impacted substantially by non-Providence schools. Although they are excluded from the model, we can predict the likelihood that these students will graduate. Because students who are mobile tend to be disproportionately disadvantaged relative to their peers, it is likely that our model for these students is *positively biased*, i.e. these students will have higher probabilities of successfully graduating than is likely true because peers with similar observable characteristics have some unobserved advantages which resulted in being less mobile.
+
+However, we can check to see whether or not students who transfer out are similar across observable characteristics such as race/ethnicity, course failures, grade point average, attendance, within-year school mobility, IEP status, and LEP status. If students who transfer out of PPSD appear similar across all of thes observable characteristics, then we can be less concerned about the positive bias of our estimates for students that transfer out.
+
+```{r TransferCompare, results='asis'}
+race <- with(hscohort, as.data.frame(prop.table(table(race, transfer_out), 2)))
+race$transfer_out <- ifelse(race$transfer_out=='N', 
+                        'Remains in PPSD', 
+                        'Transfers Out of PPSD')
+ggplot(data = race, aes(race, Freq)) + 
+geom_bar(stat='identity') + 
+geom_text(aes(label=percent(Freq)), vjust=-.4) +
+scale_y_continuous('', labels = percent_format(), limits=c(0, .7)) +
+scale_x_discrete('') +
+theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+ggtitle('Race of Students by Attrition for\n Most Recent Three High School Cohorts') +
+facet_wrap(~transfer_out)
+
+grades <- with(hscohort, as.data.frame(prop.table(table(cut(gpa8th, 
+                                                            breaks=seq(0,4,.5)), 
+                                                        transfer_out), 2)))
+grades$transfer_out <- ifelse(grades$transfer_out=='N', 
+                              'Remains in PPSD', 
+                              'Transfers Out of PPSD')
+names(grades)[1] <- 'GPA'
+
+ggplot(data = grades, aes(GPA, Freq)) + 
+geom_bar(stat='identity') + 
+geom_text(aes(label=percent(Freq)), vjust=-.4) +
+scale_y_continuous('', labels = percent_format(), limits=c(0, .25)) +
+scale_x_discrete('') +
+theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+ggtitle('GPA of Students by Attrition for\n Most Recent Three High School Cohorts') +
+facet_wrap(~transfer_out)
+
+mobility <- with(hscohort, as.data.frame(prop.table(table(moves, transfer_out), 
+                                                    2)))
+mobility$transfer_out <- ifelse(mobility$transfer_out=='N', 
+                                'Remains in PPSD', 
+                                'Transfers Out of PPSD')
+ggplot(data = mobility, aes(moves, Freq)) + 
+geom_bar(stat='identity') + 
+geom_text(aes(label=percent(Freq)), vjust=-.4) +
+scale_y_continuous('', labels = percent_format(), limits=c(0, 1)) +
+scale_x_discrete('') +
+ggtitle('School Changes in 8th Grade of Students by Attrition for\n Most Recent Three High School Cohorts') +
+facet_wrap(~transfer_out)
 ```
 
-The model for predicting graduation based on 8th grade data is built only with students who attend a Providence Public School as their final high school prior to graduating, dropping out, or transferring to a GED program. Therefore, students whose final exit code from the Providence Public School District is a transfer to another public school, they are not included. These students are excluded because we have no way of knowing whether or not these students ultimately graduate and their graduating is impacted substantially by non-Providence schools. Although they are excluded from the model, we can predict the likelihood that these students will graduate. Because students who are mobile tend to be disproportionately disadvantaged relative to their peers, it is likely that our model for these students is *positively biased*, i.e. these students will have higher probabilities of successfully graduating than is likely true because peers with similar observable characteristics have some unobserved advantages which resulted in being less mobile.
+
 
 ```{r RunModel}
-hscohort <- rbind(hs0708, hs0809, hs0910)
 hscohort <- filter(hscohort, transfer_out=='N')
 hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
 # hscohort$graduated <- ifelse(hscohort$graduated == 'Y', 1, 
