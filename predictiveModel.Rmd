@@ -860,7 +860,26 @@ model.2 <- train(graduated ~ attendnormal + gpa10th + retained9th +
                                           summaryFunction = twoClassSummary),
                  metric='ROC')
 
-summary(resamples(list(glm = model.1, forrest = model.2)))
+summary(resamples(list(glm = model.1, ctree = model.2)))
+
+roc_lm_tenth <- roc(hscohort_test$graduated, 
+                    predict(model.1, newdata=hscohort_test, type='prob')$Y, 
+                    auc=TRUE, ci=TRUE)
+
+roc_ctree_tenth <- roc(hscohort_test$graduated, 
+                       predict(model.2, newdata=hscohort_test, type='prob')$Y)
+
+rocobj1 <- plot.roc(roc_lm_tenth, 
+                    main="Comparing glm and ctree models for\n First Time 10th Graders",
+                    col="#1c61b6", 
+                    print.auc=TRUE, 
+                    legacy.axes=TRUE)
+rocobj2 <- lines.roc(roc_ctree_tenth, col="#008600")  
+testobj <- roc.test(rocobj1, rocobj2)  
+text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
+legend("bottomright", legend=c("glm", "ctree"), col=c("#1c61b6", "#008600"), lwd=2)
+
+sjp.glm(model.1$finalModel)
 
 # basemodel10thgrade <- glm(as.numeric(as.factor(graduated))-1 ~ 
 #                          attendnormal + gpa10th + retained9th + retained10th +
