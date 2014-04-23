@@ -116,3 +116,29 @@ grades2012_13 <- merge(grades2012_13, stu2012_13[, c('studentid', 'sasid',
                        by = 'studentid')
 names(grades2012_13)[which(names(grades2012_13)=='schyr')] <- 'schoolyear'
 
+achievement1112 <- read.csv('/Volumes/ProvidenceFiles/NECAP/NECAPFall2011.csv',
+                            stringsAsFactors=FALSE)
+names(achievement1112) <- tolower(names(achievement1112))
+achievement1112 <- achievement1112 %.%
+                   select(rptstudid, lname, grade, reaal, reascaledscore, 
+                          matal, matscaledscore, wrial, wriscaledscore)
+names(achievement1112) <- c('sasid', 'last_name', 'grade', 'reaal', 'reascsc',
+                            'matal', 'matscsc', 'wrial', 'wriscsc')
+achievement1112$schoolyear <- '2011_2012'
+achievement1112$testgrade_N <- substr(achievement1112$matscsc, 1, 1)
+achievement1112$testgrade_N <- as.numeric(achievement1112$testgrade_N)
+achievement1112$testgrade_N <- ifelse(achievement1112$testgrade_N == 1, 11,
+                                      achievement1112$testgrade_N)
+achievement1112 <- achievement1112 %.%
+                   mutate(contentgrade_N = testgrade_N - 1)
+achievement1112[,c('reascsc', 'matscsc')] <- 
+  lapply(achievement1112[,c('reascsc', 'matscsc')], as.numeric)
+achievement1112 <- achievement1112 %.%
+                   group_by(testgrade_N) %.%
+                   mutate(reanormal = (reascsc - mean(reascsc, 
+                                                      na.rm=TRUE)) /
+                            sd(reascsc, na.rm=TRUE), 
+                          matnormal = (matscsc - mean(matscsc, 
+                                                      na.rm=TRUE)) /
+                            sd(matscsc, na.rm=TRUE))
+achievement1112 <- left_join(achievement1112, stu2011_12[, c('sasid', 'studentid')])
