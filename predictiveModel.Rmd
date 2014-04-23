@@ -283,7 +283,7 @@ model.1 <- train(graduated~ attendnormal + gpa8th + reanormal + matnormal +
                                           summaryFunction = twoClassSummary),
                  metric='ROC')
 
-model.2 <- train(graduated~ attendnormal + gpa8th + reaal + matal + 
+model.2 <- train(graduated~ attendnormal + gpa8th + reanormal + matnormal + 
                  I(sex=='Male') + I(ageHS>190) + fails + moves + iep, 
                  data=hscohort_train,
                  method='ctree',
