@@ -1,0 +1,460 @@
+Pathways to Graduation
+========================================================
+
+```{r Initialization, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
+source('dependencies.R')
+require(sjPlot)
+file.sources = list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
+                          pattern='*.R$', full.names=TRUE, ignore.case=TRUE)
+invisible(sapply(file.sources, source, .GlobalEnv))
+invisible(source('load.R'))
+invisible(source('buildTables.R'))
+invisible(source('person.R'))
+invisible(source('attendance.R'))
+attendance$sasid <- as.character(attendance$sasid)
+```
+
+```{r 8GMData, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+# Build cohort for predictive model
+hs0708 <- subset(person, (schoolyear_first=='2007_2008' & grade_first==9) | 
+                         (schoolyear_first=='2008_2009' & grade_first==10) | 
+                         (schoolyear_first=='2009_2010' & grade_first==11) | 
+                         (schoolyear_first=='2010_2011' & grade_first==12))
+hs0809 <- subset(person, (schoolyear_first=='2008_2009' & grade_first==9) | 
+                         (schoolyear_first=='2009_2010' & grade_first==10) | 
+                         (schoolyear_first=='2010_2011' & grade_first==11) | 
+                         (schoolyear_first=='2011_2012' & grade_first==12))
+hs0910 <- subset(person, (schoolyear_first=='2009_2010' & grade_first==9) | 
+                         (schoolyear_first=='2010_2011' & grade_first==10) | 
+                         (schoolyear_first=='2011_2012' & grade_first==11) | 
+                         (schoolyear_first=='2012_2013' & grade_first==12))
+hs0708$sasid <- as.character(hs0708$sasid)
+hs0809$sasid <- as.character(hs0809$sasid)
+hs0910$sasid <- as.character(hs0910$sasid)
+
+hs0708 <- left_join(hs0708, attendance %.% filter(schoolyear == '2006_2007')
+                                       %.% dplyr::select(sasid, attendance, 
+                                                         tardy, suspended))
+hs0809 <- left_join(hs0809, attendance %.% filter(schoolyear == '2007_2008')
+                                       %.% dplyr::select(sasid, attendance, 
+                                                         tardy, suspended))
+hs0910 <- left_join(hs0910, attendance %.% filter(schoolyear == '2008_2009')
+                                       %.% dplyr::select(sasid, attendance, 
+                                                         tardy, suspended))
+
+names(hs0708)[which(names(hs0708) %in% c('suspended'))] <- 'suspend8th'
+names(hs0708)[which(names(hs0708) %in% c('tardy'))] <- 'tardy8th'
+names(hs0708)[which(names(hs0708) %in% c('attendance'))] <- 'attendance8th'
+names(hs0809)[which(names(hs0809) %in% c('suspended'))] <- 'suspend8th'
+names(hs0809)[which(names(hs0809) %in% c('tardy'))] <- 'tardy8th'
+names(hs0809)[which(names(hs0809) %in% c('attendance'))] <- 'attendance8th'
+names(hs0910)[which(names(hs0910) %in% c('suspended'))] <- 'suspend8th'
+names(hs0910)[which(names(hs0910) %in% c('tardy'))] <- 'tardy8th'
+names(hs0910)[which(names(hs0910) %in% c('attendance'))] <- 'attendance8th'
+
+# Calculate age when student enters 9th grade for the first time.
+hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date('2007-09-01'), 
+                                          units='months'))
+hs0809 <- mutate(hs0809, ageHS = age_calc(dob, as.Date('2008-09-01'), 
+                                          units='months'))
+hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date('2009-09-01'), 
+                                          units='months'))
+# Calculate mobility for students
+# Eighth Grade year
+mobile0607 <-  moves_calc(subset(tables2006_2007$enrollment, 
+                                sasid %in% hs0708$sasid))
+
+mobile0607$sasid <- as.character(mobile0607$sasid)
+hs0708 <- left_join(hs0708, mobile0607)
+
+mobile0708 <-  moves_calc(subset(tables2007_2008$enrollment, 
+                                sasid %in% hs0809$sasid))
+
+mobile0708$sasid <- as.character(mobile0708$sasid)
+hs0809 <- left_join(hs0809, mobile0708)
+
+mobile0809 <-  moves_calc(subset(tables2008_2009$enrollment, 
+                                sasid %in% hs0910$sasid))
+
+mobile0809$sasid <- as.character(mobile0809$sasid)
+hs0910 <- left_join(hs0910, mobile0809)
+
+# Bring in 8th grade performance on standardized tests.
+tables2006_2007$achievement$sasid <- as.character(tables2006_2007$achievement$sasid)
+tables2006_2007$achievement$studentid <- as.character(tables2006_2007$achievement$studentid)
+
+tables2007_2008$achievement$sasid <- as.character(tables2007_2008$achievement$sasid)
+tables2007_2008$achievement$studentid <- as.character(tables2007_2008$achievement$studentid)
+
+tables2008_2009$achievement$sasid <- as.character(tables2008_2009$achievement$sasid)
+tables2008_2009$achievement$studentid <- as.character(tables2008_2009$achievement$studentid)
+
+
+hs0708 <- left_join(hs0708, tables2006_2007$achievement %.% 
+                            filter(testgrade_N==8, testgrade_N==grade) %.%
+                            dplyr::select(sasid, grade, reaal, reascsc, matal, 
+                                          matscsc, testgrade_N, reanormal, 
+                                          matnormal))
+hs0809 <- left_join(hs0809, tables2007_2008$achievement %.% 
+                            filter(testgrade_N==8, testgrade_N==grade) %.%
+                            dplyr::select(sasid, grade, reaal, reascsc, matal, 
+                                          matscsc, testgrade_N, reanormal, 
+                                          matnormal))
+hs0910 <- left_join(hs0910, tables2008_2009$achievement %.% 
+                            filter(testgrade_N==8, testgrade_N==grade) %.%
+                            dplyr::select(sasid, grade, reaal, reascsc, matal, 
+                                          matscsc, testgrade_N, reanormal, 
+                                          matnormal))
+
+# Attendance normalized
+hs0708 <- mutate(hs0708, attendnormal = (attendance8th - 
+                                         mean(attendance8th, na.rm=TRUE)) / 
+                                        sd(attendance8th, na.rm=TRUE))
+hs0809 <- mutate(hs0809, attendnormal = (attendance8th - 
+                                         mean(attendance8th, na.rm=TRUE)) / 
+                                        sd(attendance8th, na.rm=TRUE))
+hs0910 <- mutate(hs0910, attendnormal = (attendance8th - 
+                                         mean(attendance8th, na.rm=TRUE)) / 
+                                        sd(attendance8th, na.rm=TRUE))
+
+# Current LEP
+lep0708 <- tables2006_2007$person_annual[, c('sasid','lep')]
+names(lep0708)[2] <- 'lep8th'
+hs0708 <- left_join(hs0708, lep0708)
+
+lep0809 <- tables2007_2008$person_annual[, c('sasid','lep')]
+names(lep0809)[2] <- 'lep8th'
+hs0809 <- left_join(hs0809, lep0809)
+
+lep0910 <- tables2008_2009$person_annual[, c('sasid','lep')]
+names(lep0910)[2] <- 'lep8th'
+hs0910 <- left_join(hs0910, lep0910)
+
+
+# GPA in 8th grade calculations
+gpa0607 <- tables2006_2007$course %.% 
+           filter(grade==8) %.% 
+           group_by(sasid) %.% 
+           dplyr::summarise(gpa8th = mean(gpa, na.rm=TRUE))
+gpa0607$sasid <- as.character(gpa0607$sasid)
+hs0708 <- left_join(hs0708, gpa0607)
+
+gpa0708 <- tables2007_2008$course %.% 
+           filter(grade==8) %.% 
+           group_by(sasid) %.% 
+           dplyr::summarise(gpa8th = mean(gpa, na.rm=TRUE))
+gpa0708$sasid <- as.character(gpa0708$sasid)
+hs0809 <- left_join(hs0809, gpa0708)
+
+gpa0809 <- tables2008_2009$course %.% 
+           filter(grade==8) %.% 
+           group_by(sasid) %.% 
+           dplyr::summarise(gpa8th = mean(gpa, na.rm=TRUE))
+gpa0809$sasid <- as.character(gpa0809$sasid)
+hs0910 <- left_join(hs0910, gpa0809)
+
+# Course Failures
+fails0607 <- tables2006_2007$course %.% 
+             filter(grade == 8) %.%
+             group_by(sasid, courseno) %.% 
+             dplyr::summarise(gpa = mean(gpa, na.rm=TRUE)) %.% 
+             filter(gpa <= 1.0) %.% 
+             dplyr::summarise(fails = n())
+
+fails0708 <- tables2007_2008$course %.% 
+             filter(grade == 8) %.%
+             group_by(sasid, courseno) %.% 
+             dplyr::summarise(gpa = mean(gpa, na.rm=TRUE)) %.% 
+             filter(gpa <= 1.0) %.% 
+             dplyr::summarise(fails = n())
+
+fails0809 <- tables2008_2009$course %.% 
+             filter(grade == 8) %.%
+             group_by(sasid, courseno) %.% 
+             dplyr::summarise(gpa = mean(gpa, na.rm=TRUE)) %.% 
+             filter(gpa <= 1.0) %.% 
+             dplyr::summarise(fails = n())
+
+fails0607$sasid <- as.character(fails0607$sasid)
+fails0708$sasid <- as.character(fails0708$sasid)
+fails0809$sasid <- as.character(fails0809$sasid)
+
+hs0708 <- left_join(hs0708, fails0607)
+hs0708$fails <- with(hs0708, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
+hs0809 <- left_join(hs0809, fails0708)
+hs0809$fails <- with(hs0809, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
+hs0910 <- left_join(hs0910, fails0809)
+hs0910$fails <- with(hs0910, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
+hscohort <- rbind(hs0708, hs0809, hs0910)
+```
+## Eighth Grade Model
+### Defining the Sample
+The goal of each model is to maximize the applicability of the model to maximize the number of future non-graduates as at-risk while minimizing model complexity and overall inaccuracy. The Eighth Grade Model (8GM) for predicting high school readiness uses data from students only collected in the eighth grade year. It is preferable to use only one year of data prior to entering high school to ensure the largest possible sample. Requiring additional years of data will lead to more students with an "incomplete" record containing all of the elements required to predict their probability of graduating. Defining the sample cohort for each model necessarily excludes some students because of incompleteness. 
+
+Each cohort must have enough time to complete high school from eighth grade in order to model graduation probabilities. Our model does not specify graduation as needing to happen "on-time", or 4 years after first entering high school. However, in Providence, few students graduate in 5 or 6 years (reference TK). Therefore, we use three cohorts of students for the 8GM starting with students who enter high school in the 2007-2008 school year (expected graduation 2010-2011) through students who enter high school in the 2010-2011 school year (expected graduation 2012-2013). These are the three most recent cohorts of PPSD graduates [^cohort definition]. 
+
+[cohort definition]: We define the graduating class for each cohort based on the National Governor's Association for cohort-adjusted graduation rates. For example, students who enter PPSD for the first time in 9th grade in the 2007-2008 school year, 10th grade in the 2008-2009 school year, 11th grade in the 2009-2010 school year, and 12th grade in the 2010-2011 school year are all part of the high school 2007-2008 cohort.
+
+In the three most recent cohorts, there were 7,506 students. However, many of these students are excluded from the 8GM. The first exclusion comes from students who did not attend 8th grade in a PPSD school. As a result, these students do not have data from 8th grade available to the district prior to entering high school. 
+
+There are two ways to understand the coverage of the 8GM. First, we want to understand what proportion of all students will the model be based upon. There are three ways students are excluded from the model.
+
+1. Does the 8th grade student attend high school in Providence?
+2. Did the student attrite from the data set, e.g. transfer out of the district before recording their ultimate high school outcome?
+3. Does the student have a complete set of 8th grade data required by the model?
+
+The first two questions are easily answered prior to model selection, while the third will be specific to each model. In Table 1, we show the proportion of 8th grade students who attend Providence high schools and the proportion of 8th grade students who do not transfer out by cohort.
+
+
+
+```{r ExampleTableSource, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+cohort0708 <- subset(person, schoolyear_first=='2008_2009' & grade_first==9) %.%
+              select(sasid) %.%
+              left_join(subset(tables2008_2009$person_annual, 
+                               grade==8, select=c('sasid', 'grade')))
+prop.table(table(cohort0708$grade, useNA='ifany'))
+
+cohort_gr8 <- subset(tables2008_2009$person_annual, 
+                     grade==8, select = 'sasid') %.%
+              left_join(subset(person, 
+                              (schoolyear_first=='2009_2010' & grade_first==9) | 
+                              (schoolyear_first=='2010_2011' & grade_first==10) | 
+                              (schoolyear_first=='2011_2012' & grade_first==11) | 
+                              (schoolyear_first=='2012_2013' & grade_first==12),
+                              select = c('sasid', 'grade_first', 'transfer_out')))
+prop.table(table(cohort_gr8$grade_first, useNA='ifany'))
+
+```
+
+
+| High School Cohort | High School Attendance        || Attrition           || Remaining ||
+|                    |  In PPSD (%) | Out of PPSD (%) | Yes (%)     | No (%) |  (%) | (N) |
+| :----------        | :-------:    | :-----------:   |  :-----:    | :--:   | :--: | :-: |
+| 2007-2008          | 84.2      | 15.8            | 17.3    | 82.7   | 69.7   | 1499 |
+| 2008-2009          | 86.6      | 13.4            | 16.7    | 83.3   | 72.1   | 1496 |
+| 2009-2010          | 85.2      | 14.8            | 19.9    | 80.1   | 68.2   | 1245 | 
+
+As demonstrated in Table 1, approximately 85% of all 8th grade PPSD students will attend at least some of high school in the district. Therefore, a large portion of these students will remain in the district to benefit from early identification of risk. 
+
+The model for predicting graduation based on 8th grade data is built only with students who attend a Providence Public School as their final high school prior to graduating, dropping out, or transferring to a GED program (non-attrition). These students are excluded because we have no way of knowing whether or not these students ultimately graduate and their graduating is impacted substantially by non-Providence schools. Although they are excluded from the model, we can predict the likelihood that these students will graduate. Because students who are mobile tend to be disproportionately disadvantaged relative to their peers, it is likely that our model for these students is *positively biased*, i.e. these students will have higher probabilities of successfully graduating than is likely true because peers with similar observable characteristics have some unobserved advantages which resulted in being less mobile.
+
+However, we can check to see whether or not students who transfer out are similar across observable characteristics such as race/ethnicity, course failures, grade point average, attendance, within-year school mobility, IEP status, and LEP status. If students who transfer out of PPSD appear similar across all of thes observable characteristics, then we can be less concerned about the positive bias of our estimates for students that transfer out.
+
+```{r TransferCompare, results='hide', echo=FALSE}
+race <- with(hscohort, as.data.frame(prop.table(table(race, transfer_out), 2)))
+race$transfer_out <- ifelse(race$transfer_out=='N', 
+                        'Remains in PPSD', 
+                        'Transfers Out of PPSD')
+raceplot <- ggplot(data = race, aes(race, Freq)) + 
+            geom_bar(stat='identity') + 
+            geom_text(aes(label=percent(Freq)), vjust=-.4) +
+            scale_y_continuous('', labels = percent_format(), limits=c(0, .7)) +
+            scale_x_discrete('') +
+            theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+            ggtitle('Race of Students by Attrition for\n Most Recent Three High School Cohorts') +
+            facet_wrap(~transfer_out)
+
+grades <- with(hscohort, as.data.frame(prop.table(table(cut(gpa8th, 
+                                                            breaks=seq(0,4,.5)), 
+                                                        transfer_out), 2)))
+grades$transfer_out <- ifelse(grades$transfer_out=='N', 
+                              'Remains in PPSD', 
+                              'Transfers Out of PPSD')
+names(grades)[1] <- 'GPA'
+
+gpaplot <- ggplot(data = grades, aes(GPA, Freq)) + 
+           geom_bar(stat='identity') + 
+           geom_text(aes(label=percent(Freq)), vjust=-.4) +
+           scale_y_continuous('', labels = percent_format(), limits=c(0, .25)) +
+           scale_x_discrete('') +
+           theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+           ggtitle('GPA of Students by Attrition for\n Most Recent Three High School Cohorts') +
+           facet_wrap(~transfer_out)
+
+mobility <- with(hscohort, as.data.frame(prop.table(table(moves, transfer_out), 
+                                                    2)))
+mobility$transfer_out <- ifelse(mobility$transfer_out=='N', 
+                                'Remains in PPSD', 
+                                'Transfers Out of PPSD')
+mobilityplot <- ggplot(data = mobility, aes(moves, Freq)) + 
+                geom_bar(stat='identity') + 
+                geom_text(aes(label=percent(Freq)), vjust=-.4) +
+                scale_y_continuous('', labels = percent_format(), limits=c(0, 1)) +
+                scale_x_discrete('') +
+                ggtitle('School Changes in 8th Grade of Students by Attrition for\n Most Recent Three High School Cohorts') +
+                facet_wrap(~transfer_out)
+```
+
+```{r TransferCompareGraphics, echo=FALSE, results='asis', message=FALSE, fig.height=14, fig.width=10}
+multiplot(raceplot, gpaplot, mobilityplot, cols=1)
+```
+
+We see several interesting patterns when comparing students who transfer out of PPSD during high school and those who do not. These groups have essentially identical racial makeup, with students transfering out of the district being slightly more likely to be White or Asian ($latex \chi^{2} = 30$, $latex df = 25$, $latex p-value = 0.2243$ suggesting the groups are indistinguishable) . The 8th grade course performance of students who transfer out of PPSD during high school is actually slightly better than those who remain in PPSD. By both of these measures, we find that those who transfer out are either no different or possibly even less disadvantaged than students that remain in PPSD, which is counter to what would have been expected. Mobility shows a slightly different picture, with students who leave PPSD having higher rates of within-school year school mobility, which is not surprising ($latex \chi^{2} = 20$, $latex df = 16$, $latex p-value = 0.2202$ suggesting the groups are indistinguishable). [^allmodels] Based on these findings, we are not concerned about the biases present in providing predicted graduation rates for students even though those who transfer out are excluded from the data set when constructing our models.
+
+[allmodels]: It should be noted that while these patterns are only explored for the 8GM in this section, these same findings hold for all models.
+
+```{r RunModel ,echo=FALSE, message=FALSE, warning=FALSE}
+hscohort <- filter(hscohort, transfer_out=='N')
+hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
+# hscohort$graduated <- ifelse(hscohort$graduated == 'Y', 1, 
+#                              ifelse(hscohort$graduated == 'N', 0, NA))
+hscohort$graduated <- as.factor(hscohort$graduated)
+hscohort <- na.omit(hscohort)
+# hscohort$testgrade_N <- NULL
+# hscohort$transfer_out <- NULL
+# hscohort$still_enrl <- NULL
+# hscohort$ged <- NULL
+# hscohort$dropout <- NULL
+# hscohort$disappear <- NULL
+# hscohort$exit_type_last <-NULL
+# hscohort$exit_type_first <-NULL
+# hscohort$grade_first <-NULL
+require(caret)
+trainIndex <- createDataPartition(hscohort$graduated,
+                                  p = .8, list=FALSE)
+hscohort_train <- hscohort[trainIndex,]
+hscohort_test <- hscohort[-trainIndex,]
+
+model.1 <- train(graduated ~ attendnormal + gpa8th + I(ageHS>190) + 
+                             I(schno_first=='164') + matnormal + reanormal, 
+                 data=hscohort_train,
+                 method='glm',
+                 tuneLength = 5,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary),
+                 metric='ROC')
+
+model.2 <- train(graduated~ attendnormal + gpa8th + I(ageHS>190) + 
+                            I(schno_first=='164') + + matnormal + reanormal, 
+                 data=hscohort_train,
+                 method='ctree',
+                 tuneLength = 5,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary),
+                 metric='ROC')
+```
+The 8GM is constructed using the `caret` package in `R`. This software tools enables us to partition the data set into training and test data, conduct repeated k-fold crossvalidation model fits using different techniques and parameters, and report the predictive properties of the resulting model estimates.
+
+After testing out several specifications, it was found that standard logistic regression with graduation as the outcome and attendance, 8th grade GPA, whether or not a student was overaged when they entered high school, whether or not the first high school a student attended was Classical High School, and NECAP math and reading scaled scores as predictors provided the greatest overall predictive accuracy.
+
+Below, we detail the key statistics from two modeling techinques-- the logistic regression represented by `glm` and the blue line in the Receiver-operator characteristic (ROC) chart and a conditional inference tree represented by `ctree` in the table and the green line in the ROC chart. We then report the parameter and their estimates for the `glm` model which was ultimately chosen for the 8GM.
+
+```{r ModelResamples, echo=TRUE}
+summary(resamples(list(glm = model.1, ctree = model.2)))
+```
+```{r ROCData, results='asis', echo=FALSE, message=FALSE, warning=FALSE}
+roc_lm <- roc(hscohort_test$graduated, 
+              predict(model.1, newdata=hscohort_test, type='prob')$Y, 
+              auc=TRUE, ci=TRUE)
+
+roc_ctree <- roc(hscohort_test$graduated, 
+                 predict(model.2, newdata=hscohort_test, type='prob')$Y)
+
+rocobj1 <- plot.roc(roc_lm, 
+                    main="Comparing glm and ctree models for\n First Time 10th Graders",
+                    col="#1c61b6", 
+                    print.auc=TRUE, 
+                    legacy.axes=TRUE)
+rocobj2 <- lines.roc(roc_ctree, col="#008600")  
+testobj <- roc.test(rocobj1, rocobj2)  
+text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
+legend("bottomright", legend=c("glm", "ctree"), col=c("#1c61b6", "#008600"), lwd=2)
+```
+```{r 8GMParam, results='asis', fig.width=10}
+sjp.glm(model.1$finalModel, 
+        title = 'Eighth Grade Model Parameter Estimates',
+        showModelSummary = FALSE)
+```
+
+## Classification
+Students with predicted probabilities that are different by only a few percent do not actually represent different levels of risk for not graduating. School leaders, guidance counselors, teachers, parents, and students are likely to misinterpret the direct probabilities produced by a logistic regression. When predicting "membership to a class", e.g. will this student graduate or not, does the patient have cancer or not, we can group similar probabilities into levels of risk that more clearly indicate whether or not immediate action is required.
+
+The Rhode Island Department of Education has also been developing predictive models that seek to determine the probability that students will graduate. They have set three threshold levels for cutoffs based on the *true negative rate*. The true negative rate is the proportion of students that would be classified as not graduating in the model who ultimately fail to graduate over all non-graduates. It descrbies the percentage of students does the model correctly classify as not graduating. They have chosen three cutoffs that we will use here: 80% true negative rate for *high* risk, 70% true negative rate for *moderate* risk, and 60% true negative rate for *low* risk.
+
+We determine the true negative rate by predicting the outcomes for our *test* data set, just as we did for our ROC curves. This provides an accurate depiction of out-of-sample, i.e. with future students, performance.
+
+```{r, CutOffMatrix8GM}
+m1_matrix <- cutoff_matrix(hscohort_test, 'predict8th', 'graduated')
+thresholds <- data.frame(classification = as.factor(c('Watch', 
+                                                      'Warning', 'Action')),
+  threshold = c(m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .6)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .7)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .8)),]$cutoff))
+
+# Compute coverage: what proportion of those who fail to graduate are identified
+thresholds$coverage <- NA
+coverage <- as.data.frame(table(
+  hscohort_test$graduated, 
+  hscohort_test$predict8th <= subset(thresholds, 
+                                     classification=='Action')$threshold))
+thresholds[thresholds$classification == 'Action', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_test$graduated, 
+  hscohort_test$predict8th <= subset(thresholds, 
+                                     classification=='Warning')$threshold))
+thresholds[thresholds$classification == 'Warning', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_test$graduated, 
+  hscohort_test$predict8th <= subset(thresholds, 
+                                     classification=='Watch')$threshold))
+thresholds[thresholds$classification == 'Watch', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+```
+
+
+Although many demographic characteristics are not present in the model, this is not because all groups of students are served equally well. The following figures examine the distribution of graduation probabilities by student groupings such as race, free or reduced price lunch, special education status, and limited English proficiency. These data look at the incoming high school freshman in the fall of 2012 using the 8GM.
+
+```{r NewestCohort8th, echo=FALSE, results='hide'}
+hs1213 <- subset(person, schoolyear_first=='2013' & grade_first==9)
+hs1213$sasid <- as.character(hs1213$sasid)
+
+hs1213 <- left_join(hs1213, attendance %.% filter(schoolyear == '2011_2012')
+                                       %.% select(sasid, attendance, 
+                                                  tardy, suspended))
+names(hs1213)[which(names(hs1213) %in% c('suspended'))] <- 'suspend8th'
+names(hs1213)[which(names(hs1213) %in% c('tardy'))] <- 'tardy8th'
+names(hs1213)[which(names(hs1213) %in% c('attendance'))] <- 'attendance8th'
+
+hs1213 <- mutate(hs1213, ageHS = age_calc(dob, as.Date('2012-09-01'), 
+                                          units='months'))
+mobile1213 <-  moves_calc(subset(tables2011_2012$enrollment, 
+                                sasid %in% hs1213$sasid))
+
+mobile1213$sasid <- as.character(mobile1213$sasid)
+hs1213 <- left_join(hs1213, mobile1213)
+tables2011_2012$achievement$sasid <- as.character(tables2011_2012$achievement$sasid)
+tables2011_2012$achievement$studentid <- as.character(tables2011_2012$achievement$studentid)
+hs1213 <- left_join(hs1213, tables2011_2012$achievement %.% 
+                            filter(testgrade_N==8, testgrade_N==grade) %.%
+                            select(sasid, grade, reaal, reascsc, matal, matscsc,
+                                   testgrade_N, reanormal, matnormal))
+hs1213 <- mutate(hs1213, attendnormal = (attendance8th - 
+                                         mean(attendance8th, na.rm=TRUE)) / 
+                                         sd(attendance8th, na.rm=TRUE))
+gpa1112 <- tables2011_2012$course %.% 
+           filter(grade==8) %.% 
+           group_by(sasid) %.% 
+           summarise(gpa8th = mean(gpa, na.rm=TRUE))
+gpa1112$sasid <- as.character(gpa1112$sasid)
+hs1213 <- left_join(hs1213, gpa1112)
+hs1213 <- na.omit(hs1213)
+hs1213$prediction <- predict(model.1, newdata=hs1213, type='prob')$Y
+```
+
+```{r Prediction8GMDisagg, results='asis', fig.width=10}
+ggplot(data=hs1213, aes(prediction)) + geom_histogram(binwidth=0.1)
+ggplot(data=hs1213, aes(race, prediction)) + geom_boxplot()
+ggplot(data=hs1213, aes(lep, prediction)) + geom_boxplot()
+ggplot(data=hs1213, aes(iep, prediction)) + geom_boxplot()
+ggplot(data=hs1213, aes(as.factor(moves), prediction)) + geom_boxplot()
+ggplot(data=hs1213, aes(sex, prediction)) + geom_boxplot()
+ggplot(data=hs1213, aes(school_first, prediction)) + geom_boxplot()
+```
