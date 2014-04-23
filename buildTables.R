@@ -38,7 +38,8 @@ tables2011_2012 <- list(person = subset(stu2011_12,
                         person_annual = subset(stu2011_12,
                                                select = person_annual_attributes),
                         enrollment = enr2011_12,
-                        course = extract_course(grades2011_12))
+                        course = extract_course(grades2011_12),
+                        achievement = achievement1112)
 tables2011_2012$person <- subset(tables2011_2012$person, !duplicated(tables2011_2012$person))
 tables2011_2012$person$sex <- ifelse(!tables2011_2012$person$sex %in% c('F','M'), 
                                      NA, tables2011_2012$person$sex) 
@@ -46,6 +47,7 @@ tables2011_2012$person$sex<- factor(tables2011_2012$person$sex,
                                     labels = c('Female', 'Male'))
 tables2011_2012$person_annual <- subset(tables2011_2012$person_annual, 
                                         !duplicated(tables2011_2012$person_annual))
+
 tables2012_2013 <-  list(person = subset(stu2012_13, 
                                         select = person_attributes),
                         person_annual = subset(stu2012_13,
