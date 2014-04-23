@@ -841,8 +841,7 @@ hscohort_train <- hscohort[trainIndex,]
 hscohort_test <- hscohort[-trainIndex,]
 
 model.1 <- train(graduated ~ attendnormal + gpa10th + retained9th + 
-                             retained10th + fails + I(moves>=1) + I(ageHS>190) +
-                             I(schno_first=='164'), 
+                             retained10th + I(ageHS>190),
                  data=hscohort_train,
                  method='glm',
                  tuneLength = 10,
@@ -852,8 +851,7 @@ model.1 <- train(graduated ~ attendnormal + gpa10th + retained9th +
                  metric='ROC')
 
 model.2 <- train(graduated ~ attendnormal + gpa10th + retained9th + 
-                             retained10th + fails + I(moves>=1) + I(ageHS>190) +
-                             I(schno_first=='164'), 
+                             retained10th + I(ageHS>190),
                  data=hscohort_train,
                  method='ctree',
                  tuneLength = 10,
