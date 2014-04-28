@@ -430,7 +430,9 @@ require(xtable)
 print(xtable(thresholds), type="html", include.rownames=FALSE)
 ```
 
-Although many demographic characteristics are not present in the model, this is not because all groups of students are served equally well. The following figures examine the distribution of graduation probabilities by student groupings such as race, free or reduced price lunch, special education status, and limited English proficiency. These data look at the incoming high school freshman in the fall of 2012 using the 8GM.
+## Disaggregated Results
+
+Although many demographic characteristics are not present in the model, this is not because all groups of students are served equally well. The following figures examine the classification of students by groupings such as race, free or reduced price lunch, special education status, and limited English proficiency. These data look at the incoming high school freshman in the fall of 2012 using the 8GM.
 
 ```{r NewestCohort8th}
 hs1213 <- subset(person, schoolyear_first=='2013' & grade_first==9)
