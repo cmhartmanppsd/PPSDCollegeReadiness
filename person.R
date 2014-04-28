@@ -108,6 +108,7 @@ all_years_enr <- rbind(tables2005_2006$enrollment,
                        tables2011_2012$enrollment,
                        tables2012_2013$enrollment)
 all_years_enr$sasid <- as.character(all_years_enr$sasid)
+all_years_enr$school <- str_trim(all_years_enr$school, side='both')
 first_hs <- select_hs(all_years_enr, 'first')
 # Select the last high school attended with same process as the first.
 last_hs <- select_hs(all_years_enr, 'last')
