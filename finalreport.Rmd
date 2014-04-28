@@ -319,7 +319,11 @@ hscohort <- na.omit(hscohort)
 # hscohort$exit_type_last <-NULL
 # hscohort$exit_type_first <-NULL
 # hscohort$grade_first <-NULL
+require(doParallel)
+workers <- makeCluster(4)
+registerDoParallel(workers)
 require(caret)
+set.seed(101)
 trainIndex <- createDataPartition(hscohort$graduated,
                                   p = .8, list=FALSE)
 hscohort_train <- hscohort[trainIndex,]
