@@ -436,7 +436,10 @@ Although many demographic characteristics are not present in the model, this is 
 
 ```{r NewestCohort8th}
 hs1213 <- subset(person, schoolyear_first=='2013' & grade_first==9)
+hs1112 <- subset(person, schoolyear_first=='2012' & grade_first==9)
+
 hs1213$sasid <- as.character(hs1213$sasid)
+hs1112$sasid <- as.character(hs1112$sasid)
 
 hs1213 <- left_join(hs1213, attendance %.% filter(schoolyear == '2011_2012')
                                        %.% select(sasid, attendance, 
@@ -445,15 +448,35 @@ names(hs1213)[which(names(hs1213) %in% c('suspended'))] <- 'suspend8th'
 names(hs1213)[which(names(hs1213) %in% c('tardy'))] <- 'tardy8th'
 names(hs1213)[which(names(hs1213) %in% c('attendance'))] <- 'attendance8th'
 
+hs1112 <- left_join(hs1112, attendance %.% filter(schoolyear == '2010_2011')
+                                       %.% select(sasid, attendance, 
+                                                  tardy, suspended))
+names(hs1112)[which(names(hs1112) %in% c('suspended'))] <- 'suspend8th'
+names(hs1112)[which(names(hs1112) %in% c('tardy'))] <- 'tardy8th'
+names(hs1112)[which(names(hs1112) %in% c('attendance'))] <- 'attendance8th'
+
+
 hs1213 <- mutate(hs1213, ageHS = age_calc(dob, as.Date('2012-09-01'), 
                                           units='months'))
+hs1112 <- mutate(hs1112, ageHS = age_calc(dob, as.Date('2011-09-01'), 
+                                          units='months'))
+
 mobile1213 <-  moves_calc(subset(tables2011_2012$enrollment, 
-                                sasid %in% hs1213$sasid))
+                                 sasid %in% hs1213$sasid))
+mobile1112 <-  moves_calc(subset(tables2010_2011$enrollment, 
+                                 sasid %in% hs1112$sasid))
 
 mobile1213$sasid <- as.character(mobile1213$sasid)
+mobile1112$sasid <- as.character(mobile1112$sasid)
 hs1213 <- left_join(hs1213, mobile1213)
+hs1112 <- left_join(hs1112, mobile1112)
+
+
 tables2011_2012$achievement$sasid <- as.character(tables2011_2012$achievement$sasid)
 tables2011_2012$achievement$studentid <- as.character(tables2011_2012$achievement$studentid)
+tables2010_2011$achievement$sasid <- as.character(tables2010_2011$achievement$sasid)
+tables2010_2011$achievement$studentid <- as.character(tables2010_2011$achievement$studentid)
+
 hs1213 <- left_join(hs1213, tables2011_2012$achievement %.% 
                             filter(testgrade_N==8, testgrade_N==grade) %.%
                             select(sasid, grade, reaal, reascsc, matal, matscsc,
@@ -461,14 +484,30 @@ hs1213 <- left_join(hs1213, tables2011_2012$achievement %.%
 hs1213 <- mutate(hs1213, attendnormal = (attendance8th - 
                                          mean(attendance8th, na.rm=TRUE)) / 
                                          sd(attendance8th, na.rm=TRUE))
+hs1112 <- left_join(hs1112, tables2010_2011$achievement %.% 
+                            filter(testgrade_N==8, testgrade_N==grade) %.%
+                            select(sasid, grade, reaal, reascsc, matal, matscsc,
+                                   testgrade_N, reanormal, matnormal))
+hs1112 <- mutate(hs1112, attendnormal = (attendance8th - 
+                                         mean(attendance8th, na.rm=TRUE)) / 
+                                         sd(attendance8th, na.rm=TRUE))
+
+
+
 gpa1112 <- tables2011_2012$course %.% 
            filter(grade==8) %.% 
            group_by(sasid) %.% 
            summarise(gpa8th = mean(gpa, na.rm=TRUE))
 gpa1112$sasid <- as.character(gpa1112$sasid)
 hs1213 <- left_join(hs1213, gpa1112)
-hs1213 <- na.omit(hs1213)
-hs1213$prediction <- predict(model.1, newdata=hs1213, type='prob')$Y
+gpa1011 <- tables2010_2011$course %.% 
+           filter(grade==8) %.% 
+           group_by(sasid) %.% 
+           summarise(gpa8th = mean(gpa, na.rm=TRUE))
+gpa1011$sasid <- as.character(gpa1011$sasid)
+hs1112 <- left_join(hs1112, gpa1011)
+hs_new <- rbind(hs1213, hs1112)
+hs_new <- na.omit(hs_new)
 ```
 
 ```{r Prediction8GMDisagg, results='asis', fig.width=10}
