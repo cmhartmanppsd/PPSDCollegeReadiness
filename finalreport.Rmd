@@ -574,5 +574,44 @@ ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 The figure above shows the classification of incoming ninth graders in the fall of 2012 and 2013 disaggregated by race. A smaller proportion of Black and Hispanic students enter high school on-track, although the gap between these students and their White peers is less than 10 percentage points.
 
+### Suspension
+```{r SuspendPic, results='asis', fig.height=7, fig.width=7}
+suspension <- as.data.frame(with(hs_new, prop.table(table(suspend8th>0,classification),1)))
+names(suspension)[1] <- 'suspension'
+suspension$suspension <- as.factor(suspension$suspension)
+levels(suspension$suspension) <- c('Has not been suspended', 
+                                   'Suspended one or more times')
+
+ggplot(suspension, aes(suspension, Freq, fill=classification)) + 
+geom_bar(stat='identity', position='stack') + 
+scale_y_continuous('', labels = percent_format(), breaks=seq(0,1,.1)) +
+scale_x_discrete('') +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
+```
+Whether or not a student is suspended even one time leads to substantial separation between on- and off-track students. Nearly 40% of students with one or more suspensions are in the highest risk category compared to around 7% of those who have never been suspended. However, there is a wide range in number of suspension incidents from 0 to 62.
+
+```{r SuspendPic2, results='asis'}
+suspend_labels <- c('None', as.character(seq(1,7,1)), '8 or more')
+suspension <- as.data.frame(prop.table(table(cut(hs_new$suspend8th, 
+                                                 breaks = c(seq(0, 8, 1), 1000),
+                                                 include.lowest = TRUE, 
+                                                 labels = suspend_labels,
+                                                 right = FALSE), 
+                                             hs_new$classification),
+                                       1))
+names(suspension) <- c('suspensions', 'classification', 'Freq')
+ggplot(suspension, aes(suspensions, Freq, fill=classification)) + 
+geom_bar(stat='identity', position='stack') + 
+scale_y_continuous('', labels = percent_format(), breaks=seq(0,1,.1)) +
+scale_x_discrete('') +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
+```
+The relationship between number of days suspended and likelihood to graduate is clear-- the more times a student is suspended, the more likely it is that they fall into an at-risk classification.
 ```
 
