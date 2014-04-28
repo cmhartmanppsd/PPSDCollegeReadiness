@@ -22,7 +22,7 @@ invisible(source('attendance.R'))
 attendance$sasid <- as.character(attendance$sasid)
 ```
 
-```{r 8GMData, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+```{r 8GMData}
 # Build cohort for predictive model
 hs0708 <- subset(person, (schoolyear_first=='2007_2008' & grade_first==9) | 
                          (schoolyear_first=='2008_2009' & grade_first==10) | 
@@ -215,7 +215,7 @@ The first two questions are easily answered prior to model selection, while the 
 
 
 
-```{r ExampleTableSource, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+```{r ExampleTableSource}
 cohort0708 <- subset(person, schoolyear_first=='2008_2009' & grade_first==9) %.%
               select(sasid) %.%
               left_join(subset(tables2008_2009$person_annual, 
@@ -248,7 +248,7 @@ The model for predicting graduation based on 8th grade data is built only with s
 
 However, we can check to see whether or not students who transfer out are similar across observable characteristics such as race/ethnicity, course failures, grade point average, attendance, within-year school mobility, IEP status, and LEP status. If students who transfer out of PPSD appear similar across all of thes observable characteristics, then we can be less concerned about the positive bias of our estimates for students that transfer out.
 
-```{r TransferCompare, results='hide', echo=FALSE}
+```{r TransferCompare}
 race <- with(hscohort, as.data.frame(prop.table(table(race, transfer_out), 2)))
 race$transfer_out <- ifelse(race$transfer_out=='N', 
                         'Remains in PPSD', 
@@ -293,15 +293,14 @@ mobilityplot <- ggplot(data = mobility, aes(moves, Freq)) +
                 facet_wrap(~transfer_out)
 ```
 
-```{r TransferCompareGraphics, echo=FALSE, results='asis', message=FALSE, fig.height=14, fig.width=10}
-multiplot(raceplot, gpaplot, mobilityplot, cols=1)
+```{r TransferCompareGraphics, results='asis'}
 ```
 
 We see several interesting patterns when comparing students who transfer out of PPSD during high school and those who do not. These groups have essentially identical racial makeup, with students transfering out of the district being slightly more likely to be White or Asian ($latex \chi^{2} = 30$, $latex df = 25$, $latex p-value = 0.2243$ suggesting the groups are indistinguishable) . The 8th grade course performance of students who transfer out of PPSD during high school is actually slightly better than those who remain in PPSD. By both of these measures, we find that those who transfer out are either no different or possibly even less disadvantaged than students that remain in PPSD, which is counter to what would have been expected. Mobility shows a slightly different picture, with students who leave PPSD having higher rates of within-school year school mobility, which is not surprising ($latex \chi^{2} = 20$, $latex df = 16$, $latex p-value = 0.2202$ suggesting the groups are indistinguishable). [^allmodels] Based on these findings, we are not concerned about the biases present in providing predicted graduation rates for students even though those who transfer out are excluded from the data set when constructing our models.
 
 [allmodels]: It should be noted that while these patterns are only explored for the 8GM in this section, these same findings hold for all models.
 
-```{r RunModel ,echo=FALSE, message=FALSE, warning=FALSE}
+```{r RunModel}
 hscohort <- filter(hscohort, transfer_out=='N')
 hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
 # hscohort$graduated <- ifelse(hscohort$graduated == 'Y', 1, 
@@ -349,10 +348,10 @@ After testing out several specifications, it was found that standard logistic re
 
 Below, we detail the key statistics from two modeling techinques-- the logistic regression represented by `glm` and the blue line in the Receiver-operator characteristic (ROC) chart and a conditional inference tree represented by `ctree` in the table and the green line in the ROC chart. We then report the parameter and their estimates for the `glm` model which was ultimately chosen for the 8GM.
 
-```{r ModelResamples, echo=TRUE}
+```{r ModelResamples, results='markup'}
 summary(resamples(list(glm = model.1, ctree = model.2)))
 ```
-```{r ROCData, results='asis', echo=FALSE, message=FALSE, warning=FALSE}
+```{r ROCData, results='asis', fig.width=7, fig.height=7}
 roc_lm <- roc(hscohort_test$graduated, 
               predict(model.1, newdata=hscohort_test, type='prob')$Y, 
               auc=TRUE, ci=TRUE)
@@ -370,7 +369,7 @@ testobj <- roc.test(rocobj1, rocobj2)
 text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
 legend("bottomright", legend=c("glm", "ctree"), col=c("#1c61b6", "#008600"), lwd=2)
 ```
-```{r 8GMParam, results='asis', fig.width=10}
+```{r 8GMParam, results='asis'}
 sjp.glm(model.1$finalModel, 
         title = 'Eighth Grade Model Parameter Estimates',
         showModelSummary = FALSE)
@@ -419,7 +418,7 @@ thresholds[thresholds$classification == 'Watch', ]$coverage <-
 
 Although many demographic characteristics are not present in the model, this is not because all groups of students are served equally well. The following figures examine the distribution of graduation probabilities by student groupings such as race, free or reduced price lunch, special education status, and limited English proficiency. These data look at the incoming high school freshman in the fall of 2012 using the 8GM.
 
-```{r NewestCohort8th, echo=FALSE, results='hide'}
+```{r NewestCohort8th}
 hs1213 <- subset(person, schoolyear_first=='2013' & grade_first==9)
 hs1213$sasid <- as.character(hs1213$sasid)
 
