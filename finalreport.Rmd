@@ -544,6 +544,35 @@ hs_new$classification <- factor(hs_new$classification,
                                 levels = rev(levels(hs_new$classification)), 
                                 ordered=TRUE)
 ```
+### Race
+```{r RacePic, results='asis'}
+race <- as.data.frame(with(hs_new, prop.table(table(race, classification), 1)))
+race_n <- as.data.frame(with(hs_new, table(race, classification)))
+race_seq <- race %.%
+            filter(classification == 'On-track') %.%
+            arrange(Freq)
+race$race <- factor(race$race,
+                    levels = race_seq$race)
+race <- filter(race, race != 'Pacific Islander') # n-size exclusion
+race_n <- filter(race_n, race != 'Pacific Islander') # n-size exclusion
+names(race_n)[ncol(race_n)] <- 'n'
+race <- left_join(race, race_n)
+
+ggplot(race, aes(race, Freq, fill = classification)) + 
+geom_bar(stat = 'identity', position = 'stack') + 
+geom_text(aes(label = n, y = Freq, ymax = 1), 
+          position = 'stack',
+          vjust = 1.66,
+          fontface = 'bold',
+          color = '#3f4c55')+ 
+scale_y_continuous('', labels = percent_format(), breaks=seq(0,1,.1)) +
+scale_x_discrete('') +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
+```
+The figure above shows the classification of incoming ninth graders in the fall of 2012 and 2013 disaggregated by race. A smaller proportion of Black and Hispanic students enter high school on-track, although the gap between these students and their White peers is less than 10 percentage points.
 
 ```{r Prediction8GMDisagg, results='asis', fig.width=10}
 ggplot(data=hs1213, aes(prediction)) + geom_histogram(binwidth=0.1)
