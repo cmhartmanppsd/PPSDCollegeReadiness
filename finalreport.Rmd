@@ -387,10 +387,11 @@ Students with predicted probabilities that are different by only a few percent d
 
 The Rhode Island Department of Education has also been developing predictive models that seek to determine the probability that students will graduate. They have set three threshold levels for cutoffs based on the *true negative rate*. The true negative rate is the proportion of students that would be classified as not graduating in the model who ultimately fail to graduate over all non-graduates. It descrbies the percentage of students does the model correctly classify as not graduating. They have chosen three cutoffs that we will use here: 80% true negative rate for *high* risk, 70% true negative rate for *moderate* risk, and 60% true negative rate for *low* risk.
 
-We determine the true negative rate by predicting the outcomes for our *test* data set, just as we did for our ROC curves. This provides an accurate depiction of out-of-sample, i.e. with future students, performance.
-
 ```{r, CutOffMatrix8GM}
-m1_matrix <- cutoff_matrix(hscohort_test, 'predict8th', 'graduated')
+hscohort_train$predict8th <- predict(model.1, 
+                                     newdata = hscohort_train, 
+                                     type = 'prob')$Y
+m1_matrix <- cutoff_matrix(hscohort_train, 'predict8th', 'graduated')
 thresholds <- data.frame(classification = as.factor(c('Watch', 
                                                       'Warning', 'Action')),
   threshold = c(m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .6)),]$cutoff,
@@ -400,28 +401,34 @@ thresholds <- data.frame(classification = as.factor(c('Watch',
 # Compute coverage: what proportion of those who fail to graduate are identified
 thresholds$coverage <- NA
 coverage <- as.data.frame(table(
-  hscohort_test$graduated, 
-  hscohort_test$predict8th <= subset(thresholds, 
+  hscohort_train$graduated, 
+  hscohort_train$predict8th <= subset(thresholds, 
                                      classification=='Action')$threshold))
 thresholds[thresholds$classification == 'Action', ]$coverage <- 
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 coverage <- as.data.frame(table(
-  hscohort_test$graduated, 
-  hscohort_test$predict8th <= subset(thresholds, 
+  hscohort_train$graduated, 
+  hscohort_train$predict8th <= subset(thresholds, 
                                      classification=='Warning')$threshold))
 thresholds[thresholds$classification == 'Warning', ]$coverage <- 
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 coverage <- as.data.frame(table(
-  hscohort_test$graduated, 
-  hscohort_test$predict8th <= subset(thresholds, 
+  hscohort_train$graduated, 
+  hscohort_train$predict8th <= subset(thresholds, 
                                      classification=='Watch')$threshold))
 thresholds[thresholds$classification == 'Watch', ]$coverage <- 
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 ```
 
+For the 8GM, our thresholds can be seen in the table below.
+
+```{r ThresholdTablePrint, results='asis'}
+require(xtable)
+print(xtable(thresholds), type="html", include.rownames=FALSE)
+```
 
 Although many demographic characteristics are not present in the model, this is not because all groups of students are served equally well. The following figures examine the distribution of graduation probabilities by student groupings such as race, free or reduced price lunch, special education status, and limited English proficiency. These data look at the incoming high school freshman in the fall of 2012 using the 8GM.
 
@@ -471,3 +478,4 @@ ggplot(data=hs1213, aes(as.factor(moves), prediction)) + geom_boxplot()
 ggplot(data=hs1213, aes(sex, prediction)) + geom_boxplot()
 ggplot(data=hs1213, aes(school_first, prediction)) + geom_boxplot()
 ```
+
