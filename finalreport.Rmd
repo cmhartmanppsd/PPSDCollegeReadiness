@@ -634,5 +634,94 @@ scale_fill_manual('',
 ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 
+### Sorting by School
+Students that are on-track are not evenly distributed among either sending middle schools or recieving high schools. When reviewing this data, it is critical to understand that this data does not suggest that some middle schools are better or worse at preparing students for high school. Because of differences in school composition and their own incoming classes from elementary to middle school, these data are not sufficient to make any claims about middle school efficacy. However, the stark differences in preparedness by middle school, and subsequently, receiving high schools, have important policy implications.
+
+#### Sending Middle School
+```{r MSSchoolLong, results='asis', fig.height=8.2, fig.width=10}
+school_ms <- as.data.frame(with(hs_new, 
+                                prop.table(table(schno_ms_long, 
+                                                 classification), 1)))
+school_ms <- na.omit(school_ms)
+#school_ms <- filter(school_ms,
+#                            !schno_first %in% c('185', '147'))
+#school_lookup <- unique(hs_new[, c('schno_ms_long', 'school_ms_long')])
+#school_lookup$schno_ms_long <- as.character(school_lookup$schno_ms_long)
+#school_ms$schno_ms_long <- as.character(school_ms$school_ms_long)
+school_lookup <- data.frame(schno_ms_long = as.character(c(143, 126, 145, 
+                                                           137, 144, 147, 
+                                                           172, 114)), 
+                            school_ms_long = c('Bishop', 'DelSesto', 'Greene', 
+                                               'Hopkins', 'Stuart', 'Williams', 
+                                               'Bridgham', 'Times 2'))
+
+school_ms <- left_join(school_ms, school_lookup)
+school_ms_seq <- school_ms %.%
+                 filter(classification == 'On-track') %.%
+                 arrange(Freq)
+school_ms$school_ms_long <- factor(school_ms$school_ms_long,
+                                   levels = school_ms_seq$school_ms_long)
+ggplot(na.omit(school_ms), aes(school_ms_long, Freq, fill=classification)) + 
+geom_bar(stat='identity', position='stack') + 
+scale_y_continuous('', 
+                   labels = percent_format(), 
+                   breaks = seq(0,1,.1),
+                   limits = c(0, 1.05),
+                   expand = c(0, 0)) +
+scale_x_discrete('Middle school attended longest',
+                 labels = substr(x=levels(school_ms$school_ms_long), 1, 13)) +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+theme(axis.text.x = element_text(angle=90)) +
+ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
+
+
 ```
+
+#### Receiving High School
+```{r SchoolsPic, results='asis', fig.height=8.2, fig.width=10}
+hs_new$schno_first <- with(hs_new, 
+                           ifelse(as.character(schno_first) %in% c('181', '183'),
+                                  '149', as.character(schno_first)))
+
+school_first_data <- as.data.frame(with(hs_new, 
+                                        prop.table(table(schno_first, 
+                                                         classification), 1)))
+school_first_data <- na.omit(school_first_data)
+school_first_data <- filter(school_first_data,
+                            !schno_first %in% c('185', '147', '114'))
+# school_first_data$schno_first <- with(school_first_data, 
+#                                       ifelse(as.character(schno_first) %in% 
+#                                                c('181', '183'),
+#                                              '149', as.character(schno_first)))
+school_lookup <- 
+  data.frame(schno_first = as.character(unique(school_first_data$schno_first)),
+             school_first = c('Times 2', 'Birch', 'Central', 'Hope', 
+                              'Mount Pleasant', 'Classical', 'E-Cubed',
+                              'Alvarez', 'Sanchez', 'ACES', 'Career & Tech'),
+             stringsAsFactors=FALSE)
+school_first_data$schno_first <- as.character(school_first_data$schno_first)
+school_first_data <- left_join(school_first_data, school_lookup)
+school_seq <- school_first_data %.%
+              filter(classification == 'On-track') %.%
+              arrange(Freq)
+school_first_data$school_first <- factor(school_first_data$school_first,
+                                         levels=school_seq$school_first)
+ggplot(school_first_data, aes(school_first, Freq, fill=classification)) + 
+geom_bar(stat='identity', position='stack') + 
+scale_y_continuous('', 
+                   labels = percent_format(), 
+                   breaks = seq(0,1,.1),
+                   limits = c(0, 1.05),
+                   expand = c(0, 0)) +
+scale_x_discrete('High school first attended',
+                 labels = substr(x=levels(school_first_data$school_first), 1, 13)) +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+theme(axis.text.x = element_text(angle=90)) +
+ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
+```
+### The Importance of Middle to High School Transitions
 
