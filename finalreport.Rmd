@@ -613,5 +613,26 @@ scale_fill_manual('',
 ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 The relationship between number of days suspended and likelihood to graduate is clear-- the more times a student is suspended, the more likely it is that they fall into an at-risk classification.
+
+### Mobility
+```{r MovesPic, results='asis', fig.height=7, fig.width=7}
+moves <- as.data.frame(with(hs_new, prop.table(table(cut(moves, 
+                                                         breaks = c(0,1,2,10),
+                                                         include.lowest = TRUE,
+                                                         labels = c('None',
+                                                                    'One',
+                                                                    'Two or more'),
+                                                         right=FALSE),
+                                                     classification),1)))
+ggplot(moves, aes(Var1, Freq, fill=classification)) + 
+geom_bar(stat='identity', position='stack') + 
+scale_y_continuous('', labels = percent_format(), breaks=seq(0,1,.1)) +
+scale_x_discrete('Number of school changes in 8th grade') +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
+```
+
 ```
 
