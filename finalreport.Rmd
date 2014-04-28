@@ -294,6 +294,9 @@ mobilityplot <- ggplot(data = mobility, aes(moves, Freq)) +
 ```
 
 ```{r TransferCompareGraphics, results='asis'}
+raceplot
+gpaplot
+mobilityplot
 ```
 
 We see several interesting patterns when comparing students who transfer out of PPSD during high school and those who do not. These groups have essentially identical racial makeup, with students transfering out of the district being slightly more likely to be White or Asian ($latex \chi^{2} = 30$, $latex df = 25$, $latex p-value = 0.2243$ suggesting the groups are indistinguishable) . The 8th grade course performance of students who transfer out of PPSD during high school is actually slightly better than those who remain in PPSD. By both of these measures, we find that those who transfer out are either no different or possibly even less disadvantaged than students that remain in PPSD, which is counter to what would have been expected. Mobility shows a slightly different picture, with students who leave PPSD having higher rates of within-school year school mobility, which is not surprising ($latex \chi^{2} = 20$, $latex df = 16$, $latex p-value = 0.2202$ suggesting the groups are indistinguishable). [^allmodels] Based on these findings, we are not concerned about the biases present in providing predicted graduation rates for students even though those who transfer out are excluded from the data set when constructing our models.
