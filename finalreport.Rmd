@@ -574,13 +574,5 @@ ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 The figure above shows the classification of incoming ninth graders in the fall of 2012 and 2013 disaggregated by race. A smaller proportion of Black and Hispanic students enter high school on-track, although the gap between these students and their White peers is less than 10 percentage points.
 
-```{r Prediction8GMDisagg, results='asis', fig.width=10}
-ggplot(data=hs1213, aes(prediction)) + geom_histogram(binwidth=0.1)
-ggplot(data=hs1213, aes(race, prediction)) + geom_boxplot()
-ggplot(data=hs1213, aes(lep, prediction)) + geom_boxplot()
-ggplot(data=hs1213, aes(iep, prediction)) + geom_boxplot()
-ggplot(data=hs1213, aes(as.factor(moves), prediction)) + geom_boxplot()
-ggplot(data=hs1213, aes(sex, prediction)) + geom_boxplot()
-ggplot(data=hs1213, aes(school_first, prediction)) + geom_boxplot()
 ```
 
