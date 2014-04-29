@@ -420,6 +420,7 @@ coverage <- as.data.frame(table(
 thresholds[thresholds$classification == 'Watch', ]$coverage <- 
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
+thresholds$coverage <- round(thresholds$coverage, digits=1)
 ```
 
 For the 8GM, our thresholds can be seen in the table below.
