@@ -40,15 +40,18 @@ hs0708$sasid <- as.character(hs0708$sasid)
 hs0809$sasid <- as.character(hs0809$sasid)
 hs0910$sasid <- as.character(hs0910$sasid)
 
-hs0708 <- left_join(hs0708, attendance %.% filter(schoolyear == '2006_2007')
-                                       %.% dplyr::select(sasid, attendance, 
-                                                         tardy, suspended))
-hs0809 <- left_join(hs0809, attendance %.% filter(schoolyear == '2007_2008')
-                                       %.% dplyr::select(sasid, attendance, 
-                                                         tardy, suspended))
-hs0910 <- left_join(hs0910, attendance %.% filter(schoolyear == '2008_2009')
-                                       %.% dplyr::select(sasid, attendance, 
-                                                         tardy, suspended))
+hs0708 <- left_join(hs0708, attendance %.% filter(schoolyear == '2006_2007',
+                                                  grade == 8)
+                                       %.% select(sasid, attendance, 
+                                                  tardy, suspended))
+hs0809 <- left_join(hs0809, attendance %.% filter(schoolyear == '2007_2008',
+                                                  grade == 8)
+                                       %.% select(sasid, attendance, 
+                                                  tardy, suspended))
+hs0910 <- left_join(hs0910, attendance %.% filter(schoolyear == '2008_2009',
+                                                  grade == 8)
+                                       %.% select(sasid, attendance, 
+                                                  tardy, suspended))
 
 names(hs0708)[which(names(hs0708) %in% c('suspended'))] <- 'suspend8th'
 names(hs0708)[which(names(hs0708) %in% c('tardy'))] <- 'tardy8th'
@@ -724,4 +727,3 @@ theme(axis.text.x = element_text(angle=90)) +
 ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 ### The Importance of Middle to High School Transitions
-
