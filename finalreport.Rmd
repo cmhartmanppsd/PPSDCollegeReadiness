@@ -726,3 +726,286 @@ theme(axis.text.x = element_text(angle=90)) +
 ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 ### The Importance of Middle to High School Transitions
+The Providence Personal Graduation Plan is used from grades 6 through 12. It is critical that we update our classification of risk periodically to ensure that resources are focused on the right students. The 8GM provides powerful insight into the readiness of students entering high school. By using data from before the start of 9th grade, we can work to ensure that students with the highest needs are provided with extra supports from the first day of high school, rather than wait for later indicators of falling behind.
+
+Extensive research on the middle to high school transition suggests that after entering ninth grade, we may see a reshuffling of students at risk. Researchers at the Consortium on Chicago School Research have found that ninth grade performance data is so critical that most data available about students prior to high school is no longer useful in predicting high school success once this data is considered (http://ccsr.uchicago.edu/publications/what-matters-staying-track-and-graduating-chicago-public-schools).
+
+With the 8GM we hope to inspire action to intervene with the highest need students immediately upon the start of high school (and perhaps the summer before entering high school). For this reason, and because of the research body pointing to the importance of transitioning to high school, we were motivated to see if we can re-classify students after just the first quarter of high school is complete. Building on the CCSR research, we chose to examine whether quarter 1 course performance can distinguish between students who are classified as having the same risk level based on the 8GM but ultimately have different graduation outcomes.
+
+```{r Qtr19th}
+gpa_qtr1_0708 <- tables2007_2008$course %.% 
+                 filter(grade == 9 & 
+                        sasid %in% 
+                        subset(hscohort, 
+                               schoolyear_first=='2007_2008' & 
+                               grade_first==9)$sasid) %.% 
+                 group_by(sasid, variable) %.% 
+                 summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
+                 filter(variable == 'cum_qtr1') %.%
+                 select(sasid, gpa_qtr1_9th)
+gpa_qtr1_0809 <- tables2008_2009$course %.% 
+                 filter(grade == 9 & sasid %in%
+                        subset(hscohort, 
+                               schoolyear_first=='2008_2009' & 
+                               grade_first==9)$sasid) %.% 
+                 group_by(sasid, variable) %.% 
+                 summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
+                 filter(variable == 'cum_qtr1') %.%
+                 select(sasid, gpa_qtr1_9th)
+gpa_qtr1_0910 <- tables2009_2010$course %.% 
+                 filter(grade == 9 & sasid %in% 
+                        subset(hscohort, 
+                               schoolyear_first=='2009_2010' & 
+                               grade_first==9)$sasid) %.% 
+                 group_by(sasid, variable) %.% 
+                 summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
+                 filter(variable == 'cum_qtr1') %.%
+                 select(sasid, gpa_qtr1_9th)
+
+# First Quarter Course Failures
+fails_qtr1_0708 <- tables2007_2008$course %.% 
+                   filter(grade == 9 & sasid %in% hscohort$sasid) %.%
+                   group_by(sasid, variable, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
+                   summarize(fails_qtr1 = n())
+
+fails_qtr1_0809 <- tables2008_2009$course %.% 
+                   filter(grade == 9 & sasid %in% hscohort$sasid & 
+                          !sasid %in% gpa_qtr1_0708) %.%
+                   group_by(sasid, variable, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
+                   summarize(fails_qtr1 = n())
+
+fails_qtr1_0910 <- tables2009_2010$course %.% 
+                   filter(grade == 9 & sasid %in% hscohort$sasid &
+                          !sasid %in% gpa_qtr1_0809) %.%
+                   group_by(sasid, variable, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
+                   summarize(fails_qtr1 = n())
+
+hscohort_train <- left_join(hscohort_train, 
+                      rbind(gpa_qtr1_0708, gpa_qtr1_0809, gpa_qtr1_0910) %.%
+                      select(sasid, gpa_qtr1_9th))
+
+hscohort_train <- left_join(hscohort_train, 
+                      rbind(fails_qtr1_0708, fails_qtr1_0809, 
+                            fails_qtr1_0910) %.%
+                      select(sasid, fails_qtr1))
+
+hscohort_test <- left_join(hscohort_test, 
+                      rbind(gpa_qtr1_0708, gpa_qtr1_0809, gpa_qtr1_0910) %.%
+                      select(sasid, gpa_qtr1_9th))
+
+hscohort_test <- left_join(hscohort_test, 
+                      rbind(fails_qtr1_0708, fails_qtr1_0809, 
+                            fails_qtr1_0910) %.%
+                      select(sasid, fails_qtr1))
+
+hscohort_train$classification <-
+  cut(hscohort_train$predict8th, 
+      breaks=rev(c(1, thresholds$threshold, 0)), include.lowest=TRUE, 
+      labels=rev(c('On-track', as.character(thresholds$classification))))
+hscohort_train$classification <- 
+  factor(hscohort_train$classification, 
+         levels = rev(levels(hscohort_train$classification)), 
+         ordered=TRUE)
+```
+
+```{r Qtr1Fails, results='asis', fig.height=8.2, fig.width=10}
+levels(hscohort_train$graduated) <- c('Did not graduate', 'Graduated')
+box_quant <- function(x, ...){
+  y <- median(x, na.rm=TRUE)
+  minmax <- quantile(x, ..., na.rm=TRUE)
+  result <- data.frame(y = y,
+                       ymin = minmax[1],
+                       ymax = minmax[2],
+                       row.names = NULL)
+  result
+}
+ggplot(data=hscohort_train, 
+       aes(classification, gpa_qtr1_9th, color=graduated)) +
+stat_summary(fun.data="box_quant", probs=c(0.25, 0.75), geom='pointrange', 
+             position = position_dodge(width = 0.5), size=1.5) +
+scale_x_discrete('Eighth Grade Model Classification') +
+scale_y_continuous('Quarter 1 GPA, 9th Grade',
+                   breaks = seq(0, 4, .5), 
+                   limits = c(0,4)) +
+scale_color_manual('',
+                   values = c('Did not graduate' = '#CA0020', 
+                              'Graduated' = '#0571B0')) +
+ggtitle('First Quarter Performance in 9th Grade Impacts Graduation') +
+theme(legend.position = c(0.9, 0.9),
+      legend.background = element_rect(fill = "transparent"))
+  
+```
+We find that students who are classified at the same level of readiness by the 8GM who ultimately graduate perform markedly better in their courses in the first quarter of 9th grade as compared to their peers who do not graduate. The figure above separates students by their 8GM classification along the x-axis and colors those students who do graduate blue and those who do not red. The point represents the median first quarter GPA for that group, with the lines extending to the 25th and 75th percentile. Notably, students who enter high school "On-track" and fail to graduate slightly outperform those students who are in "Warning" and "Action" that ultimately graduate. 
+
+We believe this figure is a stark demonstration of the key role the middle to high school transition plays. Students who underperform *relative to their potential* in just the first 45 days of high school ultimately fail to graduate, while those who are succesful go on to complete high school.
+
+Based on this exploratory analysis and the research of others, we developed a new predictive model that incorporates the elements of the 8GM and adds the first quarter 9th grade GPA. We found that we could exclude the results on the 8th grade NECAP for both reading and mathematics as well as whether or not a student attended Classical High School once we include 9th grade GPA and the result is still a substantially better fit model. Similar to the findings in Chicago, we find that the number of course failures also improves the model, above and beyond just using quarter 1 GPA. Our new model with both 9th grade quarter 1 GPA and the number of courses failed in quarter 1, but excluding whether or not a student attends Classical and state test results from grade 8 will be known as QTR1.
+
+```{r Qtr19thModel}
+levels(hscohort_train$graduated) <- c('N', 'Y')
+hscohort_train <- na.omit(hscohort_train)
+
+model.orig <- train(graduated ~ attendnormal + gpa8th + I(ageHS>190) + 
+                                I(schno_first=='164') + matnormal + reanormal, 
+                 data=hscohort_train,
+                 method='glm',
+                 tuneLength = 5,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary),
+                 metric='ROC')
+
+model.qtr1 <- train(graduated ~ attendnormal + gpa8th + I(ageHS>190) +  
+                                gpa_qtr1_9th + fails_qtr1, 
+                 data=hscohort_train,
+                 method='glm',
+                 tuneLength = 5,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary),
+                 metric='ROC')
+```
+
+```{r ROCPlotsQtr1, results='asis', fig.width=7, fig.height=7}
+hscohort_test <- na.omit(hscohort_test)
+roc_orig <- roc(hscohort_test$graduated, 
+              predict(model.orig, newdata=hscohort_test, type='prob')$Y, 
+              auc=TRUE, ci=TRUE)
+
+roc_qtr1 <- roc(hscohort_test$graduated, 
+                 predict(model.qtr1, newdata=hscohort_test, type='prob')$Y,
+                auc=TRUE, ci=TRUE)
+
+rocobj1 <- plot.roc(roc_qtr1, 
+                    main="Comparing Original 8GM to Updated Quarter 1 Model",
+                    col="#1c61b6",
+                    print.auc=TRUE,
+                    legacy.axes=TRUE)
+rocobj2 <- lines.roc(roc_orig, col="#008600")  
+testobj <- roc.test(rocobj1, rocobj2)  
+text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
+legend("bottomright", legend=c("8GM + Qtr1", "8GM"), col=c("#1c61b6", "#008600"), lwd=2)
+```
+Above is a comparison between the ROC for the 8GM (in green) and QTR1 (in blue) models. For the 8GM, $latex AUC = 0.786 (\pm0.0369)$ while for the improved QTR1 model $latex AUC = 0.8249 (\pm0.0333$.
+```{r ParamQtr1, results='asis'}
+sjp.glm(model.qtr1$finalModel)
+```
+Students with a GPA one letter grade higher in the first quarter of 9th grade are 1.8 times more likely to graduate. Each course failure is associated with being 0.82 times as likely to graduate.
+
+These findings confirm the exploratory analysis demonstrating the impact of quarter 1 course performance and closely follow the findings in Chicago that ninth grade course performance can supersede previously important covariates for predicting high school graduation.
+
+```{r, CutOffMatrixQTR}
+hscohort_train$predictqtr1 <- predict(model.qtr1, 
+                                      newdata = hscohort_train, 
+                                      type = 'prob')$Y
+m1_matrix <- cutoff_matrix(hscohort_train, 'predictqtr1', 'graduated')
+thresholds <- data.frame(classification = as.factor(c('Watch', 
+                                                      'Warning', 'Action')),
+  threshold = c(m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .6)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .7)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .8)),]$cutoff))
+
+# Compute coverage: what proportion of those who fail to graduate are identified
+thresholds$coverage <- NA
+coverage <- as.data.frame(table(
+  hscohort_train$graduated, 
+  hscohort_train$predictqtr1 <= subset(thresholds, 
+                                     classification=='Action')$threshold))
+thresholds[thresholds$classification == 'Action', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_train$graduated, 
+  hscohort_train$predictqtr1 <= subset(thresholds, 
+                                     classification=='Warning')$threshold))
+thresholds[thresholds$classification == 'Warning', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_train$graduated, 
+  hscohort_train$predictqtr1 <= subset(thresholds, 
+                                     classification=='Watch')$threshold))
+thresholds[thresholds$classification == 'Watch', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+thresholds$coverage <- round(thresholds$coverage, digits=3)
+```
+We use the same method as with the 8GM to produce new thresholds for our classifications based on the QTR1 model, seen below.
+```{r QTRThresholdTablePrint, results='asis'}
+require(xtable)
+print(xtable(thresholds), type="html", include.rownames=FALSE)
+```
+One way to see the vast improvement that 9th grade quarter 1 course performance data provides is by examining the coverage in each classification. Whereas the 8GM identified approximately 36% of all non-graduates in the "Action" category, 54.9% are captured in QTR1. Students who are at "Warning" or "Action" together represent 76.8% of all non-graduates, and 91.2% of all non-graduates are labeled as off-track by the QTR1.
+
+Based on these thresholds, we can classify the most recent two freshman classes just as we did when analyzing the 8GM. We would like to see what proportion of students change classification after quarter 1 in 9th grade. Those students who move to less severe risk levels have already demonstrated they are getting back on track. We also expect to see some students move to more severe risk categories, demonstrating that their transition to high school was less successful and they are falling further behind.
+
+```{r Qtr1Classification}
+# Classify Training
+hscohort_train$classificationqtr1 <- 
+  cut(hscohort_train$predictqtr1, breaks=rev(c(1, thresholds$threshold, 0)), 
+      include.lowest=TRUE, 
+      labels=rev(c('On-track', as.character(thresholds$classification))))
+hscohort_train$classificationqtr1 <-
+  factor(hscohort_train$classificationqtr1, 
+         levels = rev(levels(hscohort_train$classificationqtr1)), ordered=TRUE)
+
+gpa_qtr1_1213 <- tables2012_2013$course %.% 
+                 filter(grade == 9 & sasid %in% hs1213$sasid) %.% 
+                 group_by(sasid, variable) %.% 
+                 summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
+                 filter(variable == 'cum_qtr1') %.%
+                 select(sasid, gpa_qtr1_9th)
+gpa_qtr1_1112 <- tables2011_2012$course %.% 
+                 filter(grade == 9 & sasid %in% hs1112$sasid) %.% 
+                 group_by(sasid, variable) %.% 
+                 summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
+                 filter(variable == 'cum_qtr1') %.%
+                 select(sasid, gpa_qtr1_9th)
+fails_qtr1_1213 <- tables2012_2013$course %.% 
+                   filter(grade == 9 & sasid %in% hs1213$sasid) %.%
+                   group_by(sasid, variable, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
+                   summarize(fails_qtr1 = n())
+fails_qtr1_1112 <- tables2011_2012$course %.% 
+                   filter(grade == 9 & sasid %in% hs1112$sasid) %.%
+                   group_by(sasid, variable, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
+                   summarize(fails_qtr1 = n())
+gpa_qtr1_new <- rbind(gpa_qtr1_1112, gpa_qtr1_1213)
+gpa_qtr1_new$sasid <- as.character(gpa_qtr1_new$sasid)
+hs_new <- left_join(hs_new, 
+                    gpa_qtr1_new %.%
+                    select(sasid, gpa_qtr1_9th))
+fails_qtr1_new <- rbind(fails_qtr1_1112, fails_qtr1_1213)
+fails_qtr1_new$sasid <- as.character(fails_qtr1_new$sasid)
+hs_new <- left_join(hs_new, 
+                    fails_qtr1_new %.%
+                    select(sasid, fails_qtr1))
+hs_new <- na.omit(hs_new)
+hs_new$predictqtr1 <- predict(model.qtr1, newdata=hs_new, type='prob')$Y
+hs_new$classificationqtr1 <- cut(hs_new$predictqtr1, 
+                             breaks=rev(c(1, thresholds$threshold, 0)), 
+                             include.lowest=TRUE, 
+                             labels=rev(c('On-track', 
+                                        as.character(thresholds$classification))))
+hs_new$classificationqtr1 <- factor(hs_new$classificationqtr1, 
+                                levels = rev(levels(hs_new$classificationqtr1)), 
+                                ordered=TRUE)
+```
+
+```{r Qtr1ChangeClass}
+heatmap <- as.data.frame(with(hs_new, 
+                              table(classification, classificationqtr1)))
+ggplot(data = heatmap, aes(classification, classificationqtr1, fill=Freq)) +
+geom_tile() +
+scale_fill_gradient(low="#EFF3FF", high="#08519C") +
+geom_text(aes(fill = heatmap$Freq, label = heatmap$Freq))
+```
