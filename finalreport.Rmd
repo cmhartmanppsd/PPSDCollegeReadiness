@@ -346,6 +346,8 @@ model.2 <- train(graduated~ attendnormal + gpa8th + I(ageHS>190) +
                                           summaryFunction = twoClassSummary),
                  metric='ROC')
 ```
+
+### Modeling Methods
 The 8GM is constructed using the `caret` package in `R`. This software tools enables us to partition the data set into training and test data, conduct repeated k-fold crossvalidation model fits using different techniques and parameters, and report the predictive properties of the resulting model estimates.
 
 After testing out several specifications, it was found that standard logistic regression with graduation as the outcome and attendance, 8th grade GPA, whether or not a student was overaged when they entered high school, whether or not the first high school a student attended was Classical High School, and NECAP math and reading scaled scores as predictors provided the greatest overall predictive accuracy.
@@ -379,7 +381,7 @@ sjp.glm(model.1$finalModel,
         showModelSummary = FALSE)
 ```
 
-## Classification
+### Classification Methods
 Students with predicted probabilities that are different by only a few percent do not actually represent different levels of risk for not graduating. School leaders, guidance counselors, teachers, parents, and students are likely to misinterpret the direct probabilities produced by a logistic regression. When predicting "membership to a class", e.g. will this student graduate or not, does the patient have cancer or not, we can group similar probabilities into levels of risk that more clearly indicate whether or not immediate action is required.
 
 The Rhode Island Department of Education has also been developing predictive models that seek to determine the probability that students will graduate. They have set three threshold levels for cutoffs based on the *true negative rate*. The true negative rate is the proportion of students that would be classified as not graduating in the model who ultimately fail to graduate over all non-graduates. It descrbies the percentage of students does the model correctly classify as not graduating. They have chosen three cutoffs that we will use here: 80% true negative rate for *high* risk, 70% true negative rate for *moderate* risk, and 60% true negative rate for *low* risk.
@@ -541,7 +543,7 @@ hs_new$classification <- factor(hs_new$classification,
                                 levels = rev(levels(hs_new$classification)), 
                                 ordered=TRUE)
 ```
-### Race
+#### Race
 ```{r RacePic, results='asis'}
 race <- as.data.frame(with(hs_new, prop.table(table(race, classification), 1)))
 race_n <- as.data.frame(with(hs_new, table(race, classification)))
@@ -571,7 +573,7 @@ ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 The figure above shows the classification of incoming ninth graders in the fall of 2012 and 2013 disaggregated by race. A smaller proportion of Black and Hispanic students enter high school on-track, although the gap between these students and their White peers is less than 10 percentage points.
 
-### Suspension
+#### Suspension
 ```{r SuspendPic, results='asis', fig.height=7, fig.width=7}
 suspension <- as.data.frame(with(hs_new, prop.table(table(suspend8th>0,classification),1)))
 names(suspension)[1] <- 'suspension'
@@ -611,7 +613,7 @@ ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 The relationship between number of days suspended and likelihood to graduate is clear-- the more times a student is suspended, the more likely it is that they fall into an at-risk classification.
 
-### Mobility
+#### Mobility
 ```{r MovesPic, results='asis', fig.height=7, fig.width=7}
 moves <- as.data.frame(with(hs_new, prop.table(table(cut(moves, 
                                                          breaks = c(0,1,2,10),
@@ -631,7 +633,7 @@ scale_fill_manual('',
 ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 
-### Sorting by School
+#### Sorting by School
 Students that are on-track are not evenly distributed among either sending middle schools or recieving high schools. When reviewing this data, it is critical to understand that this data does not suggest that some middle schools are better or worse at preparing students for high school. Because of differences in school composition and their own incoming classes from elementary to middle school, these data are not sufficient to make any claims about middle school efficacy. However, the stark differences in preparedness by middle school, and subsequently, receiving high schools, have important policy implications.
 
 #### Sending Middle School
