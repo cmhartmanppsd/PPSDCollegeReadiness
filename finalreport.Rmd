@@ -73,19 +73,19 @@ hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date('2009-09-01'),
 # Calculate mobility for students
 # Eighth Grade year
 mobile0607 <-  moves_calc(subset(tables2006_2007$enrollment, 
-                                sasid %in% hs0708$sasid))
+                                sasid %in% hs0708$sasid & grade == 8))
 
 mobile0607$sasid <- as.character(mobile0607$sasid)
 hs0708 <- left_join(hs0708, mobile0607)
 
 mobile0708 <-  moves_calc(subset(tables2007_2008$enrollment, 
-                                sasid %in% hs0809$sasid))
+                                sasid %in% hs0809$sasid & grade == 8))
 
 mobile0708$sasid <- as.character(mobile0708$sasid)
 hs0809 <- left_join(hs0809, mobile0708)
 
 mobile0809 <-  moves_calc(subset(tables2008_2009$enrollment, 
-                                sasid %in% hs0910$sasid))
+                                sasid %in% hs0910$sasid & grade == 8))
 
 mobile0809$sasid <- as.character(mobile0809$sasid)
 hs0910 <- left_join(hs0910, mobile0809)
@@ -129,15 +129,18 @@ hs0910 <- mutate(hs0910, attendnormal = (attendance8th -
                                         sd(attendance8th, na.rm=TRUE))
 
 # Current LEP
-lep0708 <- tables2006_2007$person_annual[, c('sasid','lep')]
+lep0708 <- subset(tables2006_2007$person_annual,
+                  grade == 8)[, c('sasid','lep')]
 names(lep0708)[2] <- 'lep8th'
 hs0708 <- left_join(hs0708, lep0708)
 
-lep0809 <- tables2007_2008$person_annual[, c('sasid','lep')]
+lep0809 <- subset(tables2007_2008$person_annual,
+                  grade == 8)[, c('sasid','lep')]
 names(lep0809)[2] <- 'lep8th'
 hs0809 <- left_join(hs0809, lep0809)
 
-lep0910 <- tables2008_2009$person_annual[, c('sasid','lep')]
+lep0910 <- subset(tables2008_2009$person_annual,
+                  grade == 8)[, c('sasid','lep')]
 names(lep0910)[2] <- 'lep8th'
 hs0910 <- left_join(hs0910, lep0910)
 
