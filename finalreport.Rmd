@@ -441,14 +441,16 @@ hs1112 <- subset(person, schoolyear_first=='2012' & grade_first==9)
 hs1213$sasid <- as.character(hs1213$sasid)
 hs1112$sasid <- as.character(hs1112$sasid)
 
-hs1213 <- left_join(hs1213, attendance %.% filter(schoolyear == '2011_2012')
+hs1213 <- left_join(hs1213, attendance %.% filter(schoolyear == '2011_2012',
+                                                  grade == 8)
                                        %.% select(sasid, attendance, 
                                                   tardy, suspended))
 names(hs1213)[which(names(hs1213) %in% c('suspended'))] <- 'suspend8th'
 names(hs1213)[which(names(hs1213) %in% c('tardy'))] <- 'tardy8th'
 names(hs1213)[which(names(hs1213) %in% c('attendance'))] <- 'attendance8th'
 
-hs1112 <- left_join(hs1112, attendance %.% filter(schoolyear == '2010_2011')
+hs1112 <- left_join(hs1112, attendance %.% filter(schoolyear == '2010_2011',
+                                                  grade == 8)
                                        %.% select(sasid, attendance, 
                                                   tardy, suspended))
 names(hs1112)[which(names(hs1112) %in% c('suspended'))] <- 'suspend8th'
@@ -462,9 +464,9 @@ hs1112 <- mutate(hs1112, ageHS = age_calc(dob, as.Date('2011-09-01'),
                                           units='months'))
 
 mobile1213 <-  moves_calc(subset(tables2011_2012$enrollment, 
-                                 sasid %in% hs1213$sasid))
+                                 sasid %in% hs1213$sasid & grade == 8))
 mobile1112 <-  moves_calc(subset(tables2010_2011$enrollment, 
-                                 sasid %in% hs1112$sasid))
+                                 sasid %in% hs1112$sasid & grade == 8))
 
 mobile1213$sasid <- as.character(mobile1213$sasid)
 mobile1112$sasid <- as.character(mobile1112$sasid)
