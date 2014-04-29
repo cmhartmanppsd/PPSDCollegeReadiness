@@ -313,15 +313,6 @@ hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
 #                              ifelse(hscohort$graduated == 'N', 0, NA))
 hscohort$graduated <- as.factor(hscohort$graduated)
 hscohort <- na.omit(hscohort)
-# hscohort$testgrade_N <- NULL
-# hscohort$transfer_out <- NULL
-# hscohort$still_enrl <- NULL
-# hscohort$ged <- NULL
-# hscohort$dropout <- NULL
-# hscohort$disappear <- NULL
-# hscohort$exit_type_last <-NULL
-# hscohort$exit_type_first <-NULL
-# hscohort$grade_first <-NULL
 require(doParallel)
 workers <- makeCluster(4)
 registerDoParallel(workers)
