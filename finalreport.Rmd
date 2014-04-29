@@ -366,7 +366,7 @@ roc_ctree <- roc(hscohort_test$graduated,
                  predict(model.2, newdata=hscohort_test, type='prob')$Y)
 
 rocobj1 <- plot.roc(roc_lm, 
-                    main="Comparing glm and ctree models for\n First Time 10th Graders",
+                    main="Comparing glm and ctree models for 8GM",
                     col="#1c61b6", 
                     print.auc=TRUE, 
                     legacy.axes=TRUE)
