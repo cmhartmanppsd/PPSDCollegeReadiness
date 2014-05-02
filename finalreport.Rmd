@@ -764,23 +764,32 @@ gpa_qtr1_0910 <- tables2009_2010$course %.%
 
 # First Quarter Course Failures
 fails_qtr1_0708 <- tables2007_2008$course %.% 
-                   filter(grade == 9 & sasid %in% hscohort$sasid) %.%
+                   filter(grade == 9 & sasid %in% 
+                          subset(hscohort,
+                                 schoolyear_first=='2007_2008' &
+                                 grade_first == 9)$sasid) %.%
                    group_by(sasid, variable, courseno) %.% 
                    summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
                    filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
                    summarize(fails_qtr1 = n())
 
 fails_qtr1_0809 <- tables2008_2009$course %.% 
-                   filter(grade == 9 & sasid %in% hscohort$sasid & 
-                          !sasid %in% gpa_qtr1_0708) %.%
+                   filter(grade == 9 & sasid %in% 
+                          subset(hscohort,
+                                 schoolyear_first=='2008_2009' &
+                                 grade_first == 9)$sasid & 
+                          !sasid %in% gpa_qtr1_0708$sasid) %.%
                    group_by(sasid, variable, courseno) %.% 
                    summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
                    filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
                    summarize(fails_qtr1 = n())
 
 fails_qtr1_0910 <- tables2009_2010$course %.% 
-                   filter(grade == 9 & sasid %in% hscohort$sasid &
-                          !sasid %in% gpa_qtr1_0809) %.%
+                   filter(grade == 9 & sasid %in% 
+                          subset(hscohort,
+                                 schoolyear_first=='2009_2010' &
+                                 grade_first == 9)$sasid &
+                          !sasid %in% gpa_qtr1_0809$sasid) %.%
                    group_by(sasid, variable, courseno) %.% 
                    summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
                    filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
