@@ -458,9 +458,9 @@ names(hs1112)[which(names(hs1112) %in% c('tardy'))] <- 'tardy8th'
 names(hs1112)[which(names(hs1112) %in% c('attendance'))] <- 'attendance8th'
 
 
-hs1213 <- mutate(hs1213, ageHS = age_calc(dob, as.Date('2012-09-01'), 
+hs1213 <- mutate(hs1213, overage = age_calc(dob, as.Date('2011-09-01'), 
                                           units='months'))
-hs1112 <- mutate(hs1112, ageHS = age_calc(dob, as.Date('2011-09-01'), 
+hs1112 <- mutate(hs1112, overage = age_calc(dob, as.Date('2012-09-01'), 
                                           units='months'))
 
 mobile1213 <-  moves_calc(subset(tables2011_2012$enrollment, 
