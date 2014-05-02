@@ -355,25 +355,25 @@ After testing out several specifications, it was found that standard logistic re
 Below, we detail the key statistics from the regression represented by the blue line in the Receiver-operator characteristic (ROC) chart. We then report the parameter and their estimates for the `glm` model which was ultimately chosen for the 8GM.
 
 ```{r ModelResamples, results='markup'}
-summary(resamples(list(glm = model.1, ctree = model.2)))
+# summary(resamples(list(glm = model.1, ctree = model.2)))
 ```
 ```{r ROCData, results='asis', fig.width=7, fig.height=7}
 roc_lm <- roc(hscohort_test$graduated, 
               predict(model.1, newdata=hscohort_test, type='prob')$Y, 
               auc=TRUE, ci=TRUE)
 
-roc_ctree <- roc(hscohort_test$graduated, 
-                 predict(model.2, newdata=hscohort_test, type='prob')$Y)
+# roc_ctree <- roc(hscohort_test$graduated, 
+#                  predict(model.2, newdata=hscohort_test, type='prob')$Y)
 
 rocobj1 <- plot.roc(roc_lm, 
-                    main="Comparing glm and ctree models for 8GM",
+                    main="8GM ROC",
                     col="#1c61b6", 
                     print.auc=TRUE, 
                     legacy.axes=TRUE)
-rocobj2 <- lines.roc(roc_ctree, col="#008600")  
-testobj <- roc.test(rocobj1, rocobj2)  
-text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
-legend("bottomright", legend=c("glm", "ctree"), col=c("#1c61b6", "#008600"), lwd=2)
+# rocobj2 <- lines.roc(roc_ctree, col="#008600")  
+# testobj <- roc.test(rocobj1, rocobj2)  
+# text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
+legend("bottomright", legend=c("8GM"), col=c("#1c61b6"), lwd=2)
 ```
 ```{r 8GMParam, results='asis'}
 sjp.glm(model.1$finalModel, 
