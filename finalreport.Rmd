@@ -64,12 +64,12 @@ names(hs0910)[which(names(hs0910) %in% c('tardy'))] <- 'tardy8th'
 names(hs0910)[which(names(hs0910) %in% c('attendance'))] <- 'attendance8th'
 
 # Calculate age when student enters 9th grade for the first time.
-hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date('2007-09-01'), 
-                                          units='months'))
-hs0809 <- mutate(hs0809, ageHS = age_calc(dob, as.Date('2008-09-01'), 
-                                          units='months'))
-hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date('2009-09-01'), 
-                                          units='months'))
+hs0708 <- mutate(hs0708, overage = age_calc(dob, as.Date('2006-09-01'), 
+                                            units='months'))
+hs0809 <- mutate(hs0809, overage = age_calc(dob, as.Date('2007-09-01'), 
+                                            units='months'))
+hs0910 <- mutate(hs0910, overage = age_calc(dob, as.Date('2008-09-01'), 
+                                            units='months'))
 # Calculate mobility for students
 # Eighth Grade year
 mobile0607 <-  moves_calc(subset(tables2006_2007$enrollment, 
