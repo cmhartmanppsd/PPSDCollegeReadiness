@@ -326,8 +326,8 @@ trainIndex <- createDataPartition(hscohort$graduated,
 hscohort_train <- hscohort[trainIndex,]
 hscohort_test <- hscohort[-trainIndex,]
 
-model.1 <- train(graduated ~ attendnormal + gpa8th + I(ageHS>190) + 
-                             I(schno_first=='164') + matnormal + reanormal, 
+model.1 <- train(graduated ~ I(attendance8th*10) + gpa8th + matnormal + 
+                             reanormal + I(overage>178), 
                  data=hscohort_train,
                  method='glm',
                  tuneLength = 5,
