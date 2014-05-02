@@ -350,9 +350,9 @@ model.1 <- train(graduated ~ I(attendance8th*10) + gpa8th + matnormal +
 ### Modeling Methods
 The 8GM is constructed using the `caret` package in `R`. This software tools enables us to partition the data set into training and test data, conduct repeated k-fold crossvalidation model fits using different techniques and parameters, and report the predictive properties of the resulting model estimates.
 
-After testing out several specifications, it was found that standard logistic regression with graduation as the outcome and attendance, 8th grade GPA, whether or not a student was overaged when they entered high school, whether or not the first high school a student attended was Classical High School, and NECAP math and reading scaled scores as predictors provided the greatest overall predictive accuracy.
+After testing out several specifications, it was found that standard logistic regression with graduation as the outcome and attendance, 8th grade GPA, whether or not a student is overaged when they enter 8th grade (likely reflecting they were retained in an earlier grade), and NECAP math and reading scaled scores as predictors provided the greatest overall predictive accuracy.
 
-Below, we detail the key statistics from two modeling techinques-- the logistic regression represented by `glm` and the blue line in the Receiver-operator characteristic (ROC) chart and a conditional inference tree represented by `ctree` in the table and the green line in the ROC chart. We then report the parameter and their estimates for the `glm` model which was ultimately chosen for the 8GM.
+Below, we detail the key statistics from the regression represented by the blue line in the Receiver-operator characteristic (ROC) chart. We then report the parameter and their estimates for the `glm` model which was ultimately chosen for the 8GM.
 
 ```{r ModelResamples, results='markup'}
 summary(resamples(list(glm = model.1, ctree = model.2)))
