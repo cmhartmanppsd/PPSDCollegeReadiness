@@ -582,7 +582,7 @@ suspension <- as.data.frame(with(hs_new, prop.table(table(suspend8th>0,classific
 names(suspension)[1] <- 'suspension'
 suspension$suspension <- as.factor(suspension$suspension)
 levels(suspension$suspension) <- c('Has not been suspended', 
-                                   'Suspended one or more times')
+                                   'Suspended one or more days')
 
 ggplot(suspension, aes(suspension, Freq, fill=classification)) + 
 geom_bar(stat='identity', position='stack') + 
@@ -608,7 +608,7 @@ names(suspension) <- c('suspensions', 'classification', 'Freq')
 ggplot(suspension, aes(suspensions, Freq, fill=classification)) + 
 geom_bar(stat='identity', position='stack') + 
 scale_y_continuous('', labels = percent_format(), breaks=seq(0,1,.1)) +
-scale_x_discrete('') +
+scale_x_discrete('Days') +
 scale_fill_manual('',
                   values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
                   breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
