@@ -336,15 +336,15 @@ model.1 <- train(graduated ~ I(attendance8th*10) + gpa8th + matnormal +
                                           summaryFunction = twoClassSummary),
                  metric='ROC')
 
-model.2 <- train(graduated~ attendnormal + gpa8th + I(ageHS>190) + 
-                            I(schno_first=='164') + + matnormal + reanormal, 
-                 data=hscohort_train,
-                 method='ctree',
-                 tuneLength = 5,
-                 trControl = trainControl(method = "repeatedcv", number = 10,
-                                          repeats = 10, classProbs=TRUE,
-                                          summaryFunction = twoClassSummary),
-                 metric='ROC')
+# model.2 <- train(graduated~ attendnormal + gpa8th + I(ageHS>190) + 
+#                             I(schno_first=='164') + + matnormal + reanormal, 
+#                  data=hscohort_train,
+#                  method='ctree',
+#                  tuneLength = 5,
+#                  trControl = trainControl(method = "repeatedcv", number = 10,
+#                                           repeats = 10, classProbs=TRUE,
+#                                           summaryFunction = twoClassSummary),
+#                  metric='ROC')
 ```
 
 ### Modeling Methods
