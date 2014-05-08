@@ -996,7 +996,16 @@ legend("bottomright", legend=c("8GM + Qtr1", "8GM"), col=c("#1c61b6", "#008600")
 ### UPDATE VALUES
 Above is a comparison between the ROC for the 8GM (in green) and QTR1 (in blue) models. For the 8GM, $latex AUC = 0.7769 (\pm0.0431)$ while for the improved QTR1 model $latex AUC = 0.8032 (\pm0.0403$.
 ```{r ParamQtr1, results='asis'}
-sjp.glm(model.qtr1$finalModel)
+sjp.glm(model.qtr1$finalModel, 
+        title = '9th Grade Quarter 1 Odds Ratios',
+        theme = 'bw',
+        showModelSummary = FALSE,
+        borderColor = 'white',
+        axisLabels.y = c('Attendance * 10', '8th Grade GPA', 
+                         'Overage Entering High School', '9th Grade GPA Quarter 1',
+                         'Course Failing Grades Quarter 1', 
+                         'Interaction: GPA*Failing'),
+        axisLabelSize = 0.7)
 ```
 Students with a GPA one letter grade higher in the first quarter of 9th grade are 1.8 times more likely to graduate. Each course failure is associated with being 0.82 times as likely to graduate.
 
