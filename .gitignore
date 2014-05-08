@@ -20,3 +20,5 @@
 *.history
 Cache/*
 figure/*
+*.out
+*.RDataTmp
