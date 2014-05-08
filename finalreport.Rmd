@@ -669,10 +669,10 @@ school_ms <- na.omit(school_ms)
 #school_ms$schno_ms_long <- as.character(school_ms$school_ms_long)
 school_lookup <- data.frame(schno_ms_long = as.character(c(143, 126, 145, 
                                                            137, 144, 147, 
-                                                           172, 114)), 
+                                                           172)), 
                             school_ms_long = c('Bishop', 'DelSesto', 'Greene', 
                                                'Hopkins', 'Stuart', 'Williams', 
-                                               'Bridgham', 'Times 2'))
+                                               'Bridgham'))
 
 school_ms <- left_join(school_ms, school_lookup)
 school_ms_seq <- school_ms %.%
@@ -716,9 +716,9 @@ school_first_data <- filter(school_first_data,
 #                                              '149', as.character(schno_first)))
 school_lookup <- 
   data.frame(schno_first = as.character(unique(school_first_data$schno_first)),
-             school_first = c('Times 2', 'Birch', 'Central', 'Hope', 
+             school_first = c('Birch', 'Central', 'Hope', 
                               'Mount Pleasant', 'Classical', 'E-Cubed',
-                              'Alvarez', 'Sanchez', 'ACES', 'Career & Tech'),
+                              'Alvarez', 'Sanchez', 'Career & Tech'),
              stringsAsFactors=FALSE)
 school_first_data$schno_first <- as.character(school_first_data$schno_first)
 school_first_data <- left_join(school_first_data, school_lookup)
