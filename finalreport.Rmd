@@ -812,6 +812,49 @@ fails_qtr1_0910 <- tables2009_2010$course %.%
                    filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
                    summarize(fails_qtr1 = n())
 
+suspension <- read.csv('data/suspension.csv')
+suspension$date_suspended <- as.Date(suspension$date_suspended, 
+                                     format='%m/%d/%Y')
+names(suspension)[1] <- 'studentid'
+suspension$studentid <- as.character(suspension$studentid)
+suspension0708 <- suspension %.%
+                  filter(date_suspended > '2007-08-01' &
+                         date_suspended < '2007-11-10')
+suspension0708 <- suspension0708 %.%
+                  filter(studentid %in% 
+                          subset(hscohort,
+                                 schoolyear_first=='2007_2008' &
+                                 grade_first == 9)$studentid) %.%
+                  group_by(studentid) %.%
+                  summarize(suspended_qtr1 = sum(duration))
+suspension0809 <- suspension %.%
+                  filter(date_suspended > '2008-08-01' &
+                         date_suspended < '2008-11-10')
+suspension0809 <- suspension0809 %.%
+                  filter(studentid %in% 
+                          subset(hscohort,
+                                 schoolyear_first=='2008_2009' &
+                                 grade_first == 9)$studentid) %.%
+                  group_by(studentid) %.%
+                  summarize(suspended_qtr1 = sum(duration))
+suspension0910 <- suspension %.%
+                  filter(date_suspended > '2009-08-01' &
+                         date_suspended < '2009-11-10')
+suspension0910 <- suspension0910 %.%
+                  filter(studentid %in% 
+                          subset(hscohort,
+                                 schoolyear_first=='2009_2010' &
+                                 grade_first == 9)$studentid) %.%
+                  group_by(studentid) %.%
+                  summarize(suspended_qtr1 = sum(duration))
+hscohort_train <- left_join(hscohort_train, 
+                            rbind(suspension0708, 
+                                  suspension0809, 
+                                  suspension0910))
+hscohort_train$suspended_qtr1 <- ifelse(is.na(hscohort_train$suspended_qtr1),
+                                        0,
+                                        hscohort_train$suspended_qtr1)
+
 hscohort_train <- left_join(hscohort_train, 
                       rbind(gpa_qtr1_0708, gpa_qtr1_0809, gpa_qtr1_0910) %.%
                       select(sasid, gpa_qtr1_9th))
@@ -820,6 +863,15 @@ hscohort_train <- left_join(hscohort_train,
                       rbind(fails_qtr1_0708, fails_qtr1_0809, 
                             fails_qtr1_0910) %.%
                       select(sasid, fails_qtr1))
+
+hscohort_test <- left_join(hscohort_test, 
+                            rbind(suspension0708, 
+                                  suspension0809, 
+                                  suspension0910))
+hscohort_test$suspended_qtr1 <- ifelse(is.na(hscohort_test$suspended_qtr1),
+                                        0,
+                                        hscohort_test$suspended_qtr1)
+
 
 hscohort_test <- left_join(hscohort_test, 
                       rbind(gpa_qtr1_0708, gpa_qtr1_0809, gpa_qtr1_0910) %.%
