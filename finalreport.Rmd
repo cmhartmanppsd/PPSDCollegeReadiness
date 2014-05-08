@@ -394,8 +394,12 @@ legend("bottomright", legend=c("8GM"), col=c("#1c61b6"), lwd=2)
 ```
 ```{r 8GMParam, results='asis'}
 sjp.glm(model.1$finalModel, 
-        title = 'Eighth Grade Model Parameter Estimates',
-        showModelSummary = FALSE)
+        title = 'Eighth Grade Model Odds Ratios',
+        showModelSummary = FALSE,
+        theme = 'bw',
+        borderColor = 'white',
+        axisLabels.y = c('Attendance * 10', '8th Grade GPA', 'NECAP Math',
+                         'NECAP Reading', 'Overage Entering 8th Grade'))
 ```
 
 ### Classification Methods
