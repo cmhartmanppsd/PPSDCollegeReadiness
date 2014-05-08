@@ -599,9 +599,9 @@ ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 Whether or not a student is suspended even one time leads to substantial separation between on- and off-track students. Nearly 40% of students with one or more suspensions are in the highest risk category compared to around 7% of those who have never been suspended. However, there is a wide range in number of suspension incidents from 0 to 62.
 
 ```{r SuspendPic2, results='asis'}
-suspend_labels <- c('None', as.character(seq(1,7,1)), '8 or more')
+suspend_labels <- c('None', as.character(seq(1,4,1)), '5 or more')
 suspension <- as.data.frame(prop.table(table(cut(hs_new$suspend8th, 
-                                                 breaks = c(seq(0, 8, 1), 1000),
+                                                 breaks = c(seq(0, 5, 1), 1000),
                                                  include.lowest = TRUE, 
                                                  labels = suspend_labels,
                                                  right = FALSE), 
