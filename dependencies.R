@@ -1,5 +1,6 @@
 # Environment Setup
 require(foreign)
+require(lubridate)
 require(plyr)
 require(dplyr)
 require(ggplot2)
