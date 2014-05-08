@@ -994,7 +994,7 @@ text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0,
 legend("bottomright", legend=c("8GM + Qtr1", "8GM"), col=c("#1c61b6", "#008600"), lwd=2)
 ```
 ### UPDATE VALUES
-Above is a comparison between the ROC for the 8GM (in green) and QTR1 (in blue) models. For the 8GM, $latex AUC = 0.786 (\pm0.0369)$ while for the improved QTR1 model $latex AUC = 0.8249 (\pm0.0333$.
+Above is a comparison between the ROC for the 8GM (in green) and QTR1 (in blue) models. For the 8GM, $latex AUC = 0.7769 (\pm0.0431)$ while for the improved QTR1 model $latex AUC = 0.8032 (\pm0.0403$.
 ```{r ParamQtr1, results='asis'}
 sjp.glm(model.qtr1$finalModel)
 ```
