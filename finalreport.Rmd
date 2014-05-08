@@ -974,7 +974,7 @@ model.qtr1 <- train(graduated ~ I(attendance8th*10) + gpa8th + I(overage>178) +
 ```{r ROCPlotsQtr1, results='asis', fig.width=7, fig.height=7}
 hscohort_test <- na.omit(hscohort_test)
 roc_orig <- roc(hscohort_test$graduated, 
-              predict(model.orig, newdata=hscohort_test, type='prob')$Y, 
+              predict(model.1, newdata=hscohort_test, type='prob')$Y, 
               auc=TRUE, ci=TRUE)
 
 roc_qtr1 <- roc(hscohort_test$graduated, 
