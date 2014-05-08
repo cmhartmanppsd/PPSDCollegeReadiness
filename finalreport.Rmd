@@ -1133,5 +1133,10 @@ heatmap <- as.data.frame(with(hs_new,
 ggplot(data = heatmap, aes(classification, classificationqtr1, fill=Freq)) +
 geom_tile() +
 scale_fill_gradient(low="#EFF3FF", high="#08519C") +
+geom_text(aes(fill = heatmap$Freq, label = heatmap$Freq)) +
+scale_x_discrete('Classification based on 8GM') + 
+scale_y_discrete('Classification based on QTR1') +
+ggtitle('Classification Changes Due to Updated 9th Grade Quarter 1 Data')
+```
 geom_text(aes(fill = heatmap$Freq, label = heatmap$Freq))
 ```
