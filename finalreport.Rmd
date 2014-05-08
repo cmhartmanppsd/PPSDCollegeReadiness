@@ -371,6 +371,8 @@ Below, we detail the key statistics from the regression represented by the blue 
 # summary(resamples(list(glm = model.1, ctree = model.2)))
 ```
 ```{r ROCData, results='asis', fig.width=7, fig.height=7}
+load('/Users/jason/Downloads/bowersEWS.rda')
+grade_8_comps <- subset(bowersEWS, grade==8)
 roc_lm <- roc(hscohort_test$graduated, 
               predict(model.1, newdata=hscohort_test, type='prob')$Y, 
               auc=TRUE, ci=TRUE)
