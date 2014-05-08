@@ -1138,5 +1138,15 @@ scale_x_discrete('Classification based on 8GM') +
 scale_y_discrete('Classification based on QTR1') +
 ggtitle('Classification Changes Due to Updated 9th Grade Quarter 1 Data')
 ```
+
+Unsurprisingly, the most common positions on this table are along the diagnol, which signals that students did not change classifications between the 8GM and QTR1. We also can see that these groupings are more resilient at the extremes-- students who were "On-track" remain "On-track" and students in the "Action" classification remain there as well. Both the "Warning" and "Watch" students were more likely to be reclassified once entering high school. Encouragingly, students in both the "Watch" and "Warning" groups were slightly more likely to improve their classification than fall further behind.
+
+#### Summary of Findings from 8GM and QTR1
+The previous two models focused on data available throughout 8th grade and immediately after students entered high school. The results of these analysis revealed that data from 8th grade can identify student risk of failing to graduate, that students in need of additional supports are disproportionately mobile, involved in disciplinary infractions, and students of color. We also found that there is a wide range in the proportion of students classified as "On-track" to graduate in each middle school and that high schools receive students with different levels of readiness. 
+
+By using additional course performance data available after just 45 days in high school, we are able to improve our predictive analysis and more accurately classified students who are falling behind. The increase in predictive power with just one additional element from the early high school experience supports the important role of transitioning successfully from middle school to high school.
+
+These findings support many of the policy and programmatic interventions that PPSD is already pursuing. Student interventions to support graduation can begin much earlier using the predictive analysis from 8th grade to provide supports before students find themselves unable to meet the graduation requirements in later grades. Attendance and course performance are the key elements that predict graduation. While this relationship is not necessarily causal, sustained improvement in both areas will likely lead to greater student success in high school. While student disciplinary infractions was not included in the predictive models, they are strongly related to the risk levels calculated by the model. This suggests there are deep-linkages between student course performance, attendance, and number of days suspended ass supported in the literature.
+
 geom_text(aes(fill = heatmap$Freq, label = heatmap$Freq))
 ```
