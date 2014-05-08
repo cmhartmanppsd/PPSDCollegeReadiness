@@ -358,6 +358,7 @@ model.1 <- train(graduated ~ I(attendance8th*10) + gpa8th + matnormal +
 #                                           repeats = 10, classProbs=TRUE,
 #                                           summaryFunction = twoClassSummary),
 #                  metric='ROC')
+
 ```
 
 ### Modeling Methods
