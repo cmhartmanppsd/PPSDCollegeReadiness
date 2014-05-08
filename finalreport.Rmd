@@ -1148,5 +1148,695 @@ By using additional course performance data available after just 45 days in high
 
 These findings support many of the policy and programmatic interventions that PPSD is already pursuing. Student interventions to support graduation can begin much earlier using the predictive analysis from 8th grade to provide supports before students find themselves unable to meet the graduation requirements in later grades. Attendance and course performance are the key elements that predict graduation. While this relationship is not necessarily causal, sustained improvement in both areas will likely lead to greater student success in high school. While student disciplinary infractions was not included in the predictive models, they are strongly related to the risk levels calculated by the model. This suggests there are deep-linkages between student course performance, attendance, and number of days suspended ass supported in the literature.
 
+## Ninth Grade Model
+### Defining the Sample
+The QTR1 model for 9th grade students utilizes student data collected in PPSD from the 8th grade and is only applicable to students who attended both 8th and 9th grade within the district. The Ninth Grade Model (9GM) is constructed using only data from the ninth grade in order to maxmizie the applicability of the model to the broadest set of students. This model is built on data from first-time ninth grade students in PPSD. 
+
+Each cohort must have enough time to complete high school from eighth grade in order to model graduation probabilities. Our model does not specify graduation as needing to happen "on-time", or 4 years after first entering high school. We use the three most recent cohorts with completed data, the freshman classes of 2007-2008, 2008-2009, and 2009-2010 to develep the 9GM.
+
+We want to examine the difference between students who remain in the district and those who transfer out of the district just like with the 8GM. For the ninth grade model, we're particularly interested in difference between on-time promotion to 10th grade, one of the key early indicators of high school graduation.
+
+```{r NineModelCohorts}
+hs0708 <- subset(person, (schoolyear_first=='2007_2008' & grade_first==9) | 
+                         (schoolyear_first=='2008_2009' & grade_first==10) | 
+                         (schoolyear_first=='2009_2010' & grade_first==11) | 
+                         (schoolyear_first=='2010_2011' & grade_first==12))
+hs0708$retained <- ifelse(hs0708$sasid %in% 
+                          filter(hs0708, 
+                                 grade_first == 9 & 
+                                 sasid %in% filter(tables2008_2009$person_annual, 
+                                                   grade == 9)$sasid)$sasid,
+                          'Y', 'N')
+
+  
+hs0809 <- subset(person, (schoolyear_first=='2008_2009' & grade_first==9) | 
+                         (schoolyear_first=='2009_2010' & grade_first==10) | 
+                         (schoolyear_first=='2010_2011' & grade_first==11) | 
+                         (schoolyear_first=='2011_2012' & grade_first==12))
+
+hs0809$retained <- ifelse(hs0809$sasid %in% 
+                          filter(hs0809, 
+                                 grade_first == 9 & 
+                                 sasid %in% filter(tables2009_2010$person_annual, 
+                                                   grade == 9)$sasid)$sasid,
+                          'Y', 'N')
+hs0910 <- subset(person, (schoolyear_first=='2009_2010' & grade_first==9) | 
+                         (schoolyear_first=='2010_2011' & grade_first==10) | 
+                         (schoolyear_first=='2011_2012' & grade_first==11) | 
+                         (schoolyear_first=='2012_2013' & grade_first==12))
+hs0910$retained <- ifelse(hs0910$sasid %in% 
+                          filter(hs0910, 
+                                 grade_first == 9 & 
+                                 sasid %in% filter(tables2010_2011$person_annual, 
+                                                   grade == 9)$sasid)$sasid,
+                          'Y', 'N')
+
+hs0708$sasid <- as.character(hs0708$sasid)
+hs0809$sasid <- as.character(hs0809$sasid)
+hs0910$sasid <- as.character(hs0910$sasid)
+
+# Attendance is same as previous code for cohorts except that I use the school
+# year that is the same as the grade_first value so that it represents 9th grade
+# attendance not 8th grade.
+
+hs0708 <- left_join(hs0708, attendance %.% filter(schoolyear == '2007_2008')
+                                       %.% select(sasid, attendance, tardy, 
+                                                  suspended))
+hs0809 <- left_join(hs0809, attendance %.% filter(schoolyear == '2008_2009')
+                                       %.% select(sasid, attendance, tardy, 
+                                                  suspended))
+hs0910 <- left_join(hs0910, attendance %.% filter(schoolyear == '2009_2010')
+                                       %.% select(sasid, attendance, tardy, 
+                                                  suspended))
+hs0708 <- mutate(hs0708, ageHS = age_calc(dob, as.Date('2007-09-01'), 
+                                          units='months'))
+hs0809 <- mutate(hs0809, ageHS = age_calc(dob, as.Date('2008-09-01'), 
+                                          units='months'))
+hs0910 <- mutate(hs0910, ageHS = age_calc(dob, as.Date('2009-09-01'), 
+                                          units='months'))
+gpa_9th_0708 <- tables2007_2008$course %.% 
+                 filter(grade == 9 & 
+                        sasid %in% 
+                        subset(hs0708, 
+                               schoolyear_first=='2007_2008' & 
+                               grade_first==9)$sasid) %.% 
+                 group_by(sasid) %.% 
+                 summarize(gpa9th = mean(gpa, na.rm=TRUE)) %.%
+                 select(sasid, gpa9th)
+gpa_9th_0809 <- tables2008_2009$course %.% 
+                 filter(grade == 9 & sasid %in%
+                        subset(hs0809, 
+                               schoolyear_first=='2008_2009' & 
+                               grade_first==9)$sasid) %.% 
+                 group_by(sasid) %.% 
+                 summarize(gpa9th = mean(gpa, na.rm=TRUE)) %.%
+                 select(sasid, gpa9th)
+gpa_9th_0910 <- tables2009_2010$course %.% 
+                 filter(grade == 9 & sasid %in% 
+                        subset(hs0910, 
+                               schoolyear_first=='2009_2010' & 
+                               grade_first==9)$sasid) %.% 
+                 group_by(sasid) %.% 
+                 summarize(gpa9th = mean(gpa, na.rm=TRUE)) %.%
+                 select(sasid, gpa9th)
+
+# First Quarter Course Failures
+fails_9th_0708 <- tables2007_2008$course %.% 
+                   filter(grade == 9 & sasid %in% 
+                          subset(hs0708,
+                                 schoolyear_first=='2007_2008' &
+                                 grade_first == 9)$sasid) %.%
+                   group_by(sasid, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0) %.% 
+                   summarize(fails9th = n())
+                   
+
+fails_9th_0809 <- tables2008_2009$course %.% 
+                   filter(grade == 9 & sasid %in% 
+                          subset(hs0809,
+                                 schoolyear_first=='2008_2009' &
+                                 grade_first == 9)$sasid & 
+                          !sasid %in% gpa_9th_0708$sasid) %.%
+                   group_by(sasid, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0) %.% 
+                   summarize(fails9th = n())
+                   
+fails_9th_0910 <- tables2009_2010$course %.% 
+                   filter(grade == 9 & sasid %in% 
+                          subset(hs0910,
+                                 schoolyear_first=='2009_2010' &
+                                 grade_first == 9)$sasid &
+                          !sasid %in% gpa_9th_0809$sasid) %.%
+                   group_by(sasid, courseno) %.% 
+                   summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
+                   filter(gpa <= 1.0) %.% 
+                   summarize(fails9th = n())
+
+
+hs0708 <- left_join(hs0708, gpa_9th_0708)
+hs0708 <- left_join(hs0708, fails_9th_0708)
+hs0809 <- left_join(hs0809, gpa_9th_0809)
+hs0809 <- left_join(hs0809, fails_9th_0809)
+hs0910 <- left_join(hs0910, gpa_9th_0910)
+hs0910 <- left_join(hs0910, fails_9th_0910)
+
+
+# Mobility for ninth grade
+mobile0708 <-  moves_calc(subset(tables2007_2008$enrollment, 
+                                sasid %in% hs0708$sasid & grade == 9),
+                          gap = 30, enrollby = "2007-10-01")
+
+mobile0708$sasid <- as.character(mobile0708$sasid)
+hs0708 <- left_join(hs0708, mobile0708)
+mobile0809 <-  moves_calc(subset(tables2008_2009$enrollment, 
+                                sasid %in% hs0809$sasid & grade == 9),
+                          gap = 30, enrollby = "2008-10-01")
+mobile0809$sasid <- as.character(mobile0809$sasid)
+hs0809 <- left_join(hs0809, mobile0809)
+
+mobile0910 <-  moves_calc(subset(tables2009_2010$enrollment, 
+                                sasid %in% hs0910$sasid & grade == 9),
+                          gap = 30, enrollby = "2008-10-01")
+mobile0910$sasid <- as.character(mobile0910$sasid)
+hs0910 <- left_join(hs0910, mobile0910)
+
+hscohort <- rbind(hs0708, hs0809, hs0910)
+hscohort <- subset(hscohort, !schno_first %in% charters)
+hscohort <- subset(hscohort, !schno_first %in% c('185', '147', '114',
+                                                 '117', '189'))
+hscohort <- subset(hscohort, !schno_first %in% c('131')) # Birch Vocational
+```
+
+```{r TransferCompare9th}
+race <- with(hscohort, as.data.frame(prop.table(table(race, transfer_out), 2)))
+race$transfer_out <- ifelse(race$transfer_out=='N', 
+                        'Remains in PPSD', 
+                        'Transfers Out of PPSD')
+raceplot <- ggplot(data = race, aes(race, Freq)) + 
+            geom_bar(stat='identity') + 
+            geom_text(aes(label=percent(Freq)), vjust=-.4) +
+            scale_y_continuous('', labels = percent_format(), limits=c(0, .7)) +
+            scale_x_discrete('') +
+            theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+            ggtitle('Race of Students by Attrition for\n Most Recent Three High School Cohorts') +
+            facet_wrap(~transfer_out)
+
+grades <- with(hscohort, as.data.frame(prop.table(table(cut(gpa9th, 
+                                                            breaks=seq(0,4,.5)), 
+                                                        transfer_out), 2)))
+grades$transfer_out <- ifelse(grades$transfer_out=='N', 
+                              'Remains in PPSD', 
+                              'Transfers Out of PPSD')
+names(grades)[1] <- 'GPA'
+
+gpaplot <- ggplot(data = grades, aes(GPA, Freq)) + 
+           geom_bar(stat='identity') + 
+           geom_text(aes(label=percent(Freq)), vjust=-.4) +
+           scale_y_continuous('', labels = percent_format(), limits=c(0, .25)) +
+           scale_x_discrete('') +
+           theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+           ggtitle('GPA of Students by Attrition for\n Most Recent Three High School Cohorts') +
+           facet_wrap(~transfer_out)
+
+mobility <- with(hscohort, as.data.frame(prop.table(table(moves, transfer_out), 
+                                                    2)))
+mobility$transfer_out <- ifelse(mobility$transfer_out=='N', 
+                                'Remains in PPSD', 
+                                'Transfers Out of PPSD')
+mobilityplot <- ggplot(data = mobility, aes(moves, Freq)) + 
+                geom_bar(stat='identity') + 
+                geom_text(aes(label=percent(Freq)), vjust = -.4) +
+                scale_y_continuous('', labels = percent_format(), limits=c(0, 1)) +
+                scale_x_discrete('') +
+                ggtitle('School Changes in 8th Grade of Students by Attrition for\n Most Recent Three High School Cohorts') +
+                facet_wrap(~transfer_out)
+
+retained9th <- with(hscohort, 
+                    as.data.frame(prop.table(table(retained, transfer_out), 2)))
+retained9th$transfer_out <- ifelse(retained9th$transfer_out=='N',
+                                   'Remains in PPSD',
+                                   'Transfers Out of PPSD')
+retained9thplot <- ggplot(data = retained9th, aes(retained, Freq)) +
+                   geom_bar(stat='identity') +
+                   geom_text(aes(label=percent(Freq)), vjust = -.4) +
+                   scale_y_continuous('', 
+                                      labels = percent_format(), 
+                                      limits = c(0, 1)) +
+                   scale_x_discrete('') +
+                   ggtitle('First-time 9th Grade Retention by Attrition for\n Most Recent Three High School Cohorts') +
+                   facet_wrap(~transfer_out)
+```
+
+```{r TransferCompareGraphics9th, results='asis'}
+raceplot
+gpaplot
+mobilityplot
+retained9thplot
+```
+When reviewing the potential for bias with the 8GM, it was found that there was little pattern to suggest that students who transferred out of PPSD were racially different or performed more poorly in courses. The primary difference between students who transferred out of PPSD some time during high school was they were more likely to have changed schools during 8th grade.
+
+Using ninth grade data, we find that in addition to differences in prior school mobility, students who transfer out of PPSD during high school appear to perform worse in their courses than those that remain. Unsurprisingly, students who transfer out are retained in 9th grade at a higher rate (26.7% versus 22.2%). Our model is likely to be *positively biased* for students who transfer out of PPSD, i.e. these students will have higher probabilities of successfully graduating than is likely true because peers with similar observable characteristics have some unobserved advantages which resulted in being less mobile.
+
+### Modeling Methods
+We tested multiple factors to predict graduation selected by following the extensive research on 9th grade success at the Consortium on Chicago School Research. Their findings suggested attendance, course failures, and course performance were the primary predictors of 9th grade readiness.
+
+Additionally, the Longitudinal Data Analysis group in Rhode Island has identified some indicators of 9th grade success as well. Their work focused on promotion to 10th grade as an indicator of 9th grade readiness. Nationwide, only 15% of students who are not promoted to 10th grade graduate. These results numbers are similarly reflected in the PPSD data, with 15.7% of those retained graduating.
+
+```{r RetentionGraduatePic, results='asis'}
+hscohort$graduated <- as.factor(hscohort$graduated)
+levels(hscohort$graduated) <- c('Did not graduate', 'Graduated')
+hscohort$graduated <- factor(hscohort$graduated, 
+                             levels = rev(levels(hscohort$graduated)),
+                             ordered = TRUE)
+ggplot(data=as.data.frame(with(hscohort, 
+                               prop.table(table(retained, graduated),1))), 
+       aes(retained, Freq, fill=graduated)) + 
+geom_bar(stat='identity', position='stack') +
+scale_fill_manual('',
+                  values = c('Graduated' = '#0571B0', 
+                             'Did not graduate' = '#CA0020')) +
+scale_y_continuous('', labels = percent_format()) +
+scale_x_discrete('', labels = c('Promoted', 'Retained')) +
+ggtitle('Promotion to 10th Grade and Graduation')
+```
+
+The LDA found that student attendance, suspensions, and 8th grade NECAP results were all related to promotion to 10th grade. Because we found in the earlier models that NECAP results lose their significance when including course performance data, we substitute 9th grade GPA and course failures for NECAP results. There are several practical reasons for this exclusion as well. First, incoming high school freshman were last assessed in the fall of grade 8 on material taught during their 7th grade year. Second, requiring information about eighth grade in the 9GM would require omitting more students from the model, potentially biasing its predictions.
+
+```{r 9GMTrain}
+hscohort <- filter(hscohort, transfer_out=='N')
+hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
+# hscohort$graduated <- ifelse(hscohort$graduated == 'Y', 1, 
+#                              ifelse(hscohort$graduated == 'N', 0, NA))
+hscohort$graduated <- factor(hscohort$graduated, 
+                             levels=rev(levels(hscohort$graduated)))
+levels(hscohort$graduated) <- c('N', 'Y')
+hscohort <- na.omit(hscohort)
+set.seed(101)
+trainIndex <- createDataPartition(hscohort$graduated,
+                                  p = .8, list=FALSE)
+hscohort_train <- hscohort[trainIndex,]
+hscohort_test <- hscohort[-trainIndex,]
+set.seed(101)
+predictors <- c('attendance', 'gpa9th', 'ageHS', 'fails9th', 
+                'moves', 'suspended', 'retained')
+
+myControl <-  trainControl(method = "repeatedcv", 
+                           number = 10,
+                           repeats = 5, 
+                           classProbs = TRUE,
+                           summaryFunction = twoClassSummary,
+                           seeds = NA)
+
+model.9GMt <- train(graduated ~ I(attendance*10) + gpa9th +  
+                                I(ageHS>190) + moves + suspended,
+                   data = hscohort_train,
+                   method='glm',
+                   tuneLength = 5,
+                   trControl = myControl,
+                   metric='ROC')
+
+model.9GMr <- train(graduated ~ I(attendance*10) + gpa9th +  
+                                I(ageHS>190) + moves + suspended + retained,
+                   data = hscohort_train,
+                   method='glm',
+                   tuneLength = 5,
+                   trControl = trainControl(method = "repeatedcv", 
+                                            number = 10,
+                                            repeats = 5, classProbs=TRUE,
+                                            summaryFunction = twoClassSummary,
+                                            seeds = NA),
+                    metric='ROC')
+```
+We built two versions of the 9GM -- one with information about whether or not a student is retained at the end of the year and one without. However, we can only know when a student is retained in 9th grade at the end of the year. As a result, this model could not be easily applied to students throughout the year to monitor risk. Because PPSD would like to update the models with projected on-track status during the year, we tested a model including only information available during the year.
+
+A comparison between the two model specifications are below.
+
+| Predictor | 9th Grade Throughout Year | 9th Grade End of Year |
+| :------   | :----------------------:  | :------------------:  |
+| Average Course Performance | X | X |
+| School Changes             | X | X |
+| Attendance Rate * 10            | X | X |
+| Days Suspended             | X | X |
+| Overage when entering High School | X | X |
+| Retained at the end of 9th grade |  | X |
+| Model AIC                        | 2370.2 | 2340.7 |
+| Model ROC AUC                    | 0.835  | 0.841  |
+
+These two models are quite similar, and although the model including 9th grade retention is a better predictive model (ANOVA likelihood ratio test $latex p< 0.0001$), we believe that the improvement is slight enough that using the "throughout-the-year" model (9GM-TOY) to track risk at the end of the second and third quarter is defensible (AUC test $latex p=0.297$). 
+
+```{r ROC9GM, results='asis', fig.width=7, fig.height=7}
+hscohort_test <- na.omit(hscohort_test)
+load('/Users/jason/Downloads/bowersEWS.rda')
+grade_9_comps <- subset(bowersEWS, grade==9)
+roc_toy <- roc(hscohort_test$graduated, 
+                predict(model.9GMt, newdata=hscohort_test, type='prob')$Y, 
+                auc=TRUE, ci=TRUE)
+
+roc_reta <- roc(hscohort_test$graduated, 
+                predict(model.9GMr, newdata=hscohort_test, type='prob')$Y,
+                auc=TRUE, ci=TRUE)
+
+rocobj1 <- plot.roc(roc_reta, 
+                    main="Comparing 9GM with Course Failure v. Retention",
+                    col="#1c61b6",
+                    print.auc=TRUE,
+                    legacy.axes=TRUE)
+rocobj2 <- lines.roc(roc_toy, col="#008600")  
+points(x=grade_9_comps$specificity, 
+       y=grade_9_comps$sensitivity, col='gray', pch = 20)
+testobj <- roc.test(rocobj1, rocobj2)  
+text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
+legend("bottomright", legend=c("Retention", "No Retention"), 
+       col=c("#1c61b6", "#008600"), lwd=2)
+
+
+```
+
+There are several assumptions that must be made to use the model during the year. The model predictions assume that the data will not change, i.e. data aggregated by averaging will remain about the same and data aggregated by sums will grow at the same rate. For example, Students at the end of the second quarter will be assumed to have the same attendance rate and GPA for the entire year that they had for the first half of the year, while having double as many failing course grades and double the number of days suspended. However, our models always assume that "nothing changes", and the goal of reporing all of the on-track data is to induce changes that lead to improved graduation probabilities. Our models will always be biased toward lower graduation probabilities, because we assume that school staff, students, and parents will react to this information in various ways, some of which will impact the measures that predict graduation and some of which may not immediately impact these measures.
+
+```{r Param9GM, results='asis'}
+sjp.glm(model.9GMt$finalModel, 
+        title='9GM-TOY Odds Ratios', 
+        showModelSummary = FALSE,
+        theme = 'bw',
+        borderColor = 'white',
+        axisLabels.y = c('Attendance * 10', '9th Grade GPA', 
+                         'Overage Entering High School', 'School Changes',
+                         'Days Suspended'))
+sjp.glm(model.9GMr$finalModel, 
+        title='9GM-EOY Odds Ratios',
+        showModelSummary = FALSE,
+        theme = 'bw',
+        borderColor = 'white',
+        axisLabels.y = c('Attendance * 10', '9th Grade GPA', 
+                         'Overage Entering High School', 'School Changes',
+                         'Days Suspended', 'Retained in 9th Grade'))
+```
+
+```{r 9GMThresholds}
+hscohort_train$predict9GMt <- predict(model.9GMt, 
+                                      newdata = hscohort_train, 
+                                      type = 'prob')$Y
+hscohort_train$predict9GMr <- predict(model.9GMr, 
+                                      newdata = hscohort_train, 
+                                      type = 'prob')$Y
+
+m1_matrix <- cutoff_matrix(hscohort_train, 'predict9GMt', 'graduated')
+thresholds9GMt <- data.frame(classification = as.factor(c('Watch', 
+                                                          'Warning', 'Action')),
+  threshold = c(m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .6)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .7)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .8)),]$cutoff))
+
+# Compute coverage: what proportion of those who fail to graduate are identified
+thresholds9GMt$coverage <- NA
+coverage <- as.data.frame(table(
+  hscohort_train$graduated, 
+  hscohort_train$predict9GMt <= subset(thresholds9GMt, 
+                                     classification=='Action')$threshold))
+thresholds9GMt[thresholds9GMt$classification == 'Action', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_train$graduated, 
+  hscohort_train$predict9GMt <= subset(thresholds9GMt, 
+                                     classification=='Warning')$threshold))
+thresholds9GMt[thresholds9GMt$classification == 'Warning', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_train$graduated, 
+  hscohort_train$predict9GMt <= subset(thresholds9GMt, 
+                                     classification=='Watch')$threshold))
+thresholds9GMt[thresholds9GMt$classification == 'Watch', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+thresholds9GMt$coverage <- round(thresholds9GMt$coverage, digits=3)
+
+m1_matrix <- cutoff_matrix(hscohort_train, 'predict9GMr', 'graduated')
+thresholds9GMr <- data.frame(classification = as.factor(c('Watch', 
+                                                          'Warning', 'Action')),
+  threshold = c(m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .6)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .7)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .8)),]$cutoff))
+
+# Compute coverage: what proportion of those who fail to graduate are identified
+thresholds9GMr$coverage <- NA
+coverage <- as.data.frame(table(
+  hscohort_train$graduated, 
+  hscohort_train$predict9GMr <= subset(thresholds9GMr, 
+                                     classification=='Action')$threshold))
+thresholds9GMr[thresholds9GMr$classification == 'Action', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_train$graduated, 
+  hscohort_train$predict9GMr <= subset(thresholds9GMr, 
+                                     classification=='Warning')$threshold))
+thresholds9GMr[thresholds9GMr$classification == 'Warning', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_train$graduated, 
+  hscohort_train$predict9GMr <= subset(thresholds9GMr, 
+                                     classification=='Watch')$threshold))
+thresholds9GMr[thresholds9GMr$classification == 'Watch', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+thresholds9GMr$coverage <- round(thresholds9GMr$coverage, digits=3)
+```
+
+
+```{r HSNew9th}
+hs1011 <- subset(person, schoolyear_first=='2010_2011' & grade_first==9)
+hs1112 <- subset(person, schoolyear_first=='2012' & grade_first==9)
+hs1213 <- subset(person, schoolyear_first=='2013' & grade_first==9)
+
+hs1011$sasid <- as.character(hs1011$sasid)
+hs1112$sasid <- as.character(hs1112$sasid)
+hs1213$sasid <- as.character(hs1213$sasid)
+
+
+
+hs1011$retained <- ifelse(hs1011$sasid %in% 
+                          subset(tables2011_2012$person_annual, 
+                                 grade == 9)$sasid,
+                          'Y', 'N')
+hs1112$retained <- ifelse(hs1112$sasid %in% 
+                          subset(tables2012_2013$person_annual, 
+                                 grade == 9)$sasid,
+                          'Y', 'N')
+
+tables2012_2013$person_annual$sasid <- 
+  as.character(tables2012_2013$person_annual$sasid) 
+hs1213 <- merge(hs1213, tables2012_2013$person_annual[, c('sasid', 
+                                                           'willrepeatgr')],
+                all.x=TRUE)
+names(hs1213)[length(names(hs1213))] <- 'retained'
+hs1213$retained <- as.character(hs1213$retained)
+hs1213$retained <- ifelse(hs1213$retained == ' ', NA,
+                          hs1213$retained)
+
+hs1011 <- merge(hs1011, subset(attendance, schoolyear=='2010_2011', 
+                               select = c('sasid', 'attendance', 
+                                          'tardy', 'suspended')),
+                all.x=TRUE)
+hs1112 <- merge(hs1112, subset(attendance, schoolyear=='2011_2012', 
+                               select = c('sasid', 'attendance', 
+                                          'tardy', 'suspended')),
+                all.x=TRUE)
+hs1213 <- merge(hs1213, subset(attendance, schoolyear=='2012_2013', 
+                               select = c('sasid', 'attendance', 
+                                          'tardy', 'suspended')),
+                all.x=TRUE)
+
+hs1011 <- transform(hs1011,
+                    ageHS = age_calc(dob, 
+                                     as.Date('2010-09-01'), 
+                                     units='months'))
+hs1112 <- transform(hs1112,
+                    ageHS = age_calc(dob, 
+                                     as.Date('2011-09-01'), 
+                                     units='months'))
+hs1213 <- transform(hs1213,
+                    ageHS = age_calc(dob, 
+                                     as.Date('2010-09-01'), 
+                                     units='months'))
+gpa_9th_1011 <- tables2010_2011$course %.% 
+                filter(grade==9 & 
+                       sasid %in% hs1011$sasid) %.% 
+                group_by(sasid) %.% 
+                summarise(gpa9th = mean(gpa, na.rm=TRUE))
+gpa_9th_1112 <- tables2011_2012$course %.% 
+                filter(grade==9 & 
+                       sasid %in% hs1112$sasid) %.% 
+                group_by(sasid) %.% 
+                summarise(gpa9th = mean(gpa, na.rm=TRUE))
+gpa_9th_1213 <- tables2012_2013$course %.% 
+                filter(grade==9 & 
+                       sasid %in% hs1213$sasid) %.% 
+                group_by(sasid) %.% 
+                summarise(gpa9th = mean(gpa, na.rm=TRUE))
+
+
+gpa_9th_1011$sasid <- as.character(gpa_9th_1011$sasid)
+gpa_9th_1112$sasid <- as.character(gpa_9th_1112$sasid)
+gpa_9th_1213$sasid <- as.character(gpa_9th_1213$sasid)
+
+
+hs1011 <- merge(hs1011, gpa_9th_1011, all.x=TRUE)
+hs1112 <- merge(hs1112, gpa_9th_1112, all.x=TRUE)
+hs1213 <- merge(hs1213, gpa_9th_1213, all.x=TRUE)
+
+mobile1011 <-  moves_calc(subset(tables2010_2011$enrollment, 
+                                 sasid %in% hs1011$sasid & grade == 9),
+                          gap = 30, enrollby = "2010-10-01")
+mobile1112 <-  moves_calc(subset(tables2011_2012$enrollment, 
+                                 sasid %in% hs1112$sasid & grade == 9),
+                          gap = 30, enrollby = "2011-10-01")
+mobile1213 <-  moves_calc(subset(tables2012_2013$enrollment, 
+                                 sasid %in% hs1213$sasid & grade == 9),
+                          gap = 30, enrollby = "2012-10-01")
+mobile1011$sasid <- as.character(mobile1011$sasid)
+mobile1112$sasid <- as.character(mobile1112$sasid)
+mobile1213$sasid <- as.character(mobile1213$sasid)
+hs1011 <- merge(hs1011, mobile1011, all.x=TRUE)
+hs1112 <- merge(hs1112, mobile1112, all.x=TRUE)
+hs1213 <- merge(hs1213, mobile1213, all.x=TRUE)
+hs_new9 <- rbind(hs1011, hs1112, hs1213)
+hs_new9 <- subset(hs_new9, !schno_first %in% charters)
+hs_new9 <- na.omit(hs_new9)
+hs_new9$predict9GMt <- predict(model.9GMt, newdata=hs_new9, type='prob')$Y
+hs_new9$predict9GMr <- predict(model.9GMr, newdata=hs_new9, type='prob')$Y
+hs_new9$classification9GMt <- cut(hs_new9$predict9GMt, 
+                                  breaks=rev(c(1, thresholds9GMt$threshold, 0)), 
+                                  include.lowest=TRUE, 
+                                  labels = rev(c('On-track', 
+                                               as.character(thresholds9GMt$classification))))
+hs_new9$classification9GMt <- 
+  factor(hs_new9$classification9GMt, 
+         levels = rev(levels(hs_new9$classification9GMt)), 
+         ordered=TRUE)
+hs_new9$classification9GMr <- cut(hs_new9$predict9GMr, 
+                                  breaks=rev(c(1, thresholds9GMr$threshold, 0)), 
+                                  include.lowest=TRUE, 
+                                  labels=rev(c('On-track', 
+                                        as.character(thresholds9GMr$classification))))
+hs_new9$classification9GMr <- 
+  factor(hs_new9$classification9GMr, 
+         levels = rev(levels(hs_new9$classification9GMr)), 
+         ordered=TRUE)
+```
+
+The classifications from the two models can be applied to the three most recent freshman classes to compare the extent to which including retention impacts a student's overall classification in practice.
+```{r, results='asis'}
+heatmap <- as.data.frame(with(hs_new9, 
+                              table(classification9GMt, classification9GMr)))
+ggplot(data = heatmap, aes(classification9GMt, classification9GMr, fill=Freq)) +
+geom_tile() +
+scale_fill_gradient(low="#EFF3FF", high="#08519C") +
 geom_text(aes(fill = heatmap$Freq, label = heatmap$Freq))
+```
+Nearly all students maintained their same classification, with the largest shift being students who would be classified as **Warning** in the model excluding retention moving to **Action** in the model that includes retention. This is unsurprising-- students who are at the margin of the highest risk category that are retained see the biggest negative impact from retention.
+
+```{r 9GMlongestFreshman, results='asis'}
+freshman_hs1011 <- findFreshmanHS(all_years_enr, '2010_2011')
+freshman_hs1112 <- findFreshmanHS(all_years_enr, '2012')
+freshman_hs1213 <- findFreshmanHS(all_years_enr, '2013')
+hs_new9 <- left_join(hs_new9, 
+                     rbind(freshman_hs1011, freshman_hs1112, freshman_hs1213))
+# Combine all of the Hope High Schools
+hs_new9$schno_hs_f9_long <- with(hs_new9, 
+                            ifelse(as.character(schno_hs_f9_long) %in% 
+                                     c('181', '183'),
+                                  '149', as.character(schno_hs_f9_long)))
+
+# Combine PAIS with HSTA & PAIS
+hs_new9$schno_hs_f9_long <- with(hs_new9, 
+                            ifelse(as.character(schno_hs_f9_long) %in% 
+                                     c('173'),
+                                  '175', as.character(schno_hs_f9_long)))
+school_f9 <- as.data.frame(with(hs_new9, 
+                                prop.table(table(schno_hs_f9_long, 
+                                                 classification9GMr), 1)))
+school_f9 <- na.omit(school_f9)
+school_f9 <- filter(school_f9, 
+                    !schno_hs_f9_long %in% c('185', '147', '114', 
+                                             '117', '189', '131'))
+#school_ms <- filter(school_ms,
+#                            !schno_first %in% c('185', '147'))
+#school_lookup <- unique(hs_new[, c('schno_ms_long', 'school_ms_long')])
+#school_lookup$schno_ms_long <- as.character(school_lookup$schno_ms_long)
+#school_ms$schno_ms_long <- as.character(school_ms$school_ms_long)
+school_lookup <- data.frame(schno_hs_f9_long = as.character(c(139, 149, 150, 
+                                                              164, 167, 169, 
+                                                              175, 193)), 
+                            school_hs_f9_long = c('Central', 'Hope', 
+                                                  'Mount Pleasant', 'Classical',
+                                                  'E-Cubed', 'Alvarez', 
+                                                  'Sanchez', 'Career & Tech'),
+                            stringsAsFactors = FALSE)
+school_f9$schno_hs_f9_long <- as.character(school_f9$schno_hs_f9_long)
+school_f9 <- left_join(school_f9, school_lookup)
+school_f9_seq <- school_f9 %.%
+                 filter(classification9GMr == 'On-track') %.%
+                 arrange(Freq)
+school_f9$school_hs_f9_long <- factor(school_f9$school_hs_f9_long,
+                                      levels = school_f9_seq$school_hs_f9_long)
+ggplot(data = na.omit(school_f9), 
+       aes(school_hs_f9_long, Freq, fill=classification9GMr)) + 
+geom_bar(stat='identity', position='stack') + 
+scale_y_continuous('', 
+                   labels = percent_format(), 
+                   breaks = seq(0,1,.1),
+                   limits = c(0, 1.05),
+                   expand = c(0, 0)) +
+scale_x_discrete('HS Attended Longest As First-Time 9th Grade',
+                 labels = substr(x=levels(school_f9$school_hs_f9_long), 1, 13)) +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+theme(axis.text.x = element_text(angle=90)) +
+ggtitle('Classifications by High School After 9th Grade')
+```
+
+```{r HSFirstYearImpact, results='asis'}
+incoming_on_track <- school_first_data %.%
+                     filter(classification=='On-track')
+end_of_9 <- school_f9 %.%
+            filter(classification9GMr == 'On-track')
+names(end_of_9) <- c('schno_f9', 'classification9', 'Freq9', 'school_f9')
+
+impact <- merge(incoming_on_track, end_of_9, 
+                by.x=c('schno_first', 'school_first'),
+                by.y=c('schno_f9', 'school_f9'))
+
+ggplot(impact, aes(Freq, Freq9)) +
+geom_point() + 
+geom_text(aes(label=school_first),hjust=0, vjust=0) + 
+geom_abline(intercept=0, slope=1) + 
+scale_x_continuous('On-track entering 9th grade', 
+                   labels = percent_format(), limits=c(0,1)) + 
+scale_y_continuous('On-track after 9th grade',
+                   labels = percent_format(), limits=c(0,1))
+```
+
+#### Race
+```{r RacePic9GM, results='asis'}
+race <- as.data.frame(with(hs_new9, prop.table(table(race, 
+                                                     classification9GMr), 1)))
+
+race_n <- as.data.frame(with(hs_new9, table(race, classification9GMr)))
+# n-size exclusion
+race <- filter(race, race != 'Pacific Islander')
+# race_n <- filter(race_n, race != 'Pacific Islander') # n-size exclusion
+# names(race_n)[ncol(race_n)] <- 'n'
+# race <- left_join(race, race_n)
+
+race_seq <- race %.%
+            filter(classification9GMr == 'On-track') %.%
+            arrange(Freq)
+race$race <- factor(race$race,
+                    levels = race_seq$race,
+                    ordered=TRUE)
+
+ggplot(race, aes(race, Freq, fill = classification9GMr, order=race)) + 
+geom_bar(stat = 'identity', position = 'stack') + 
+geom_text(aes(label = percent(Freq), y = Freq, ymax = 1), 
+          position = 'stack',
+          vjust = 1.66,
+          fontface = 'bold',
+          color = '#3f4c55') + 
+scale_y_continuous('', 
+                   labels = percent_format(), 
+                   breaks=seq(0,1,.1),
+                   expand = c(0, 0)) +
+scale_x_discrete('',
+                 expand = c(0, 0)) +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+ggtitle('End of 9th Grade Risk by Race')
 ```
