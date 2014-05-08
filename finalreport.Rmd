@@ -538,6 +538,7 @@ hs1213 <- left_join(hs1213, findLongestMiddleSchool(all_years_enr))
 
 hs_new <- rbind(hs1213, hs1112)
 hs_new <- na.omit(hs_new)
+hs_new <- subset(hs_new, !schno_first %in% charters)
 hs_new$prediction <- predict(model.1, newdata=hs_new, type='prob')$Y
 hs_new$classification <- cut(hs_new$prediction, 
                              breaks=rev(c(1, thresholds$threshold, 0)), 
