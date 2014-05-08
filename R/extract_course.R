@@ -20,6 +20,7 @@ extract_course <- function(regYr){
   quarters <- grep('^cum', names(tbl_course), value=TRUE)
   key_vars <- names(tbl_course)[which(!names(tbl_course) %in% c('course_grade',
                                                                 quarters))]
+  tbl_course[,quarters] <- lapply(tbl_course[,quarters], as.character)
   tbl_course <- melt(tbl_course, id.vars=c(key_vars),
                      value.name='course_grade')
   tbl_course$course_grade <- str_trim(tbl_course$course_grade, side='both')
