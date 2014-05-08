@@ -15,11 +15,16 @@ require(sjPlot)
 file.sources = list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
                           pattern='*.R$', full.names=TRUE, ignore.case=TRUE)
 invisible(sapply(file.sources, source, .GlobalEnv))
-invisible(source('load.R'))
-invisible(source('buildTables.R'))
-invisible(source('person.R'))
-invisible(source('attendance.R'))
-attendance$sasid <- as.character(attendance$sasid)
+# invisible(source('load.R'))
+# invisible(source('buildTables.R'))
+# invisible(source('person.R'))
+# invisible(source('attendance.R'))
+# attendance$sasid <- as.character(attendance$sasid)
+# charters <- c(114, 117, 189, 185)
+# rm(list=c('reg0405', 'reg0506', 'reg0607', 'reg0708', 
+#           'reg0809', 'reg0910', 'reg1011'))
+load('Cache/initialEnv.RData')
+theme_set(theme_jb())
 ```
 
 ```{r 8GMData}
