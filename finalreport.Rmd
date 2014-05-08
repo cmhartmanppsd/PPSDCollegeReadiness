@@ -485,9 +485,11 @@ hs1112 <- mutate(hs1112, overage = age_calc(dob, as.Date('2012-09-01'),
                                           units='months'))
 
 mobile1213 <-  moves_calc(subset(tables2011_2012$enrollment, 
-                                 sasid %in% hs1213$sasid & grade == 8))
+                                 sasid %in% hs1213$sasid & grade == 8),
+                          gap = 30, enrollby = "2011-10-01")
 mobile1112 <-  moves_calc(subset(tables2010_2011$enrollment, 
-                                 sasid %in% hs1112$sasid & grade == 8))
+                                 sasid %in% hs1112$sasid & grade == 8),
+                          gap = 30, enrollby = "2010-10-01")
 
 mobile1213$sasid <- as.character(mobile1213$sasid)
 mobile1112$sasid <- as.character(mobile1112$sasid)
