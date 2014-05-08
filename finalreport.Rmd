@@ -207,6 +207,11 @@ hs0809 <- left_join(hs0809, fails0708)
 hs0809$fails <- with(hs0809, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
 hs0910 <- left_join(hs0910, fails0809)
 hs0910$fails <- with(hs0910, ifelse(is.na(fails) & !is.na(gpa8th), 0, fails))
+
+hs0708 <- left_join(hs0708, findLongestMiddleSchool(all_years_enr))
+hs0809 <- left_join(hs0809, findLongestMiddleSchool(all_years_enr))
+hs0910 <- left_join(hs0910, findLongestMiddleSchool(all_years_enr))
+
 hscohort <- rbind(hs0708, hs0809, hs0910)
 ```
 ## Eighth Grade Model
