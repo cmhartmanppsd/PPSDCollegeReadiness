@@ -1067,29 +1067,44 @@ hscohort_train$classificationqtr1 <-
          levels = rev(levels(hscohort_train$classificationqtr1)), ordered=TRUE)
 
 gpa_qtr1_1213 <- tables2012_2013$course %.% 
-                 filter(grade == 9 & sasid %in% hs1213$sasid) %.% 
+                 filter(grade == 9 & 
+                        sasid %in% 
+                        subset(hs_new, 
+                               schoolyear_first=='2013' & 
+                               grade_first==9)$sasid) %.%
                  group_by(sasid, variable) %.% 
                  summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
                  filter(variable == 'cum_qtr1') %.%
                  select(sasid, gpa_qtr1_9th)
 gpa_qtr1_1112 <- tables2011_2012$course %.% 
-                 filter(grade == 9 & sasid %in% hs1112$sasid) %.% 
+                 filter(grade == 9 & 
+                        sasid %in% 
+                        subset(hs_new, 
+                               schoolyear_first=='2012' & 
+                               grade_first==9)$sasid) %.% 
                  group_by(sasid, variable) %.% 
                  summarize(gpa_qtr1_9th = mean(gpa, na.rm=TRUE)) %.%
                  filter(variable == 'cum_qtr1') %.%
                  select(sasid, gpa_qtr1_9th)
 fails_qtr1_1213 <- tables2012_2013$course %.% 
-                   filter(grade == 9 & sasid %in% hs1213$sasid) %.%
+                   filter(grade == 9 & sasid %in% 
+                          subset(hs_new,
+                                 schoolyear_first=='2013' &
+                                 grade_first == 9)$sasid &
+                          !sasid %in% gpa_qtr1_1112$sasid) %.%
                    group_by(sasid, variable, courseno) %.% 
                    summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
                    filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
-                   summarize(fails_qtr1 = n())
+                   summarize(fails = n())
 fails_qtr1_1112 <- tables2011_2012$course %.% 
-                   filter(grade == 9 & sasid %in% hs1112$sasid) %.%
+                   filter(grade == 9 & sasid %in% 
+                          subset(hs_new,
+                                 schoolyear_first=='2012' &
+                                 grade_first == 9)$sasid) %.%
                    group_by(sasid, variable, courseno) %.% 
                    summarize(gpa = mean(gpa, na.rm=TRUE)) %.% 
                    filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
-                   summarize(fails_qtr1 = n())
+                   summarize(fails = n())
 gpa_qtr1_new <- rbind(gpa_qtr1_1112, gpa_qtr1_1213)
 gpa_qtr1_new$sasid <- as.character(gpa_qtr1_new$sasid)
 hs_new <- left_join(hs_new, 
@@ -1099,7 +1114,7 @@ fails_qtr1_new <- rbind(fails_qtr1_1112, fails_qtr1_1213)
 fails_qtr1_new$sasid <- as.character(fails_qtr1_new$sasid)
 hs_new <- left_join(hs_new, 
                     fails_qtr1_new %.%
-                    select(sasid, fails_qtr1))
+                    select(sasid, fails))
 hs_new <- na.omit(hs_new)
 hs_new$predictqtr1 <- predict(model.qtr1, newdata=hs_new, type='prob')$Y
 hs_new$classificationqtr1 <- cut(hs_new$predictqtr1, 
