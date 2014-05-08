@@ -213,6 +213,8 @@ hs0809 <- left_join(hs0809, findLongestMiddleSchool(all_years_enr))
 hs0910 <- left_join(hs0910, findLongestMiddleSchool(all_years_enr))
 
 hscohort <- rbind(hs0708, hs0809, hs0910)
+hscohort <- subset(hscohort, !schno_first %in% charters)
+hscohort <- subset(hscohort, !schno_ms_long %in% charters)
 ```
 ## Eighth Grade Model
 ### Defining the Sample
