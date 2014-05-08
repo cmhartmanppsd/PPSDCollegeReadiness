@@ -639,6 +639,20 @@ scale_fill_manual('',
 ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
 ```
 
+#### Gender
+```{r GenderPic, results='asis', fig.height=7, fig.width=7}
+gender <- as.data.frame(with(hs_new, prop.table(table(sex,
+                                                      classification),1)))
+ggplot(gender, aes(sex, Freq, fill=classification)) + 
+geom_bar(stat='identity', position='stack') + 
+scale_y_continuous('', labels = percent_format(), breaks=seq(0,1,.1)) +
+scale_x_discrete('Sex') +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+ggtitle('Incoming 9th Grade Classes of 2012 and 2013 Risk Levels')
+```
+
 #### Sorting by School
 Students that are on-track are not evenly distributed among either sending middle schools or recieving high schools. When reviewing this data, it is critical to understand that this data does not suggest that some middle schools are better or worse at preparing students for high school. Because of differences in school composition and their own incoming classes from elementary to middle school, these data are not sufficient to make any claims about middle school efficacy. However, the stark differences in preparedness by middle school, and subsequently, receiving high schools, have important policy implications.
 
