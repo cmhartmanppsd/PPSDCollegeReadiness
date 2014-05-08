@@ -987,7 +987,9 @@ rocobj1 <- plot.roc(roc_qtr1,
                     print.auc=TRUE,
                     legacy.axes=TRUE)
 rocobj2 <- lines.roc(roc_orig, col="#008600")  
-testobj <- roc.test(rocobj1, rocobj2)  
+testobj <- roc.test(rocobj1, rocobj2)
+points(x=grade_8_comps$specificity, 
+       y=grade_8_comps$sensitivity, col='gray', pch = 20)
 text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
 legend("bottomright", legend=c("8GM + Qtr1", "8GM"), col=c("#1c61b6", "#008600"), lwd=2)
 ```
