@@ -1842,4 +1842,42 @@ scale_fill_manual('',
                   values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
                   breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
 ggtitle('End of 9th Grade Risk by Race')
-```
+
+## Race without Classical
+race <- as.data.frame(with(subset(hs_new9, !schno_hs_f9_long %in% '164'), 
+                                  prop.table(table(race, 
+                                                   classification9GMr), 1)))
+
+race_n <- as.data.frame(with(subset(hs_new9, !schno_hs_f9_long %in% '164'), 
+                             table(race, classification9GMr)))
+# n-size exclusion
+race <- filter(race, race != 'Pacific Islander')
+# race_n <- filter(race_n, race != 'Pacific Islander') # n-size exclusion
+# names(race_n)[ncol(race_n)] <- 'n'
+# race <- left_join(race, race_n)
+
+race_seq <- race %.%
+            filter(classification9GMr == 'On-track') %.%
+            arrange(Freq)
+race$race <- factor(race$race,
+                    levels = race_seq$race,
+                    ordered=TRUE)
+
+ggplot(race, aes(race, Freq, fill = classification9GMr, order=race)) + 
+geom_bar(stat = 'identity', position = 'stack') + 
+geom_text(aes(label = percent(Freq), y = Freq, ymax = 1), 
+          position = 'stack',
+          vjust = 1.66,
+          fontface = 'bold',
+          color = '#3f4c55') + 
+scale_y_continuous('', 
+                   labels = percent_format(), 
+                   breaks=seq(0,1,.1),
+                   expand = c(0, 0)) +
+scale_x_discrete('',
+                 expand = c(0, 0)) +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+ggtitle('End of 9th Grade Risk by Race without Classical')
+
