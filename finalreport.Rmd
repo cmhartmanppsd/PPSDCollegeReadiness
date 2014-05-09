@@ -1881,3 +1881,258 @@ scale_fill_manual('',
                   breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
 ggtitle('End of 9th Grade Risk by Race without Classical')
 
+```
+
+## Tenth Grade Model
+The 10th grade model (10GM) has a complex sample because a large number of students repeat 9th grade. This model uses all first-time 10th grade students. This is defined by looking at the enrollment records from the 2005-2006 school year through to the 2012-2013 school year and selecting all records for the 10th grade. The minimum enrollment date for each student is then chosen. Based on that enrollment date, each student is assigned a school year representing their first enrollment in the 10th grade in PPSD. 
+
+All 10th grade data is filtered both by grade and the school year selected as the first enrollment in the 10th grade. The model is then constructed from the subset of students who entered PPSD for the first time as a ninth grade student in the school years 2006-2007, 2007-2008, 2008-2009, and 2009-2010 or entered PPSD for the first time as tenth grade students in 2007-2008, 2008-2009, 2009-2010, and 2010-2011.
+
+The models were constructed using the same candidate predictors as previous models, with final model selection based on out-of-sample AUC and likelihood-ratio tests both between and step-wise within models.
+```{r TenthGradeModel}
+hs0607 <- subset(person, (schoolyear_first=='2006_2007' & grade_first==9) | 
+                         (schoolyear_first=='2007_2008' & grade_first==10) | 
+                         (schoolyear_first=='2008_2009' & grade_first==11) | 
+                         (schoolyear_first=='2009_2010' & grade_first==12))
+hs0708 <- subset(person, (schoolyear_first=='2007_2008' & grade_first==9) | 
+                         (schoolyear_first=='2008_2009' & grade_first==10) | 
+                         (schoolyear_first=='2009_2010' & grade_first==11) | 
+                         (schoolyear_first=='2010_2011' & grade_first==12))
+hs0809 <- subset(person, (schoolyear_first=='2008_2009' & grade_first==9) | 
+                         (schoolyear_first=='2009_2010' & grade_first==10) | 
+                         (schoolyear_first=='2010_2011' & grade_first==11) | 
+                         (schoolyear_first=='2011_2012' & grade_first==12))
+hs0910 <- subset(person, (schoolyear_first=='2009_2010' & grade_first==9) | 
+                         (schoolyear_first=='2010_2011' & grade_first==10) | 
+                         (schoolyear_first=='2011_2012' & grade_first==11) | 
+                         (schoolyear_first=='2012_2013' & grade_first==12))
+first9th <- all_years_enr %.% 
+            filter(grade == 9) %.% 
+            group_by(sasid) %.% 
+            summarize(enroll_date = min(enroll_date))
+first9th$schoolyear_9 <- 
+  ifelse(month(first9th$enroll_date) %in% seq(8,12,1),
+         paste(year(first9th$enroll_date), 
+               year(first9th$enroll_date) + 1, 
+               sep = "_"),
+         paste(year(first9th$enroll_date) - 1,
+               year(first9th$enroll_date),
+               sep = "_"))
+
+
+first10th <- all_years_enr %.% 
+             filter(grade == 10) %.% 
+             group_by(sasid) %.% 
+             summarize(enroll_date = min(enroll_date))
+first10th$schoolyear <- 
+  ifelse(month(first10th$enroll_date) %in% seq(8,12,1),
+         paste(year(first10th$enroll_date), 
+               year(first10th$enroll_date) + 1, 
+               sep = "_"),
+         paste(year(first10th$enroll_date) - 1,
+               year(first10th$enroll_date),
+               sep = "_"))
+
+hs0607$sasid <- as.character(hs0607$sasid)
+hs0708$sasid <- as.character(hs0708$sasid)
+hs0809$sasid <- as.character(hs0809$sasid)
+hs0910$sasid <- as.character(hs0910$sasid)
+hscohort <- rbind(hs0607, hs0708, hs0809, hs0910)
+hscohort <- left_join(hscohort,
+                      first10th %.%
+                      select(sasid, schoolyear))
+hscohort <- left_join(hscohort,
+                      first9th %.%
+                      select(sasid, schoolyear_9))
+hscohort <- subset(hscohort, !is.na(schoolyear))
+hscohort$schoolyear_9 <- with(hscohort,
+                              ifelse(is.na(schoolyear_9),
+                                     paste((as.numeric(substring(schoolyear, 
+                                                                 1, 4)) - 1),
+                                           substring(schoolyear, 1, 4), 
+                                           sep = "_"),
+                                     schoolyear_9))
+# Repeated 9th grade
+hscohort <- left_join(hscohort,
+                      retained_calc(x = annual_demos, 
+                                    sid = 'sasid',
+                                    grade = 'grade',
+                                    grade_value = 9))
+names(hscohort)[length(names(hscohort))] <- 'retained9th'
+
+# Repeated 10th grade
+retained <- annual_demos %.%
+            filter(grade == 10) %.%
+            select(sasid, willrepeatgr, schoolyear)
+
+hscohort <- left_join(hscohort,
+                      retained)
+names(hscohort)[length(names(hscohort))] <- 'retained'
+hscohort$retained <- with(hscohort,
+                          ifelse(as.character(retained) == ' ', 
+                                 'N', 
+                                 as.character(retained)))
+
+hscohort <- left_join(hscohort, 
+                      attendance %.%
+                      filter(grade == 10) %.%
+                      select(sasid, schoolyear, attendance, tardy, suspended))
+
+
+hscohort <- mutate(hscohort, 
+                   ageHS = age_calc(dob,
+                                    as.Date(paste(substr(schoolyear_9, 1, 4), 
+                                                  '09', '01', sep='-')),
+                                    units = 'months'))
+
+gpa <- rbind(tables2007_2008$course,
+             tables2008_2009$course,
+             tables2009_2010$course,
+             tables2010_2011$course,
+             tables2011_2012$course) %.%
+             filter(grade == 10) %.%
+             group_by(sasid, schoolyear) %.%
+             summarize(gpa10th = mean(gpa, na.rm=TRUE)) %.%
+             select(sasid, gpa10th, schoolyear)
+gpa$schoolyear <- ifelse(gpa$schoolyear == '2012',
+                           '2011_2012',
+                           ifelse(gpa$schoolyear == '2013',
+                                  '2012_2013',
+                                  gpa$schoolyear))
+
+
+fails <- rbind(tables2007_2008$course,
+               tables2008_2009$course,
+               tables2009_2010$course,
+               tables2010_2011$course,
+               tables2011_2012$course) %.%
+         filter(grade == 10) %.%
+         group_by(sasid, courseno, schoolyear) %.%
+         summarize(gpa10th = mean(gpa, na.rm=TRUE)) %.%
+         filter(gpa10th <= 1.0)
+
+fails <- ungroup(fails) %.%
+         group_by(sasid, schoolyear) %.%
+         summarize(fails = n()) %.%
+         select(sasid, fails, schoolyear)
+fails$schoolyear <- ifelse(fails$schoolyear == '2012',
+                           '2011_2012',
+                           ifelse(fails$schoolyear == '2013',
+                                  '2012_2013',
+                                  fails$schoolyear))
+
+mobile0607 <- moves_calc(filter(tables2007_2008$enrollment, grade == 10),
+                         gap = 30, enrollby = "2007-10-01")
+mobile0607$schoolyear <- '2007_2008'
+mobile0708 <- moves_calc(filter(tables2008_2009$enrollment, grade == 10),
+                         gap = 30, enrollby = "2008-10-01")
+mobile0708$schoolyear <- '2008_2009'
+mobile0809 <- moves_calc(filter(tables2009_2010$enrollment, grade == 10),
+                         gap = 30, enrollby = "2009-10-01")
+mobile0809$schoolyear <- '2009_2010'
+mobile0910 <- moves_calc(filter(tables2010_2011$enrollment, grade == 10),
+                         gap = 30, enrollby = "2010-10-01")
+mobile0910$schoolyear <- '2010_2011'
+mobile1011 <- moves_calc(filter(tables2011_2012$enrollment, grade == 10),
+                         gap = 30, enrollby = "2011-10-01")
+mobile1011$schoolyear <- '2011_2012'
+
+mobile <- rbind(mobile0607, mobile0708, mobile0809, mobile0910, mobile1011)
+mobile$sasid <- as.character(mobile$sasid)
+hscohort <- left_join(hscohort, mobile)
+hscohort <- left_join(hscohort, gpa)
+hscohort <- left_join(hscohort, fails)
+hscohort$fails <- with(hscohort, 
+                       ifelse(!is.na(gpa10th) & is.na(fails), 0, fails))
+
+```
+
+```{r Train10GM}
+hscohort <- filter(hscohort, transfer_out=='N')
+hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
+# hscohort$graduated <- ifelse(hscohort$graduated == 'Y', 1, 
+#                              ifelse(hscohort$graduated == 'N', 0, NA))
+hscohort$graduated <- as.factor(hscohort$graduated)
+hscohort <- na.omit(hscohort)
+require(caret)
+set.seed(101)
+trainIndex <- createDataPartition(hscohort$graduated,
+                                  p = .8, list=FALSE)
+hscohort_train <- hscohort[trainIndex,]
+hscohort_test <- hscohort[-trainIndex,]
+set.seed(101)
+model.10 <- train(graduated ~ I(attendance*10) + gpa10th + 
+                             retained9th + retained + 
+                             I(ageHS>180 & ageHS<=192) + I(ageHS>192), 
+                 data=hscohort_train,
+                 method='glm',
+                 tuneLength = 5,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary,
+                                          seeds = NA),
+                 metric='ROC')
+model.10t <- train(graduated ~ I(attendance*10) + gpa10th + 
+                             retained9th + 
+                             I(ageHS>180 & ageHS<=192) + I(ageHS>192), 
+                 data=hscohort_train,
+                 method='glm',
+                 tuneLength = 5,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary,
+                                          seeds = NA),
+                 metric='ROC')
+
+```
+
+```{r ROC10GM, results='asis', fig.width=7, fig.height=7}
+hscohort_test <- na.omit(hscohort_test)
+grade_10_comps <- subset(bowersEWS, grade==10)
+roc_10 <- roc(hscohort_test$graduated, 
+              predict(model.10, newdata=hscohort_test, type='prob')$Y,
+              auc=TRUE, ci=TRUE)
+roc_10t <- roc(hscohort_test$graduated,
+               predict(model.10t, newdata=hscohort_test, type='prob')$Y,
+               auc=TRUE, ci=TRUE)
+rocobj1 <- plot.roc(roc_10, 
+                    main="10GM ROC",
+                    col="#1c61b6",
+                    print.auc=TRUE,
+                    legacy.axes=TRUE)
+rocobj2 <- lines.roc(roc_10t, col="#008600")  
+testobj <- roc.test(rocobj1, rocobj2)
+# lines.roc(roc_reta, col='gray')
+points(x=grade_10_comps$specificity, 
+       y=grade_10_comps$sensitivity, col='gray', pch = 20)  
+text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
+legend("bottomright", legend=c("10GM R", "10GM T"), col=c("#1c61b6", "#008600"), lwd=2)
+
+#legend("bottomright", legend=c("10GM"), 
+#      col=c("#1c61b6"), lwd=2)
+```
+
+```{r 10GMOddsratio, results='asis'}
+sjp.glm(model.10$finalModel, 
+        title='10GM Odds Ratios', 
+        showModelSummary = FALSE,
+        theme = 'bw',
+        borderColor = 'white',
+        axisLabels.y = c('Attendance * 10', '10th Grade GPA', 'Retained 9th',
+                         'Retained 10th',
+                         'Overage by 1 year prior to 10th grade',
+                         'Overage by 2 or more years prior to 10th grade'))
+```
+The predictors in this model are more complex than in previous models. Both 10th grade attendance and 10th grade GPA are the familiar measures used in previous models. Retention and overage measures are more difficult to measure when some students may not have been enrolled in PPSD in the past. For this model, a student is considered to have been retained in 9th grade if there are multiple school years where that student was enrolled in 9th grade in PPSD. Retention in 10th grade is based on the flag students receive at the end of 10th grade that says they will be repeating that grade. This is used only for the first year that students are enrolled in tenth grade and was selected because it can be known for all students at the end of tenth grade. 
+
+Overage is also more complex to calculate. In the past, we have defined overage as being greater than 180 months old on September 1 in the year a student enrolled in 9th grade for the first time. This accounted for prior retention history or late entry into schooling. However, not all tenth grade students were enrolled in PPSD for ninth grade, and some may have repeated ninth grade several times. In order to account for this, we used the following rules.
+
+1. We calculated the first year a student was in 9th grade in PPSD based on the same rules used for the first-time 10th grade school year.
+2. If there was no history of 9th grade enrollment in PPSD, we set the 9th grade year as one year prior to the first time a student has enrolled in 10th grade.
+3. Because students in (1) may have enrolled in PPSD for the first time as a 9th grade student after enrolling elsewhere as a ninth grader, and because students in (2) may have repeated ninth grade multiple times prior to enrolling in 10th grade in PPSD, we have created two overage predictors.
+  a. Students whose age was greater than 180 months but less than 192 months (1 year overage)
+  b. Students whose age was greater than 192 months (at least 2 years overage).
+  
+As a result, some students who are not captured by the measure for retention in 9th grade will be captured by the >192 months predictor.
+
+We have tested the model with and without the 10th grade retention indicator like the 9GM model to see if the model can be used and updated throughout the year prior to knowing whether a student will repeat the grade. While we find that the model utilizing the retention data to be more successful at predicting graduation, we again believe that this improvement is sufficiently small that it supports implementing the 10GM without the retention data throughout the year. We recommend this model be used at the end of the second quarter and the end of the third quarter to inform practice. Students at the beginning of tenth grade should be classified using the 9GM model with 9th grade retention.
