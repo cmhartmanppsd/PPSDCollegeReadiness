@@ -339,7 +339,7 @@ hscohort_train <- hscohort[trainIndex,]
 hscohort_test <- hscohort[-trainIndex,]
 set.seed(101)
 model.1 <- train(graduated ~ I(attendance8th*10) + gpa8th + matnormal + 
-                             reanormal + I(overage>178), 
+                             reanormal + I(overage>168), 
                  data=hscohort_train,
                  method='glm',
                  tuneLength = 5,
@@ -960,7 +960,7 @@ set.seed(101)
 #                                           summaryFunction = twoClassSummary,
 #                                           seeds = NA),
 #                  metric='ROC')
-model.qtr1 <- train(graduated ~ I(attendance8th*10) + gpa8th + I(overage>178) +
+model.qtr1 <- train(graduated ~ I(attendance8th*10) + gpa8th + I(overage>168) +
                       gpa_qtr1_9th*fails, 
                  data=hscohort_train,
                  method='glm',
@@ -1431,7 +1431,7 @@ myControl <-  trainControl(method = "repeatedcv",
                            seeds = NA)
 
 model.9GMt <- train(graduated ~ I(attendance*10) + gpa9th +  
-                                I(ageHS>190) + moves + suspended,
+                                I(ageHS>180) + moves + suspended,
                    data = hscohort_train,
                    method='glm',
                    tuneLength = 5,
@@ -1439,7 +1439,7 @@ model.9GMt <- train(graduated ~ I(attendance*10) + gpa9th +
                    metric='ROC')
 
 model.9GMr <- train(graduated ~ I(attendance*10) + gpa9th +  
-                                I(ageHS>190) + moves + suspended + retained,
+                                I(ageHS>180) + moves + suspended + retained,
                    data = hscohort_train,
                    method='glm',
                    tuneLength = 5,
