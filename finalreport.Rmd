@@ -1782,7 +1782,7 @@ scale_fill_manual('',
 theme(axis.text.x = element_text(angle=90)) +
 ggtitle('Classifications by High School After 9th Grade')
 ```
-
+After the first year of high school, there is still considerable range in the On-track status of students by school. Alvarez and PCTA appear to make the biggest changes, both improving their overall On-track status and relative position compared to other high schools. To better see the changes in On-track status, we have plotted the percent On-track of incoming students on the x-axis and the percent On-track at the end of 9th grade by high school. The 45° line, $latex y=x$, represents no change. The further above the line a school is listed, the more it has increased On-track status. Below the line represents a decrease in On-track status.
 ```{r HSFirstYearImpact, results='asis'}
 incoming_on_track <- school_first_data %.%
                      filter(classification=='On-track')
@@ -1801,10 +1801,12 @@ geom_abline(intercept=0, slope=1) +
 scale_x_continuous('On-track entering 9th grade', 
                    labels = percent_format(), limits=c(0,1)) + 
 scale_y_continuous('On-track after 9th grade',
-                   labels = percent_format(), limits=c(0,1))
+                   labels = percent_format(), limits=c(0,1)) +
+ggtitle('Impact of First Year of High School on On-Track Status by School')
 ```
 
 #### Race
+We continue to see racial gaps in On-track status after ninth grade, with White and Asian students being more likely to be On-track than Black or Hispanic students. However, when we exclude Classical High School, these patterns reverse. White students are least likely to be on track, trailing Hispanic students by approximately 5%, Black students by nearly 10%, and Asian students by nearly 13%.
 ```{r RacePic9GM, results='asis'}
 race <- as.data.frame(with(hs_new9, prop.table(table(race, 
                                                      classification9GMr), 1)))
