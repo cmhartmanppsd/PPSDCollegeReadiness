@@ -1848,7 +1848,7 @@ hs_new9$classification9GMr <-
 ```
 
 The classifications from the two models can be applied to the three most recent freshman classes to compare the extent to which including retention impacts a student's overall classification in practice.
-```{r, results='asis'}
+```{r 9GMRv9GMTclasses, results='asis'}
 heatmap <- as.data.frame(with(hs_new9, 
                               table(classification9GMt, classification9GMr)))
 ggplot(data = heatmap, aes(classification9GMt, classification9GMr, fill=Freq)) +
