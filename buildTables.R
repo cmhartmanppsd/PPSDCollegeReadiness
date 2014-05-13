@@ -32,13 +32,15 @@ person_annual_attributes <- c('studentid', 'sasid', 'last_name', 'grade',
                               "sum_excabsent", "sum_tardy", "sum_on_time",
                               "sum_suspend", "sum_enrolled", "sum_present",
                               "sum_soccurin", "sum_soccurout", "schoolyear")
-
+marks1112 <- read.csv('/Volumes/ProvidenceFiles/NewMarks/Marks_2011_2012.csv', 
+                      stringsAsFactors=FALSE)
+marks1112$studentid <- as.character(marks1112$studentid)
 tables2011_2012 <- list(person = subset(stu2011_12, 
                                         select = person_attributes),
                         person_annual = subset(stu2011_12,
                                                select = person_annual_attributes),
                         enrollment = enr2011_12,
-                        course = extract_course(grades2011_12),
+                        course = extract_course(marks1112),
                         achievement = achievement1112)
 tables2011_2012$person <- subset(tables2011_2012$person, !duplicated(tables2011_2012$person))
 tables2011_2012$person$sex <- ifelse(!tables2011_2012$person$sex %in% c('F','M'), 
@@ -47,13 +49,21 @@ tables2011_2012$person$sex<- factor(tables2011_2012$person$sex,
                                     labels = c('Female', 'Male'))
 tables2011_2012$person_annual <- subset(tables2011_2012$person_annual, 
                                         !duplicated(tables2011_2012$person_annual))
-
+tables2011_2012$person_annual$studentid <- as.character(tables2011_2012$person_annual$studentid)
+tables2011_2012$course <- left_join(tables2011_2012$course,
+                                    tables2011_2012$person_annual %.%
+                                    select(studentid, sasid, grade))
+tables2011_2012$course$credits <- gsub("\\*","", tables2011_2012$course$credits)
+tables2011_2012$course$credits <- str_trim(tables2011_2012$course$credits)
+marks1213 <- read.csv('/Volumes/ProvidenceFiles/NewMarks/Marks_2012_2013.csv',
+                      stringsAsFactors=FALSE)
+marks1213$studentid <- as.character(marks1213$studentid)
 tables2012_2013 <-  list(person = subset(stu2012_13, 
-                                        select = person_attributes),
-                        person_annual = subset(stu2012_13,
-                                               select = person_annual_attributes),
-                        enrollment = enr2012_13,
-                        course = extract_course(grades2012_13))
+                                         select = person_attributes),
+                         person_annual = subset(stu2012_13,
+                                                select = person_annual_attributes),
+                         enrollment = enr2012_13,
+                         course = extract_course(marks1213))
 tables2012_2013$person <- subset(tables2012_2013$person, !duplicated(tables2012_2013$person))
 tables2012_2013$person$sex <- ifelse(!tables2012_2013$person$sex %in% c('F','M'), 
                                      NA, tables2012_2013$person$sex) 
@@ -61,3 +71,9 @@ tables2012_2013$person$sex<- factor(tables2012_2013$person$sex,
                                     labels = c('Female', 'Male'))
 tables2012_2013$person_annual <- subset(tables2012_2013$person_annual, 
                                         !duplicated(tables2012_2013$person_annual))
+tables2012_2013$person_annual$studentid <- as.character(tables2012_2013$person_annual$studentid)
+tables2012_2013$course <- left_join(tables2012_2013$course,
+                                    tables2012_2013$person_annual %.%
+                                    select(studentid, sasid, grade))
+tables2012_2013$course$credits <- gsub("\\*","", tables2012_2013$course$credits)
+tables2012_2013$course$credits <- str_trim(tables2012_2013$course$credits)

@@ -1,11 +1,11 @@
 extract_course <- function(regYr){
-  id_attributes <-  c('studentid', 'sasid', 'schoolyear', 'grade')
+  id_attributes <-  c('studentid', 'schyr')
   course_attributes <- grep('^(cum|teacher|courseno|coursedesc|type|credits)', 
-                         names(regYr), value=TRUE)
+                            names(regYr), value=TRUE)
   tbl_course <- regYr[,c(id_attributes, course_attributes)] 
   by_course <- list(mode='any', length=length(which(grepl('courseno',
-                                                    x = course_attributes,
-                                                    ignore.case=TRUE))))
+                                                          x = course_attributes,
+                                                          ignore.case=TRUE))))
   for(i in 1:by_course$length){
     tempSch <- tbl_course[, c(id_attributes, 
                               grep(sprintf("%02d",i), 
@@ -15,7 +15,7 @@ extract_course <- function(regYr){
     by_course[[i]] <- tempSch
   }
   tbl_course <- do.call(rbind, by_course)
-  tbl_course <- subset(tbl_course, !is.na(courseno)) 
+  tbl_course <- subset(tbl_course, !is.na(courseno))
   row.names(tbl_course) <- NULL
   quarters <- grep('^cum', names(tbl_course), value=TRUE)
   key_vars <- names(tbl_course)[which(!names(tbl_course) %in% c('course_grade',
@@ -28,28 +28,9 @@ extract_course <- function(regYr){
   require(car)
   tbl_course$gpa <- recode(as.character(tbl_course$course_grade), 
                            "'A+' = 4.33; 'A' = 4.00; 'A-' = 3.67; 'B+' = 3.33;
-                            'B' = 3.00; 'B-' = 2.67; 'C+' = 2.33; 'C' =2.00; 
-                            'C-' = 1.67; 'D+' =1.33; 'D' = 1.00; 'D-' = 0.67;
-                            'E+' = 0; 'E' = 0; 'E-' = 0; 'F+' = 0; 'F' = 0; 
-                            else=NA")
-  math <- '(geom|alg|trig|math)'
-  engl <- '(liter|engl|read)'
-  scie <- '(sci|chem|physics|biol)'
-  soci <- '(hist|soci|gov|euro|ameri|worl|soc)'
-  tbl_course$subject <- with(tbl_course, 
-                             ifelse(grepl(math, x=coursedesc, ignore.case=TRUE),
-                                    'math', 
-                                    ifelse(grepl(engl, x=coursedesc, 
-                                                 ignore.case=TRUE), 
-                                           'ela',
-                                            ifelse(grepl(scie, x=coursedesc,
-                                                         ignore.case=TRUE), 
-                                                   'science',
-                                                    ifelse(grepl(soci, 
-                                                                 x=coursedesc,
-                                                              ignore.case=TRUE),
-                                                           'socialstudies', 
-                                                           'non-core')))))
-  
+                           'B' = 3.00; 'B-' = 2.67; 'C+' = 2.33; 'C' =2.00; 
+                           'C-' = 1.67; 'D+' =1.33; 'D' = 1.00; 'D-' = 0.67;
+                           'E+' = 0; 'E' = 0; 'E-' = 0; 'F+' = 0; 'F' = 0; 
+                           else=NA")
   return(tbl_course)
 }

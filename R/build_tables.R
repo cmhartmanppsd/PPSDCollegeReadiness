@@ -45,7 +45,18 @@ build_tables <- function(regYr, year){
   cat('tbl_achievement', buildLog, year, '\n\n', file=logAt, sep='\n', 
       append=TRUE)
   
-  tbl_course <- extract_course(regYr)
+  
+  file_yr <- paste(year-1, year, sep="_")
+  marks <- read.csv(paste0(paste('/Volumes/ProvidenceFiles/NewMarks/Marks',
+                                 year-1, year, sep="_"), '.csv'),
+                    stringsAsFactors=FALSE)
+  marks$studentid <- as.character(marks$studentid)
+  tbl_course <- extract_course(marks)
+  tbl_course <- left_join(tbl_course,
+                          tbl_person_annual %.%
+                          select(studentid, sasid, grade))
+  tbl_course$credits <- gsub("\\*","", tbl_course$credits)
+  tbl_course$credits <- str_trim(tbl_course$credits)
   buildLog <- capture.output(head(tbl_course)[1:10])
   cat('tbl_course', buildLog, year, '\n\n', file=logAt, sep='\n', 
       append=TRUE)

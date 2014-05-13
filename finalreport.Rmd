@@ -17,7 +17,32 @@ file.sources = list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R',
 invisible(sapply(file.sources, source, .GlobalEnv))
 # invisible(source('load.R'))
 # invisible(source('buildTables.R'))
+# tables2005_2006$course$studentid <- as.character(tables2005_2006$course$studentid)
+# tables2006_2007$course$studentid <- as.character(tables2006_2007$course$studentid)
+# tables2007_2008$course$studentid <- as.character(tables2007_2008$course$studentid)
+# tables2008_2009$course$studentid <- as.character(tables2008_2009$course$studentid)
+# tables2009_2010$course$studentid <- as.character(tables2009_2010$course$studentid)
+# tables2010_2011$course$studentid <- as.character(tables2010_2011$course$studentid)
+# tables2011_2012$course$studentid <- as.character(tables2011_2012$course$studentid)
+# tables2012_2013$course$studentid <- as.character(tables2012_2013$course$studentid)
 # invisible(source('person.R'))
+# tables2005_2006$course <- left_join(tables2005_2006$course,
+#                                     person[, c('sasid', 'studentid')])
+# tables2006_2007$course <- left_join(tables2006_2007$course,
+#                                     person[, c('sasid', 'studentid')])
+# tables2007_2008$course <- left_join(tables2007_2008$course,
+#                                     person[, c('sasid', 'studentid')])
+# tables2008_2009$course <- left_join(tables2008_2009$course,
+#                                     person[, c('sasid', 'studentid')])
+# tables2009_2010$course <- left_join(tables2009_2010$course,
+#                                     person[, c('sasid', 'studentid')])
+# tables2010_2011$course <- left_join(tables2010_2011$course,
+#                                     person[, c('sasid', 'studentid')])
+# tables2011_2012$course <- left_join(tables2011_2012$course,
+#                                     person[, c('sasid', 'studentid')])
+# tables2012_2013$course <- left_join(tables2012_2013$course,
+#                                     person[, c('sasid', 'studentid')])
+# 
 # invisible(source('attendance.R'))
 # attendance$sasid <- as.character(attendance$sasid)
 # charters <- c(114, 117, 189, 185)
@@ -217,6 +242,8 @@ hscohort <- subset(hscohort, !schno_first %in% charters)
 hscohort <- subset(hscohort, !schno_ms_long %in% charters)
 ```
 ## Eighth Grade Model
+
+
 ### Defining the Sample
 The goal of each model is to maximize the applicability of the model to maximize the number of future non-graduates as at-risk while minimizing model complexity and overall inaccuracy. The Eighth Grade Model (8GM) for predicting high school readiness uses data from students only collected in the eighth grade year. It is preferable to use only one year of data prior to entering high school to ensure the largest possible sample. Requiring additional years of data will lead to more students with an "incomplete" record containing all of the elements required to predict their probability of graduating. Defining the sample cohort for each model necessarily excludes some students because of incompleteness. 
 
@@ -1224,6 +1251,24 @@ gpa_9th_0708 <- tables2007_2008$course %.%
                  group_by(sasid) %.% 
                  summarize(gpa9th = mean(gpa, na.rm=TRUE)) %.%
                  select(sasid, gpa9th)
+
+# Credits Transformations
+credits_0708 <- tables2007_2008$course %.%
+                filter(grade == 9 &
+                       sasid %in%
+                       subset(hs0708,
+                              schoolyear_first=='2007_2008' &
+                              grade_first==9)$sasid) %.%
+                select(sasid, courseno, type, credits)
+credits_0708 <- credits_0708[!duplicated(credits_0708), ]
+credits_0708 <- ungroup(credits_0708) %.%
+                group_by(sasid, type) %.%
+                summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) %.%
+                select(sasid, type, credits)
+credits_0708$type <- ifelse(credits_0708$type == "", 'none_cred',
+                            paste(tolower(credits_0708$type), 'cred', sep = '_'))
+credits_0708 <- dcast(sasid ~ type, value.var='credits', sum, data=credits_0708)
+credits_0708$total_cred <- apply(credits_0708[, -1], 1, sum)
 gpa_9th_0809 <- tables2008_2009$course %.% 
                  filter(grade == 9 & sasid %in%
                         subset(hs0809, 
@@ -1232,6 +1277,23 @@ gpa_9th_0809 <- tables2008_2009$course %.%
                  group_by(sasid) %.% 
                  summarize(gpa9th = mean(gpa, na.rm=TRUE)) %.%
                  select(sasid, gpa9th)
+credits_0809 <- tables2008_2009$course %.%
+                filter(grade == 9 &
+                       sasid %in%
+                       subset(hs0809,
+                              schoolyear_first=='2008_2009' &
+                              grade_first==9)$sasid) %.%
+                select(sasid, courseno, type, credits)
+credits_0809 <- credits_0809[!duplicated(credits_0809), ]
+credits_0809 <- ungroup(credits_0809) %.%
+                group_by(sasid, type) %.%
+                summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) %.%
+                select(sasid, type, credits)
+credits_0809$type <- ifelse(credits_0809$type == "", 'none_cred',
+                            paste(tolower(credits_0809$type), 'cred', sep = '_'))
+credits_0809 <- dcast(sasid ~ type, value.var='credits', sum, data=credits_0809)
+credits_0809$total_cred <- apply(credits_0809[, -1], 1, sum)
+
 gpa_9th_0910 <- tables2009_2010$course %.% 
                  filter(grade == 9 & sasid %in% 
                         subset(hs0910, 
@@ -1240,6 +1302,22 @@ gpa_9th_0910 <- tables2009_2010$course %.%
                  group_by(sasid) %.% 
                  summarize(gpa9th = mean(gpa, na.rm=TRUE)) %.%
                  select(sasid, gpa9th)
+credits_0910 <- tables2009_2010$course %.%
+                filter(grade == 9 &
+                       sasid %in%
+                       subset(hs0910,
+                              schoolyear_first=='2009_2010' &
+                              grade_first==9)$sasid) %.%
+                select(sasid, courseno, type, credits)
+credits_0910 <- credits_0910[!duplicated(credits_0910), ]
+credits_0910 <- ungroup(credits_0910) %.%
+                group_by(sasid, type) %.%
+                summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) %.%
+                select(sasid, type, credits)
+credits_0910$type <- ifelse(credits_0910$type == "", 'none_cred',
+                            paste(tolower(credits_0910$type), 'cred', sep = '_'))
+credits_0910 <- dcast(sasid ~ type, value.var='credits', sum, data=credits_0910)
+credits_0910$total_cred <- apply(credits_0910[, -1], 1, sum)
 
 # First Quarter Course Failures
 fails_9th_0708 <- tables2007_2008$course %.% 
@@ -1278,11 +1356,13 @@ fails_9th_0910 <- tables2009_2010$course %.%
 
 hs0708 <- left_join(hs0708, gpa_9th_0708)
 hs0708 <- left_join(hs0708, fails_9th_0708)
+hs0708 <- left_join(hs0708, credits_0708)
 hs0809 <- left_join(hs0809, gpa_9th_0809)
 hs0809 <- left_join(hs0809, fails_9th_0809)
+hs0809 <- left_join(hs0809, credits_0809)
 hs0910 <- left_join(hs0910, gpa_9th_0910)
 hs0910 <- left_join(hs0910, fails_9th_0910)
-
+hs0910 <- left_join(hs0910, credits_0910)
 
 # Mobility for ninth grade
 mobile0708 <-  moves_calc(subset(tables2007_2008$enrollment, 
@@ -1304,6 +1384,9 @@ mobile0910$sasid <- as.character(mobile0910$sasid)
 hs0910 <- left_join(hs0910, mobile0910)
 
 hscohort <- rbind(hs0708, hs0809, hs0910)
+hscohort <- mutate(hscohort,
+                   core_cred = math_cred + eng_cred + sci_cred + soc_cred)
+
 hscohort <- subset(hscohort, !schno_first %in% charters)
 hscohort <- subset(hscohort, !schno_first %in% c('185', '147', '114',
                                                  '117', '189'))
@@ -1420,8 +1503,9 @@ trainIndex <- createDataPartition(hscohort$graduated,
 hscohort_train <- hscohort[trainIndex,]
 hscohort_test <- hscohort[-trainIndex,]
 set.seed(101)
-predictors <- c('attendance', 'gpa9th', 'ageHS', 'fails9th', 
-                'moves', 'suspended', 'retained')
+predictors <- c('attendance', 'gpa9th', 'ageHS', 'fails9th', 'moves', 
+                'suspended', 'retained', 'total_cred', 'core_cred', 'math_cred',
+                'sci_cred', 'eng_cred', 'soc_cred')
 
 myControl <-  trainControl(method = "repeatedcv", 
                            number = 10,
@@ -1431,7 +1515,8 @@ myControl <-  trainControl(method = "repeatedcv",
                            seeds = NA)
 
 model.9GMt <- train(graduated ~ I(attendance*10) + gpa9th +  
-                                I(ageHS>180) + moves + suspended,
+                                I(ageHS>180) + moves + suspended + 
+                                core_cred + sci_cred,
                    data = hscohort_train,
                    method='glm',
                    tuneLength = 5,
@@ -1439,15 +1524,12 @@ model.9GMt <- train(graduated ~ I(attendance*10) + gpa9th +
                    metric='ROC')
 
 model.9GMr <- train(graduated ~ I(attendance*10) + gpa9th +  
-                                I(ageHS>180) + moves + suspended + retained,
-                   data = hscohort_train,
-                   method='glm',
-                   tuneLength = 5,
-                   trControl = trainControl(method = "repeatedcv", 
-                                            number = 10,
-                                            repeats = 5, classProbs=TRUE,
-                                            summaryFunction = twoClassSummary,
-                                            seeds = NA),
+                                I(ageHS>180) + moves + suspended + 
+                                core_cred + sci_cred + retained,
+                    data = hscohort_train,
+                    method='glm',
+                    tuneLength = 5,
+                    trControl = myControl,
                     metric='ROC')
 ```
 We built two versions of the 9GM -- one with information about whether or not a student is retained at the end of the year and one without. However, we can only know when a student is retained in 9th grade at the end of the year. As a result, this model could not be easily applied to students throughout the year to monitor risk. Because PPSD would like to update the models with projected on-track status during the year, we tested a model including only information available during the year.
@@ -1480,11 +1562,11 @@ roc_reta <- roc(hscohort_test$graduated,
                 auc=TRUE, ci=TRUE)
 
 rocobj1 <- plot.roc(roc_reta, 
-                    main="Comparing 9GM with Course Failure v. Retention",
+                    main="Comparing 9GM Specifications",
                     col="#1c61b6",
                     print.auc=TRUE,
                     legacy.axes=TRUE)
-rocobj2 <- lines.roc(roc_toy, col="#008600")  
+rocobj2 <- lines.roc(roc_toy, col="#008600")    
 points(x=grade_9_comps$specificity, 
        y=grade_9_comps$sensitivity, col='gray', pch = 20)
 testobj <- roc.test(rocobj1, rocobj2)  
@@ -1502,18 +1584,19 @@ sjp.glm(model.9GMt$finalModel,
         title='9GM-TOY Odds Ratios', 
         showModelSummary = FALSE,
         theme = 'bw',
-        borderColor = 'white',
-        axisLabels.y = c('Attendance * 10', '9th Grade GPA', 
-                         'Overage Entering High School', 'School Changes',
-                         'Days Suspended'))
+        borderColor = 'white')#,
+#         axisLabels.y = c('Attendance * 10', '9th Grade GPA', 
+#                          'Overage Entering High School', 'Days Suspended',
+#                          'Total Credits', 'Science Credits'))
 sjp.glm(model.9GMr$finalModel, 
         title='9GM-EOY Odds Ratios',
         showModelSummary = FALSE,
         theme = 'bw',
-        borderColor = 'white',
-        axisLabels.y = c('Attendance * 10', '9th Grade GPA', 
-                         'Overage Entering High School', 'School Changes',
-                         'Days Suspended', 'Retained in 9th Grade'))
+        borderColor = 'white')#,
+#         axisLabels.y = c('Attendance * 10', '9th Grade GPA', 
+#                          'Overage Entering High School',
+#                          'Days Suspended', 'Total Credits', 'Science Credits',
+#                          'Retained in 9th Grade'))
 ```
 
 ```{r 9GMThresholds}
@@ -1670,6 +1753,57 @@ gpa_9th_1213$sasid <- as.character(gpa_9th_1213$sasid)
 hs1011 <- merge(hs1011, gpa_9th_1011, all.x=TRUE)
 hs1112 <- merge(hs1112, gpa_9th_1112, all.x=TRUE)
 hs1213 <- merge(hs1213, gpa_9th_1213, all.x=TRUE)
+credits_1011 <- tables2010_2011$course %.%
+                filter(grade == 9 &
+                       sasid %in% hs1011$sasid) %.%
+                select(sasid, courseno, type, credits)
+credits_1011 <- credits_1011[!duplicated(credits_1011), ]
+credits_1011 <- ungroup(credits_1011) %.%
+                group_by(sasid, type) %.%
+                summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) %.%
+                select(sasid, type, credits)
+credits_1011$type <- ifelse(credits_1011$type == "", 'none_cred',
+                            paste(tolower(credits_1011$type), 'cred', sep = '_'))
+credits_1011$type <- with(credits_1011,
+                          ifelse(type == 'read_cred',
+                                 'eng_cred',
+                                 type))
+credits_1011 <- dcast(sasid ~ type, value.var='credits', sum, data=credits_1011)
+credits_1011$total_cred <- apply(credits_1011[, -1], 1, sum)
+credits_1112 <- tables2011_2012$course %.%
+                filter(grade == 9 &
+                       sasid %in% hs1112$sasid) %.%
+                select(sasid, courseno, type, credits)
+credits_1112 <- credits_1112[!duplicated(credits_1112), ]
+credits_1112 <- ungroup(credits_1112) %.%
+                group_by(sasid, type) %.%
+                summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) %.%
+                select(sasid, type, credits)
+credits_1112$type <- ifelse(credits_1112$type == "", 'none_cred',
+                            paste(tolower(credits_1112$type), 'cred', sep = '_'))
+credits_1112 <- dcast(sasid ~ type, value.var='credits', sum, data=credits_1112)
+credits_1112$total_cred <- apply(credits_1112[, -1], 1, sum)
+credits_1213 <- tables2012_2013$course %.%
+                filter(grade == 9 &
+                       sasid %in% hs1213$sasid) %.%
+                select(sasid, courseno, type, credits)
+credits_1213 <- credits_1213[!duplicated(credits_1213), ]
+credits_1213 <- ungroup(credits_1213) %.%
+                group_by(sasid, type) %.%
+                summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) %.%
+                select(sasid, type, credits)
+credits_1213$type <- ifelse(credits_1213$type == "", 'none_cred',
+                            paste(tolower(credits_1213$type), 'cred', sep = '_'))
+credits_1213$type <- with(credits_1213,
+                          ifelse(type =='arts_cred',
+                                 'art_cred',
+                                 type))
+credits_1213 <- dcast(sasid ~ type, value.var='credits', sum, data=credits_1213)
+credits_1213$total_cred <- apply(credits_1213[, -1], 1, sum)
+
+hs1011 <- merge(hs1011, credits_1011, all.x=TRUE)
+hs1112 <- merge(hs1112, credits_1112, all.x=TRUE)
+hs1213 <- merge(hs1213, credits_1213, all.x=TRUE)
 
 mobile1011 <-  moves_calc(subset(tables2010_2011$enrollment, 
                                  sasid %in% hs1011$sasid & grade == 9),
@@ -1688,6 +1822,8 @@ hs1112 <- merge(hs1112, mobile1112, all.x=TRUE)
 hs1213 <- merge(hs1213, mobile1213, all.x=TRUE)
 hs_new9 <- rbind(hs1011, hs1112, hs1213)
 hs_new9 <- subset(hs_new9, !schno_first %in% charters)
+hs_new9 <- mutate(hs_new9, 
+                  core_cred = math_cred + eng_cred + sci_cred + soc_cred)
 hs_new9 <- na.omit(hs_new9)
 hs_new9$predict9GMt <- predict(model.9GMt, newdata=hs_new9, type='prob')$Y
 hs_new9$predict9GMr <- predict(model.9GMr, newdata=hs_new9, type='prob')$Y
@@ -1991,15 +2127,11 @@ gpa <- rbind(tables2007_2008$course,
              tables2010_2011$course,
              tables2011_2012$course) %.%
              filter(grade == 10) %.%
-             group_by(sasid, schoolyear) %.%
+             group_by(sasid, schyr) %.%
              summarize(gpa10th = mean(gpa, na.rm=TRUE)) %.%
-             select(sasid, gpa10th, schoolyear)
-gpa$schoolyear <- ifelse(gpa$schoolyear == '2012',
-                           '2011_2012',
-                           ifelse(gpa$schoolyear == '2013',
-                                  '2012_2013',
-                                  gpa$schoolyear))
-
+             select(sasid, gpa10th, schyr)
+names(gpa)[which(names(gpa)=='schyr')] <- 'schoolyear'
+gpa$schoolyear <- paste(gpa$schoolyear-1, gpa$schoolyear, sep='_')
 
 fails <- rbind(tables2007_2008$course,
                tables2008_2009$course,
@@ -2007,19 +2139,16 @@ fails <- rbind(tables2007_2008$course,
                tables2010_2011$course,
                tables2011_2012$course) %.%
          filter(grade == 10) %.%
-         group_by(sasid, courseno, schoolyear) %.%
+         group_by(sasid, courseno, schyr) %.%
          summarize(gpa10th = mean(gpa, na.rm=TRUE)) %.%
          filter(gpa10th <= 1.0)
 
 fails <- ungroup(fails) %.%
-         group_by(sasid, schoolyear) %.%
+         group_by(sasid, schyr) %.%
          summarize(fails = n()) %.%
-         select(sasid, fails, schoolyear)
-fails$schoolyear <- ifelse(fails$schoolyear == '2012',
-                           '2011_2012',
-                           ifelse(fails$schoolyear == '2013',
-                                  '2012_2013',
-                                  fails$schoolyear))
+         select(sasid, fails, schyr)
+names(fails)[which(names(fails)=='schyr')] <- 'schoolyear'
+fails$schoolyear <- paste(fails$schoolyear-1, fails$schoolyear, sep='_')
 
 mobile0607 <- moves_calc(filter(tables2007_2008$enrollment, grade == 10),
                          gap = 30, enrollby = "2007-10-01")
@@ -2045,6 +2174,42 @@ hscohort <- left_join(hscohort, fails)
 hscohort$fails <- with(hscohort, 
                        ifelse(!is.na(gpa10th) & is.na(fails), 0, fails))
 
+all_course <- rbind(tables2005_2006$course,
+                    tables2006_2007$course,
+                    tables2007_2008$course,
+                    tables2008_2009$course,
+                    tables2009_2010$course,
+                    tables2010_2011$course)
+credits <- all_course %.%
+           filter(grade %in% c(9, 10)) %.%
+           select(sasid, courseno, type, credits, schyr)
+rm(all_course)
+credits <- credits[!duplicated(credits), ]
+credits <- credits %.%
+           group_by(sasid, schyr, type) %.%
+           summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) %.%
+           select(sasid, schyr, type, credits)
+credits$type <- ifelse(credits$type == "", 'none_cred',
+                       paste(tolower(credits$type), 'cred', sep = '_'))
+names(credits)[which(names(credits)=='schyr')] <- 'schoolyear'
+credits$schoolyear <- paste(credits$schoolyear-1, credits$schoolyear, sep='_')
+year_filter <- hscohort[, c('sasid', 'schoolyear')]
+names(year_filter) <- c('sasid', 'tenthyear')
+credits <- inner_join(credits, year_filter)
+# Now each instance of a student has the first year of tenth grade in tenthyear
+credits$schoolyear <- as.numeric(substr(credits$schoolyear, 1, 4))
+credits$tenthyear <- as.numeric(substr(credits$tenthyear, 1, 4))
+credits <- subset(credits, schoolyear <= tenthyear)
+credits <- credits %.%
+           group_by(sasid, type) %.%
+           summarize(credits = sum(credits)) %.%
+           select(sasid, type, credits)
+credits <- dcast(sasid ~ type, value.var='credits', sum, data = credits)
+credits$total_cred <- apply(credits[, -1], 1, sum)
+credits <- mutate(credits,
+                  core_cred = math_cred + eng_cred + sci_cred + soc_cred)
+hscohort <- left_join(hscohort, credits)
+
 ```
 
 ```{r Train10GM}
@@ -2053,17 +2218,29 @@ hscohort$schoolyear_first <- as.factor(hscohort$schoolyear_first)
 # hscohort$graduated <- ifelse(hscohort$graduated == 'Y', 1, 
 #                              ifelse(hscohort$graduated == 'N', 0, NA))
 hscohort$graduated <- as.factor(hscohort$graduated)
-hscohort <- na.omit(hscohort)
+#hscohort <- na.omit(hscohort)
 require(caret)
 set.seed(101)
 trainIndex <- createDataPartition(hscohort$graduated,
                                   p = .8, list=FALSE)
 hscohort_train <- hscohort[trainIndex,]
 hscohort_test <- hscohort[-trainIndex,]
+predictors <- c('attendance', 'gpa10th', 'retained9th', 'ageHS', 'suspended',
+                'fails', 'moves', 'retained', 'total_cred', 'math_cred', 
+                'sci_cred', 'eng_cred', 'soc_cred', 'core_cred', 'age10')
 set.seed(101)
+model.10glm <- train(hscohort[, c('attendance', 'gpa10th', 'suspended', 'fails',
+                                  'moves', 'age10')],
+                     hscohort[, c('graduated')],
+                     method='glmStepAIC',
+                     tuneLenght = 5,
+                     trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary,
+                                          seeds = NA),
+                     metric='ROC')
 model.10 <- train(graduated ~ I(attendance*10) + gpa10th + 
-                             retained9th + retained + 
-                             I(ageHS>180 & ageHS<=192) + I(ageHS>192), 
+                              retained + I(age10>192) + core_cred, 
                  data=hscohort_train,
                  method='glm',
                  tuneLength = 5,
@@ -2072,9 +2249,38 @@ model.10 <- train(graduated ~ I(attendance*10) + gpa10th +
                                           summaryFunction = twoClassSummary,
                                           seeds = NA),
                  metric='ROC')
-model.10t <- train(graduated ~ I(attendance*10) + gpa10th + 
-                             retained9th + 
-                             I(ageHS>180 & ageHS<=192) + I(ageHS>192), 
+model.10r <- train(graduated ~ I(attendance*10) + gpa10th + 
+                              retained + I(age10>192), 
+                 data=hscohort_train,
+                 method='glm',
+                 tuneLength = 5,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary,
+                                          seeds = NA),
+                 metric='ROC')
+model.10c <- train(graduated ~ I(attendance*10) + gpa10th + 
+                               core_cred + I(age10>192), 
+                 data=hscohort_train,
+                 method='glm',
+                 tuneLength = 5,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary,
+                                          seeds = NA),
+                 metric='ROC')
+model.10a <- train(graduated ~ I(attendance*10) + gpa10th + 
+                               I(age10>192), 
+                 data=hscohort_train,
+                 method='glm',
+                 tuneLength = 5,
+                 trControl = trainControl(method = "repeatedcv", number = 10,
+                                          repeats = 10, classProbs=TRUE,
+                                          summaryFunction = twoClassSummary,
+                                          seeds = NA),
+                 metric='ROC')
+model.10f <- train(graduated ~ I(attendance*10) + gpa10th*fails + moves + 
+                               I(age10>192), 
                  data=hscohort_train,
                  method='glm',
                  tuneLength = 5,
@@ -2087,13 +2293,16 @@ model.10t <- train(graduated ~ I(attendance*10) + gpa10th +
 ```
 
 ```{r ROC10GM, results='asis', fig.width=7, fig.height=7}
+hscohort_test <- hscohort_test[, c('sasid', 'attendance', 'gpa10th', 
+                                   'retained', 'age10', 'core_cred',
+                                   'graduated')]
 hscohort_test <- na.omit(hscohort_test)
 grade_10_comps <- subset(bowersEWS, grade==10)
 roc_10 <- roc(hscohort_test$graduated, 
               predict(model.10, newdata=hscohort_test, type='prob')$Y,
               auc=TRUE, ci=TRUE)
 roc_10t <- roc(hscohort_test$graduated,
-               predict(model.10t, newdata=hscohort_test, type='prob')$Y,
+               predict(model.10c, newdata=hscohort_test, type='prob')$Y,
                auc=TRUE, ci=TRUE)
 rocobj1 <- plot.roc(roc_10, 
                     main="10GM ROC",
@@ -2106,7 +2315,7 @@ testobj <- roc.test(rocobj1, rocobj2)
 points(x=grade_10_comps$specificity, 
        y=grade_10_comps$sensitivity, col='gray', pch = 20)  
 text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0, .5))  
-legend("bottomright", legend=c("10GM R", "10GM T"), col=c("#1c61b6", "#008600"), lwd=2)
+legend("bottomright", legend=c("10GM", "10GM C"), col=c("#1c61b6", "#008600"), lwd=2)
 
 #legend("bottomright", legend=c("10GM"), 
 #      col=c("#1c61b6"), lwd=2)
@@ -2117,11 +2326,17 @@ sjp.glm(model.10$finalModel,
         title='10GM Odds Ratios', 
         showModelSummary = FALSE,
         theme = 'bw',
-        borderColor = 'white',
-        axisLabels.y = c('Attendance * 10', '10th Grade GPA', 'Retained 9th',
-                         'Retained 10th',
-                         'Overage by 1 year prior to 10th grade',
-                         'Overage by 2 or more years prior to 10th grade'))
+        borderColor = 'white')#,
+#         axisLabels.y = c('Attendance * 10', '10th Grade GPA', 'Retained 9th',
+#                          'Retained 10th',
+#                          'Overage by 1 year prior to 10th grade',
+#                          'Overage by 2 or more years prior to 10th grade'))
+
+sjp.glm(model.10c$finalModel, 
+        title='10GM Odds Ratios', 
+        showModelSummary = FALSE,
+        theme = 'bw',
+        borderColor = 'white')
 ```
 The predictors in this model are more complex than in previous models. Both 10th grade attendance and 10th grade GPA are the familiar measures used in previous models. Retention and overage measures are more difficult to measure when some students may not have been enrolled in PPSD in the past. For this model, a student is considered to have been retained in 9th grade if there are multiple school years where that student was enrolled in 9th grade in PPSD. Retention in 10th grade is based on the flag students receive at the end of 10th grade that says they will be repeating that grade. This is used only for the first year that students are enrolled in tenth grade and was selected because it can be known for all students at the end of tenth grade. 
 
