@@ -1429,6 +1429,22 @@ hscohort <- subset(hscohort, !schno_first %in% charters)
 hscohort <- subset(hscohort, !schno_first %in% c('185', '147', '114',
                                                  '117', '189'))
 hscohort <- subset(hscohort, !schno_first %in% c('131')) # Birch Vocational
+# Combine Hopes
+hscohort$schno_first <- with(hscohort, 
+                             ifelse(as.character(schno_first) %in% 
+                                     c('171', '182', '181', '183'),
+                                    '149', as.character(schno_first)))
+
+# Combine PAIS with HSTA & PAIS
+hscohort$schno_first <- with(hscohort, 
+                             ifelse(as.character(schno_first) %in% 
+                                     c('173', '174'),
+                                    '175', as.character(schno_first)))
+
+# hscohort <- subset(hscohort, schno_first %in% c(139, 149, 150, 
+#                                                 164, 167, 169, 
+#                                                 175, 188, 193))
+
 ```
 
 ```{r TransferCompare9th}
