@@ -1567,6 +1567,12 @@ myControl <-  trainControl(method = "repeatedcv",
                            classProbs = TRUE,
                            summaryFunction = twoClassSummary,
                            seeds = NA)
+# model.step <- train(hscohort_train[, predictors],
+#                     hscohort_train[, c('graduated')],
+#                     method='glmStepAIC',
+#                     tuneLength = 5,
+#                     trControl = myControl,
+#                     metric = 'ROC')
 
 model.9GMt <- train(graduated ~ I(attendance*10) + gpa9th +  
                                 I(ageHS>180) + moves + suspended + 
