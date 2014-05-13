@@ -1420,6 +1420,8 @@ mobile0910$sasid <- as.character(mobile0910$sasid)
 hs0910 <- left_join(hs0910, mobile0910)
 
 hscohort <- rbind(hs0708, hs0809, hs0910)
+hscohort$fails9th <- ifelse(is.na(hscohort$fails9th) & !is.na(hscohort$gpa9th),
+                            0, hscohort$fails9th)
 hscohort <- mutate(hscohort,
                    core_cred = math_cred + eng_cred + sci_cred + soc_cred)
 
