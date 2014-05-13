@@ -2359,3 +2359,266 @@ Overage is also more complex to calculate. In the past, we have defined overage 
 As a result, some students who are not captured by the measure for retention in 9th grade will be captured by the >192 months predictor.
 
 We have tested the model with and without the 10th grade retention indicator like the 9GM model to see if the model can be used and updated throughout the year prior to knowing whether a student will repeat the grade. While we find that the model utilizing the retention data to be more successful at predicting graduation, we again believe that this improvement is sufficiently small that it supports implementing the 10GM without the retention data throughout the year. We recommend this model be used at the end of the second quarter and the end of the third quarter to inform practice. Students at the beginning of tenth grade should be classified using the 9GM model with 9th grade retention.
+
+```{r 10GMThresholds}
+hscohort_predictions <- hscohort_train[, c('sasid', 'attendance', 'gpa10th', 
+                                           'retained', 'age10', 'core_cred',
+                                           'graduated')]
+hscohort_predictions <- na.omit(hscohort_predictions)
+hscohort_predictions$predict10GM <- predict(model.10, 
+                                            newdata = hscohort_predictions, 
+                                            type = 'prob')$Y
+hscohort_predictions$predict10GMc <- predict(model.10c, 
+                                             newdata = hscohort_predictions, 
+                                             type = 'prob')$Y
+
+m1_matrix <- cutoff_matrix(hscohort_predictions, 'predict10GM', 'graduated')
+thresholds10GM <- data.frame(classification = as.factor(c('Watch', 
+                                                          'Warning', 'Action')),
+  threshold = c(m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .6)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .7)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .8)),]$cutoff))
+
+# Compute coverage: what proportion of those who fail to graduate are identified
+thresholds10GM$coverage <- NA
+coverage <- as.data.frame(table(
+  hscohort_predictions$graduated, 
+  hscohort_predictions$predict10GM <= subset(thresholds10GM, 
+                                     classification=='Action')$threshold))
+thresholds10GM[thresholds10GM$classification == 'Action', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_predictions$graduated, 
+  hscohort_predictions$predict10GM <= subset(thresholds10GM, 
+                                     classification=='Warning')$threshold))
+thresholds10GM[thresholds10GM$classification == 'Warning', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_predictions$graduated, 
+  hscohort_predictions$predict10GM <= subset(thresholds10GM, 
+                                     classification=='Watch')$threshold))
+thresholds10GM[thresholds10GM$classification == 'Watch', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+thresholds10GM$coverage <- round(thresholds10GM$coverage, digits=3)
+
+m1_matrix <- cutoff_matrix(hscohort_predictions, 'predict10GMc', 'graduated')
+thresholds10GMc <- data.frame(classification = as.factor(c('Watch', 
+                                                          'Warning', 'Action')),
+  threshold = c(m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .6)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .7)),]$cutoff,
+                m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .8)),]$cutoff))
+
+# Compute coverage: what proportion of those who fail to graduate are identified
+thresholds10GMc$coverage <- NA
+coverage <- as.data.frame(table(
+  hscohort_predictions$graduated, 
+  hscohort_predictions$predict10GMc <= subset(thresholds10GMc, 
+                                     classification=='Action')$threshold))
+thresholds10GMc[thresholds10GMc$classification == 'Action', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_predictions$graduated, 
+  hscohort_predictions$predict10GMc <= subset(thresholds10GMc, 
+                                     classification=='Warning')$threshold))
+thresholds10GMc[thresholds10GMc$classification == 'Warning', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+coverage <- as.data.frame(table(
+  hscohort_predictions$graduated, 
+  hscohort_predictions$predict10GMc <= subset(thresholds10GMc, 
+                                     classification=='Watch')$threshold))
+thresholds10GMc[thresholds10GMc$classification == 'Watch', ]$coverage <- 
+  coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
+  sum(coverage[coverage$Var1 == 'N', ]$Freq)
+thresholds10GMc$coverage <- round(thresholds10GMc$coverage, digits=3)
+```
+
+```{r TenGMOutOfSample}
+hs_new10 <- first10th %.%
+            filter(schoolyear %in% c('2011_2012', '2012_2013')) %.%
+            select(sasid, schoolyear)
+hs_new10 <- left_join(hs_new10, person)
+hs_new10$sasid <- as.character(hs_new10$sasid)
+hs_new10 <- left_join(hs_new10,
+                      first9th %.%
+                      select(sasid, schoolyear_9))
+hs_new10 <- subset(hs_new10, !is.na(schoolyear))
+hs_new10$schoolyear_9 <- with(hs_new10,
+                              ifelse(is.na(schoolyear_9),
+                                     paste((as.numeric(substring(schoolyear, 
+                                                                 1, 4)) - 1),
+                                           substring(schoolyear, 1, 4), 
+                                           sep = "_"),
+                                     schoolyear_9))
+# Repeated 9th grade
+hs_new10 <- left_join(hs_new10,
+                      retained_calc(x = annual_demos, 
+                                    sid = 'sasid',
+                                    grade = 'grade',
+                                    grade_value = 9))
+names(hs_new10)[length(names(hs_new10))] <- 'retained9th'
+
+# Repeated 10th grade
+retained <- annual_demos %.%
+            filter(grade == 10) %.%
+            select(sasid, willrepeatgr, schoolyear)
+hs_new10 <- left_join(hs_new10, retained)
+names(hs_new10)[length(names(hs_new10))] <- 'retained'
+hs_new10$retained <- with(hs_new10,
+                          ifelse(as.character(retained) == ' ', 
+                                 'N', 
+                                 as.character(retained)))
+hs_new10$retained <- ifelse(is.na(hs_new10$retained),
+                            'N',
+                            hs_new10$retained)
+hs_new10 <- left_join(hs_new10, 
+                      attendance %.%
+                      filter(grade == 10) %.%
+                      select(sasid, schoolyear, attendance, tardy, suspended))
+
+
+hs_new10 <- mutate(hs_new10, 
+                   ageHS = age_calc(dob,
+                                    as.Date(paste(substr(schoolyear_9, 1, 4), 
+                                                  '09', '01', sep='-')),
+                                    units = 'months'))
+hs_new10 <- mutate(hs_new10, 
+                   age10 = age_calc(dob,
+                                    as.Date(paste(substr(schoolyear, 1, 4), 
+                                                  '09', '01', sep='-')),
+                                    units = 'months'))
+
+gpa <- rbind(tables2007_2008$course,
+             tables2008_2009$course,
+             tables2009_2010$course,
+             tables2010_2011$course,
+             tables2011_2012$course,
+             tables2012_2013$course) %.%
+             filter(grade == 10) %.%
+             group_by(sasid, schyr) %.%
+             summarize(gpa10th = mean(gpa, na.rm=TRUE)) %.%
+             select(sasid, gpa10th, schyr)
+names(gpa)[which(names(gpa)=='schyr')] <- 'schoolyear'
+gpa$schoolyear <- paste(gpa$schoolyear-1, gpa$schoolyear, sep='_')
+
+fails <- rbind(tables2007_2008$course,
+               tables2008_2009$course,
+               tables2009_2010$course,
+               tables2010_2011$course,
+               tables2011_2012$course,
+               tables2012_2013$course) %.%
+         filter(grade == 10) %.%
+         group_by(sasid, courseno, schyr) %.%
+         summarize(gpa10th = mean(gpa, na.rm=TRUE)) %.%
+         filter(gpa10th <= 1.0)
+
+fails <- ungroup(fails) %.%
+         group_by(sasid, schyr) %.%
+         summarize(fails = n()) %.%
+         select(sasid, fails, schyr)
+names(fails)[which(names(fails)=='schyr')] <- 'schoolyear'
+fails$schoolyear <- paste(fails$schoolyear-1, fails$schoolyear, sep='_')
+
+# mobile0607 <- moves_calc(filter(tables2007_2008$enrollment, grade == 10),
+#                          gap = 30, enrollby = "2007-10-01")
+# mobile0607$schoolyear <- '2007_2008'
+# mobile0708 <- moves_calc(filter(tables2008_2009$enrollment, grade == 10),
+#                          gap = 30, enrollby = "2008-10-01")
+# mobile0708$schoolyear <- '2008_2009'
+# mobile0809 <- moves_calc(filter(tables2009_2010$enrollment, grade == 10),
+#                          gap = 30, enrollby = "2009-10-01")
+# mobile0809$schoolyear <- '2009_2010'
+# mobile0910 <- moves_calc(filter(tables2010_2011$enrollment, grade == 10),
+#                          gap = 30, enrollby = "2010-10-01")
+# mobile0910$schoolyear <- '2010_2011'
+# mobile1011 <- moves_calc(filter(tables2011_2012$enrollment, grade == 10),
+#                          gap = 30, enrollby = "2011-10-01")
+# mobile1011$schoolyear <- '2011_2012'
+
+# mobile <- rbind(mobile0607, mobile0708, mobile0809, mobile0910, mobile1011)
+# mobile$sasid <- as.character(mobile$sasid)
+# hscohort <- left_join(hscohort, mobile)
+hs_new10 <- left_join(hs_new10, gpa)
+hs_new10 <- left_join(hs_new10, fails)
+hs_new10$fails <- with(hs_new10, 
+                       ifelse(!is.na(gpa10th) & is.na(fails), 0, fails))
+
+all_course <- rbind(tables2005_2006$course,
+                    tables2006_2007$course,
+                    tables2007_2008$course,
+                    tables2008_2009$course,
+                    tables2009_2010$course,
+                    tables2010_2011$course,
+                    tables2011_2012$course,
+                    tables2012_2013$course)
+credits <- all_course %.%
+           filter(grade %in% c(9, 10)) %.%
+           select(sasid, courseno, type, credits, schyr)
+rm(all_course)
+credits <- credits[!duplicated(credits), ]
+credits <- credits %.%
+           group_by(sasid, schyr, type) %.%
+           summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) %.%
+           select(sasid, schyr, type, credits)
+credits$type <- ifelse(credits$type == "", 'none_cred',
+                       paste(tolower(credits$type), 'cred', sep = '_'))
+names(credits)[which(names(credits)=='schyr')] <- 'schoolyear'
+credits$schoolyear <- paste(credits$schoolyear-1, credits$schoolyear, sep='_')
+year_filter <- hs_new10[, c('sasid', 'schoolyear')]
+names(year_filter) <- c('sasid', 'tenthyear')
+credits <- inner_join(credits, year_filter)
+# Now each instance of a student has the first year of tenth grade in tenthyear
+credits$schoolyear <- as.numeric(substr(credits$schoolyear, 1, 4))
+credits$tenthyear <- as.numeric(substr(credits$tenthyear, 1, 4))
+credits <- subset(credits, schoolyear <= tenthyear)
+credits <- credits %.%
+           group_by(sasid, type) %.%
+           summarize(credits = sum(credits)) %.%
+           select(sasid, type, credits)
+credits <- dcast(sasid ~ type, value.var='credits', sum, data = credits)
+credits$total_cred <- apply(credits[, -1], 1, sum)
+credits <- mutate(credits,
+                  core_cred = math_cred + eng_cred + sci_cred + soc_cred)
+hs_new10 <- left_join(hs_new10, credits)
+
+hs_new10 <- subset(hs_new10, !schno_first %in% charters)
+valid_cases <- hs_new10[, c('sasid', 'attendance', 'gpa10th', 
+                            'retained', 'age10', 'core_cred',
+                            'graduated')]
+valid_cases <- na.omit(valid_cases)
+hs_new10 <- subset(hs_new10, sasid %in% valid_cases$sasid)
+hs_new10$predict10GM <- predict(model.10, newdata = hs_new10, type='prob')$Y
+hs_new10$predict10GMt <- predict(model.10t, newdata = hs_new10, type='prob')$Y
+hs_new10$classification10GM <- cut(hs_new10$predict10GM, 
+                                  breaks=rev(c(1, thresholds10GM$threshold, 0)), 
+                                  include.lowest=TRUE, 
+                                  labels = rev(c('On-track', 
+                                               as.character(thresholds10GM$classification))))
+hs_new10$classification10GM <- 
+  factor(hs_new10$classification10GM, 
+         levels = rev(levels(hs_new10$classification10GM)), 
+         ordered=TRUE)
+hs_new10$classification10GMt <- cut(hs_new10$predict10GMt, 
+                                  breaks=rev(c(1, thresholds10GMt$threshold, 0)), 
+                                  include.lowest=TRUE, 
+                                  labels=rev(c('On-track', 
+                                        as.character(thresholds10GMt$classification))))
+hs_new10$classification10GMt <- 
+  factor(hs_new10$classification10GMt, 
+         levels = rev(levels(hs_new10$classification10GMt)), 
+         ordered=TRUE)
+```
+
+```{r CompareCredit10GM, results='asis'}
+heatmap <- as.data.frame(with(hs_new10, 
+                              table(classification10GM, classification10GMt)))
+ggplot(data = heatmap, 
+       aes(classification10GM, classification10GMt, fill=Freq)) +
+geom_tile() +
+scale_fill_gradient(low="#EFF3FF", high="#08519C") +
+geom_text(aes(fill = heatmap$Freq, label = heatmap$Freq))
+```
