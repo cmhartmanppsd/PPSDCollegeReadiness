@@ -48,7 +48,7 @@ We have generated new models for identifying which students are at risk of faili
 setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
 source('dependencies.R')
 require(sjPlot)
-file.sources = list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
+file.sources <- list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
                           pattern='*.R$', full.names=TRUE, ignore.case=TRUE)
 invisible(sapply(file.sources, source, .GlobalEnv))
 # invisible(source('load.R'))
