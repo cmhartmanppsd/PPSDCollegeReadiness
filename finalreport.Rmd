@@ -1918,7 +1918,7 @@ scale_fill_manual('',
 theme(axis.text.x = element_text(angle=90)) +
 ggtitle('Classifications by High School After 9th Grade')
 ```
-After the first year of high school, there is still considerable range in the On-track status of students by school. Alvarez and PCTA appear to make the biggest changes, both improving their overall On-track status and relative position compared to other high schools. To better see the changes in On-track status, we have plotted the percent On-track of incoming students on the x-axis and the percent On-track at the end of 9th grade by high school. The 45° line, $latex y=x$, represents no change. The further above the line a school is listed, the more it has increased On-track status. Below the line represents a decrease in On-track status.
+After the first year of high school, there is still considerable range in the On-track status of students by school. Alvarez and PCTA appear to make the biggest changes, both improving their overall On-track status and relative position compared to other high schools. To better see the changes in On-track status, we have plotted the percent On-track of incoming students on the x-axis and the percent On-track at the end of 9th grade by high school. The 45° line, $ y=x$, represents no change. The further above the line a school is listed, the more it has increased On-track status. Below the line represents a decrease in On-track status.
 ```{r HSFirstYearImpact, results='asis'}
 incoming_on_track <- school_first_data %.%
                      filter(classification=='On-track')
