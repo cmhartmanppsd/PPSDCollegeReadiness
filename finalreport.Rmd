@@ -2123,6 +2123,11 @@ hscohort <- mutate(hscohort,
                                     as.Date(paste(substr(schoolyear_9, 1, 4), 
                                                   '09', '01', sep='-')),
                                     units = 'months'))
+hscohort <- mutate(hscohort, 
+                   age10 = age_calc(dob,
+                                    as.Date(paste(substr(schoolyear, 1, 4), 
+                                                  '09', '01', sep='-')),
+                                    units = 'months'))
 
 gpa <- rbind(tables2007_2008$course,
              tables2008_2009$course,
