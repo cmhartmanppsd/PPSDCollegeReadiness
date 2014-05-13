@@ -8,6 +8,42 @@ opts_chunk$set(echo=FALSE,
                dev.args=list(family='Open Sans'), 
                fig.height=5.375, fig.width=8.75)
 ```
+Since 2003, the Rhode Island Board of Regents has developed, refined, and implemented regulations for Proficiency-Based Graduation Requirements (PBGRs) to ensure that each diploma recipient has attained an acceptable level of achievement in each of six core academic areas in order to be successful in college and careers (R.I. Admin. Code 21-2-46).
+
+In 2011, the state Board of Regents for Elementary and Secondary Education adopted revised regulations including the state assessment component (R.I. Admin. Code 21-2-46), that would go into effect with the graduating class of 2014. The PBGRs require students to:
+
+* meet partial proficiency or above  on the state assessment or assessments in reading and in math (a 2 or greater on a 4 point scale for the New England Common Assessment Program);
+* successfully complete state and local course requirements;
+* successfully complete two performance-based diploma assessments.
+
+With these new criteria, Providence Public School District (PPSD) faces a potential graduation crisis; roughly 65% of the class of 2014 is in jeopardy of not meeting this standard.
+
+The PBGRs also require that local education agencies provide individualized supports for their students to meet these requirements. The most prominent mechanisms for these supports are individual learning plans for students in grades 6–12 that monitor their progress against the requirements and an early warning system to identify students in need of supports.
+
+PPSD developed the Personal Graduation Plan (PGP) and On-track to Graduate Progress Plan (OTGPP) to collect and communicate student progress toward meeting the new PBGR requirements. A new software package (Richer Picture), allows guidance counselors, teachers, parents, and students to precisely monitor the requirements each student needs to complete to graduate. The district has always collected information for this purpose but has never automated its collection and presentation in one place for staff, students, and families. Previously, guidance counselors analyzed transcripts manually to determine if students met their credit requirements and collected hard copy artifacts of student work.
+
+## Personal Graduation Plans as a Process
+The Personal Graduation Plan Process has a sophisticated concept of student success. Rather than understanding graduation as meeting compliance-driven requirements, the PGP views graduation as a demonstration that PPSD successfully met that student’s needs to attain success. In practice this is articulated through a belief that the district has to build a comprehensive system of supports for students so that intervention is individualized to meet each student's academic and non-academic needs. This is in contrast, for example, with a system that universally responds to under-credited students with credit recovery and retesting opportunities without any opportunity to understand why each of those students was unsuccessful in their initial attempts.
+
+PPSD envisions its staff identifying individual needs through a data-informed decision making process and select only evidence-based programmatic interventions as part of the PGP. Students will not be identified and matched to programs entirely through a fixed set of business rules or a decision tree. Instead, PPSD is enabling its staff to review several forms of complex data on individual students to facilitate matching them to a vast array of interventions, which themselves have detailed information about target groups, purpose, and evidence on program efficacy.
+
+However, of the decisions the staff needs to make during the PGP process, identification of students is often the least complex and the most time consuming. Teachers, guidance counselors, and other staff with close relationships to their students often know those who are most at risk. However, identifying staff who knows each student and having that staff member review each student they know best is time consuming, even if simply assigning risk is straightforward. The key innovations of predictive models are, therefore:
+
+* setting expectations objectively based on past performance that leads to results, quickly, for all students.
+* distinguishing more precisely between levels of risk, reducing the likelihood that a student who is falling behind is not identified
+* achieving greater sensitivity to signs that students are falling behind before it is evident that staff should be paying extra attention.
+
+Providing clear information about which students are at risk of not graduating permits PPSD staff engaged in the PGP process to focus on uncovering why students are off track and how to address those needs.
+
+## Early Warning Systems
+The PGP was motivated by the need to monitor each student's status on the PBGRs as well as provide helpful leading indicators of success. Leading indicators are data that can reveal information about likely success before directly experiencing the tasks associated with the PBGRs (Foley and Mishook). Research led by the Chicago Consortium for School Research (Allensworth and Easton, 2005; Allensworth and Easton, 2007; Allensworth, 2013;), the Everyone Graduates Center at Johns Hopkins University (Balfanz et al., 2007; Bruce et al., 2011), and the Annenberg Institute for School Reform (Suppovitz et al., 2012) and others for the past 15 years have focused on strategies for early identification of students in needs of support. These systems are often referred to as Early Warning Systems. Much of the research has focused on identifying student demographics, performance benchmarks, and behaviors that separately or together predict graduation. Some examples of these indicators are: reading by the end of third grade, math proficiency before entering high school, number of disciplinary infractions or suspensions, and on-time promotion to the tenth grade. 
+
+Increasingly, researchers and analysts are using techniques common in forecasting and predictive modeling to identify students at-risk of not meeting a particular benchmark. These techniques promise greater accuracy while identifying a larger proportion of the students who will ultimately not meet their benchmarks, where previous techniques often traded accuracy for failing to identify many students who were falling behind (Bowers et. al., 2013).
+
+Bowers, Sprott, and Taff (2013) have a thorough meta-analysis of 36 studies and 110 drop out indicators cataloging this research as far back as the early 1980s. They have helpfully documented the features used in each of these studies, grade span of included students, and key measures of the predictive properties of each indicator.
+
+We have generated new models for identifying which students are at risk of failing to graduate based on this rich body of research using Providence Public Schools Data. Utilizing readily available administrative and student performance data, we can have multiple modeling techniques and combination of drop out indicators suggested by previous work on predicting high school graduation. Like Bower, Sprott, and Taff (2013), we use the Relative-operator characteristic (ROC) and confusion matrices as the primary tool for comparing the predictive properties of these models. Because of their work, we are also able to include the ROC properties of other models and indicator systems to compare against our locally developed models. As a result, we can assess the predictive qualities of these models compared to the leading research in predicting high school success nationwide.
+
 ```{r Initialization}
 setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
 source('dependencies.R')
@@ -347,9 +383,9 @@ gpaplot
 mobilityplot
 ```
 
-We see several interesting patterns when comparing students who transfer out of PPSD during high school and those who do not. These groups have essentially identical racial makeup, with students transfering out of the district being slightly more likely to be White or Asian ($latex \chi^{2} = 30$, $latex df = 25$, $latex p-value = 0.2243$ suggesting the groups are indistinguishable) . The 8th grade course performance of students who transfer out of PPSD during high school is actually slightly better than those who remain in PPSD. By both of these measures, we find that those who transfer out are either no different or possibly even less disadvantaged than students that remain in PPSD, which is counter to what would have been expected. Mobility shows a slightly different picture, with students who leave PPSD having higher rates of within-school year school mobility, which is not surprising ($latex \chi^{2} = 20$, $latex df = 16$, $latex p-value = 0.2202$ suggesting the groups are indistinguishable). [^allmodels] Based on these findings, we are not concerned about the biases present in providing predicted graduation rates for students even though those who transfer out are excluded from the data set when constructing our models.
+We see several interesting patterns when comparing students who transfer out of PPSD during high school and those who do not. These groups have essentially identical racial makeup, with students transfering out of the district being slightly more likely to be White or Asian ($ \chi^{2} = 30$, $ df = 25$, $ p-value = 0.2243$ suggesting the groups are indistinguishable) . The 8th grade course performance of students who transfer out of PPSD during high school is actually slightly better than those who remain in PPSD. By both of these measures, we find that those who transfer out are either no different or possibly even less disadvantaged than students that remain in PPSD, which is counter to what would have been expected. Mobility shows a slightly different picture, with students who leave PPSD having higher rates of within-school year school mobility, which is not surprising ($ \chi^{2} = 20$, $ df = 16$, $ p-value = 0.2202$ suggesting the groups are indistinguishable). [^allmodels] Based on these findings, we are not concerned about the biases present in providing predicted graduation rates for students even though those who transfer out are excluded from the data set when constructing our models.
 
-[allmodels]: It should be noted that while these patterns are only explored for the 8GM in this section, these same findings hold for all models.
+[^allmodels]: It should be noted that while these patterns are only explored for the 8GM in this section, these same findings hold for all models.
 
 ```{r RunModel}
 hscohort <- filter(hscohort, transfer_out=='N')
@@ -1022,7 +1058,7 @@ text(0.5, 0.1, labels=paste("p-value =", format.pval(testobj$p.value)), adj=c(0,
 legend("bottomright", legend=c("8GM + Qtr1", "8GM"), col=c("#1c61b6", "#008600"), lwd=2)
 ```
 ### UPDATE VALUES
-Above is a comparison between the ROC for the 8GM (in green) and QTR1 (in blue) models. For the 8GM, $latex AUC = 0.7769 (\pm0.0431)$ while for the improved QTR1 model $latex AUC = 0.8032 (\pm0.0403$.
+Above is a comparison between the ROC for the 8GM (in green) and QTR1 (in blue) models. For the 8GM, $ AUC = 0.7769 (\pm0.0431)$ while for the improved QTR1 model $ AUC = 0.8032 (\pm0.0403$.
 ```{r ParamQtr1, results='asis'}
 sjp.glm(model.qtr1$finalModel, 
         title = '9th Grade Quarter 1 Odds Ratios',
@@ -1547,7 +1583,7 @@ A comparison between the two model specifications are below.
 | Model AIC                        | 2370.2 | 2340.7 |
 | Model ROC AUC                    | 0.835  | 0.841  |
 
-These two models are quite similar, and although the model including 9th grade retention is a better predictive model (ANOVA likelihood ratio test $latex p< 0.0001$), we believe that the improvement is slight enough that using the "throughout-the-year" model (9GM-TOY) to track risk at the end of the second and third quarter is defensible (AUC test $latex p=0.297$). 
+These two models are quite similar, and although the model including 9th grade retention is a better predictive model (ANOVA likelihood ratio test $ p< 0.0001$), we believe that the improvement is slight enough that using the "throughout-the-year" model (9GM-TOY) to track risk at the end of the second and third quarter is defensible (AUC test $ p=0.297$). 
 
 ```{r ROC9GM, results='asis', fig.width=7, fig.height=7}
 hscohort_test <- na.omit(hscohort_test)
@@ -1556,7 +1592,6 @@ grade_9_comps <- subset(bowersEWS, grade==9)
 roc_toy <- roc(hscohort_test$graduated, 
                 predict(model.9GMt, newdata=hscohort_test, type='prob')$Y, 
                 auc=TRUE, ci=TRUE)
-
 roc_reta <- roc(hscohort_test$graduated, 
                 predict(model.9GMr, newdata=hscohort_test, type='prob')$Y,
                 auc=TRUE, ci=TRUE)
