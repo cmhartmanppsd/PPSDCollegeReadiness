@@ -2108,6 +2108,9 @@ hscohort$retained <- with(hscohort,
                           ifelse(as.character(retained) == ' ', 
                                  'N', 
                                  as.character(retained)))
+hscohort$retained <- ifelse(is.na(hscohort$retained),
+                             'N',
+                             hscohort$retained)
 
 hscohort <- left_join(hscohort, 
                       attendance %.%
