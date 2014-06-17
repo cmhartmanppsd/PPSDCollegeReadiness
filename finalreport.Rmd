@@ -2076,6 +2076,46 @@ scale_fill_manual('',
                   breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
 ggtitle('End of 9th Grade Risk by Race without Classical')
 
+bh <- subset(hs_new9, race %in% c('Black', 'Hispanic'))
+wa <- subset(hs_new9, !race %in% c('Black', 'Hispanic'))
+bhm <- as.data.frame(with(subset(bh, sex=='Male'), 
+                                 prop.table(table(classification9GMt))))
+bhf <- as.data.frame(with(subset(bh, sex=='Female'), 
+                          prop.table(table(classification9GMt))))
+bhm$sex <- 'Male'
+bhf$sex <- 'Female'
+bh <- rbind(bhm, bhf)
+bh$bh <- 'Black or Hispanic'
+
+wam <- as.data.frame(with(subset(wa, sex=='Male'), 
+                          prop.table(table(classification9GMt))))
+waf <- as.data.frame(with(subset(wa, sex=='Female'), 
+                          prop.table(table(classification9GMt))))
+wam$sex <- 'Male'
+waf$sex <- 'Female'
+wa <- rbind(wam, waf)
+wa$bh <- 'Not Black or Hispanic'
+
+race_sex <- rbind(bh, wa)
+
+ggplot(race_sex, aes(sex, Freq, fill = classification9GMt)) + 
+geom_bar(stat = 'identity', position = 'stack') + 
+geom_text(aes(label = percent(Freq), y = Freq, ymax = 1), 
+          position = 'stack',
+          fontface = 'bold',
+          vjust = 1.66,
+          color = '#3f4c55') + 
+scale_y_continuous('', 
+                   labels = percent_format(), 
+                   breaks=seq(0,1,.1),
+                   expand = c(0, 0)) +
+scale_x_discrete('') +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+facet_wrap(~bh) +
+ggtitle('End of 9th Grade Risk by Race and Sex')
+
 ```
 
 ## Tenth Grade Model
