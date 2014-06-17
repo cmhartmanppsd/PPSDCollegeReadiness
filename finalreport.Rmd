@@ -2622,25 +2622,29 @@ fails <- fails[, c('sasid', 'fails', 'schyr')]
 names(fails)[which(names(fails)=='schyr')] <- 'schoolyear'
 fails$schoolyear <- paste(fails$schoolyear-1, fails$schoolyear, sep='_')
 
-# mobile0607 <- moves_calc(filter(tables2007_2008$enrollment, grade == 10),
-#                          gap = 30, enrollby = "2007-10-01")
-# mobile0607$schoolyear <- '2007_2008'
-# mobile0708 <- moves_calc(filter(tables2008_2009$enrollment, grade == 10),
-#                          gap = 30, enrollby = "2008-10-01")
-# mobile0708$schoolyear <- '2008_2009'
-# mobile0809 <- moves_calc(filter(tables2009_2010$enrollment, grade == 10),
-#                          gap = 30, enrollby = "2009-10-01")
-# mobile0809$schoolyear <- '2009_2010'
-# mobile0910 <- moves_calc(filter(tables2010_2011$enrollment, grade == 10),
-#                          gap = 30, enrollby = "2010-10-01")
-# mobile0910$schoolyear <- '2010_2011'
-# mobile1011 <- moves_calc(filter(tables2011_2012$enrollment, grade == 10),
-#                          gap = 30, enrollby = "2011-10-01")
-# mobile1011$schoolyear <- '2011_2012'
+mobile0607 <- moves_calc(filter(tables2007_2008$enrollment, grade == 10),
+                         gap = 30, enrollby = "2007-10-01")
+mobile0607$schoolyear <- '2007_2008'
+mobile0708 <- moves_calc(filter(tables2008_2009$enrollment, grade == 10),
+                         gap = 30, enrollby = "2008-10-01")
+mobile0708$schoolyear <- '2008_2009'
+mobile0809 <- moves_calc(filter(tables2009_2010$enrollment, grade == 10),
+                         gap = 30, enrollby = "2009-10-01")
+mobile0809$schoolyear <- '2009_2010'
+mobile0910 <- moves_calc(filter(tables2010_2011$enrollment, grade == 10),
+                         gap = 30, enrollby = "2010-10-01")
+mobile0910$schoolyear <- '2010_2011'
+mobile1011 <- moves_calc(filter(tables2011_2012$enrollment, grade == 10),
+                         gap = 30, enrollby = "2011-10-01")
+mobile1011$schoolyear <- '2011_2012'
+mobile1112 <- moves_calc(filter(tables2012_2013$enrollment, grade == 10),
+                         gap = 30, enrollby = "2012-10-01")
+mobile1112$schoolyear <- '2012_2013'
 
-# mobile <- rbind(mobile0607, mobile0708, mobile0809, mobile0910, mobile1011)
-# mobile$sasid <- as.character(mobile$sasid)
-# hscohort <- left_join(hscohort, mobile)
+mobile <- rbind(mobile0607, mobile0708, mobile0809, 
+                mobile0910, mobile1011, mobile1112)
+mobile$sasid <- as.character(mobile$sasid)
+hs_new10 <- left_join(hs_new10, mobile)
 hs_new10 <- left_join(hs_new10, gpa)
 hs_new10 <- left_join(hs_new10, fails)
 hs_new10$fails <- with(hs_new10, 
