@@ -2565,9 +2565,8 @@ hs_new10 <- left_join(hs_new10,
 names(hs_new10)[length(names(hs_new10))] <- 'retained9th'
 
 # Repeated 10th grade
-retained <- annual_demos %.%
-            filter(grade == 10) %.%
-            select(sasid, willrepeatgr, schoolyear)
+retained <- subset(annual_demos, grade == 10, 
+                   select = c('sasid', 'willrepeatgr', 'schoolyear'))
 hs_new10 <- left_join(hs_new10, retained)
 names(hs_new10)[length(names(hs_new10))] <- 'retained'
 hs_new10$retained <- with(hs_new10,
@@ -2578,11 +2577,9 @@ hs_new10$retained <- ifelse(is.na(hs_new10$retained),
                             'N',
                             hs_new10$retained)
 hs_new10 <- left_join(hs_new10, 
-                      attendance %.%
-                      filter(grade == 10) %.%
-                      select(sasid, schoolyear, attendance, tardy, suspended))
-
-
+                      subset(attendance, grade == 10,
+                             select = c('sasid', 'schoolyear', 'attendance',
+                                        'tardy', 'suspended')))                    
 hs_new10 <- mutate(hs_new10, 
                    ageHS = age_calc(dob,
                                     as.Date(paste(substr(schoolyear_9, 1, 4), 
@@ -2602,8 +2599,8 @@ gpa <- rbind(tables2007_2008$course,
              tables2012_2013$course) %.%
              filter(grade == 10) %.%
              group_by(sasid, schyr) %.%
-             summarize(gpa10th = mean(gpa, na.rm=TRUE)) %.%
-             select(sasid, gpa10th, schyr)
+             summarize(gpa10th = mean(gpa, na.rm=TRUE))
+gpa <- gpa[, c('sasid', 'gpa10th', 'schyr')]
 names(gpa)[which(names(gpa)=='schyr')] <- 'schoolyear'
 gpa$schoolyear <- paste(gpa$schoolyear-1, gpa$schoolyear, sep='_')
 
@@ -2620,8 +2617,8 @@ fails <- rbind(tables2007_2008$course,
 
 fails <- ungroup(fails) %.%
          group_by(sasid, schyr) %.%
-         summarize(fails = n()) %.%
-         select(sasid, fails, schyr)
+         summarize(fails = n())
+fails <- fails[, c('sasid', 'fails', 'schyr')]
 names(fails)[which(names(fails)=='schyr')] <- 'schoolyear'
 fails$schoolyear <- paste(fails$schoolyear-1, fails$schoolyear, sep='_')
 
