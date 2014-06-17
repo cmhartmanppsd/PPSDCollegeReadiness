@@ -2659,14 +2659,14 @@ all_course <- rbind(tables2005_2006$course,
                     tables2011_2012$course,
                     tables2012_2013$course)
 credits <- all_course %.%
-           filter(grade %in% c(9, 10)) %.%
-           select(sasid, courseno, type, credits, schyr)
+           filter(grade %in% c(9, 10))
+credits <- credits[, c('sasid', 'courseno', 'type', 'credits', 'schyr')]
 rm(all_course)
 credits <- credits[!duplicated(credits), ]
 credits <- credits %.%
            group_by(sasid, schyr, type) %.%
-           summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) %.%
-           select(sasid, schyr, type, credits)
+           summarize(credits = sum(as.numeric(credits), na.rm = TRUE)) 
+credits <- credits[, c('sasid', 'schyr', 'type', 'credits')]
 credits$type <- ifelse(credits$type == "", 'none_cred',
                        paste(tolower(credits$type), 'cred', sep = '_'))
 names(credits)[which(names(credits)=='schyr')] <- 'schoolyear'
@@ -2680,8 +2680,8 @@ credits$tenthyear <- as.numeric(substr(credits$tenthyear, 1, 4))
 credits <- subset(credits, schoolyear <= tenthyear)
 credits <- credits %.%
            group_by(sasid, type) %.%
-           summarize(credits = sum(credits)) %.%
-           select(sasid, type, credits)
+           summarize(credits = sum(credits))
+credits <- credits[, c('sasid', 'type', 'credits')]
 credits <- dcast(sasid ~ type, value.var='credits', sum, data = credits)
 credits$total_cred <- apply(credits[, -1], 1, sum)
 credits <- mutate(credits,
