@@ -1,0 +1,205 @@
+Providence Early Warning System
+========================================================
+author: Jason P. Becker
+date: 2014-05-15
+transition: fade
+font-import: http://fonts.googleapis.com/css?family=Open+Sans
+font-family: 'Open Sans'
+width: 960
+height: 700
+
+Goals
+========================================================
+* Share work
+* What additional analysis would be interesting?
+* What are the right AISR communication tools for sharing this work?
+
+Proficiency-based Graduation Requirements
+========================================================
+Students are now expected to:
+
+* meet partial proficiency or above  on the state assessment or assessments in reading and in math (a 2 or greater on a 4 point scale for the New England Common Assessment Program);
+* successfully complete state and local course requirements;
+* successfully complete two performance-based diploma assessments.
+
+With these new criteria, Providence Public School District (PPSD) faces a potential graduation crisis; roughly 65% of the class of 2014 is in jeopardy of not meeting this standard.
+
+PGP: Case Management for Graduation
+========================================================
+
+There are four key decisions for PPSD staff to make as part of the PGP process:
+
+1.  Which students need additional supports?
+2.	What does this student need to succeed?
+3.	Which supports address those needs?
+4.	Which programmatic intervention should this student participate in?
+
+
+PGP: Identifying Students
+========================================================
+
+* Least complex; most time consuming.
+
+> **Predictive Analytics Advantage**
+>- setting expectations objectively based on past performance that leads to results, quickly, for all students.
+>- distinguishing more precisely between levels of risk, reducing the likelihood that a student who is falling behind is not identified
+>- achieving greater sensitivity to signs that students are falling behind before it is evident that staff should be paying extra attention
+
+PGP: Identifying Students
+========================================================
+Bowers, Sprott, Taff (2013) - 110 predictors, 36 studies
+![](Cache/bowersROC.png)
+
+8GM: Odds Ratios
+========================================================
+
+![](figure/8GMParam.png)
+
+8GM: ROC
+========================================================
+
+![](figure/ROCData.png)
+
+8GM: Classification
+========================================================
+Based on *True Negative Rate*
+
+* Watch -> 60% 
+* Warning -> 70%
+* Action -> 80%
+
+<table border="1">
+<tbody><tr> <th> classification </th> <th> threshold </th> <th> coverage </th> </tr>
+ <tr> <td> Watch </td> <td align="right"> 0.69 </td> <td align="right"> 0.70 </td> </tr>
+ <tr> <td> Warning </td> <td align="right"> 0.51 </td> <td align="right"> 0.50 </td> </tr>
+ <tr> <td> Action </td> <td align="right"> 0.34 </td> <td align="right"> 0.40 </td> </tr>
+ </tbody></table>
+ 
+8GM Disaggregated Results: Race
+========================================================
+
+![](figure/RacePic.png)
+ 
+8GM Disaggregated Results: Suspension
+========================================================
+![](figure/SuspendPic.png)
+
+8GM Disaggregated Results: Days Suspended
+========================================================
+![](figure/SuspendPic2.png)
+
+8GM Disaggregated Results: Mobility
+========================================================
+![](figure/MovesPic.png)
+
+8GM Disaggregated Results: Sex
+========================================================
+![](figure/GenderPic.png)
+
+8GM School Results
+========================================================
+![](figure/MSSchoolLong.png)
+
+8GM School Results
+========================================================
+![](figure/SchoolsPic.png)
+
+Transitions Matter
+========================================================
+![](figure/Qtr1Fails.png)
+
+Transitions Matter: Quarter 1 Odds Ratios
+========================================================
+![](figure/ParamQtr1.png)
+
+Transitions Matter: 8GM v. QTR1
+========================================================
+![](figure/ROCPlotsQtr1.png)
+
+Transitions Matter: Classifications
+========================================================
+![](figure/Qtr1ChangeClass.png)
+
+Grade 9 is Key
+========================================================
+![](figure/RetentionGraduatePic.png)
+
+Grade 9 is Key
+========================================================
+**Students who start PPSD in 9th grade who do not transfer out before graduation:**
+* 65.8% graduate
+
+**Students who attend PPSD for 10th grade who do not transfer out before graduation:**
+* 73.3% graduate
+
+**Students who attend 10th grade *on time* who do not transfer out before graduation:**
+* 81% graduate
+
+Grade 9: Avoiding Retention
+========================================================
+* Need to classify students throughout the year and show progress
+* Avoid dependency on data that is only plausibly available at the end of the year
+* Assume  
+  * My course performance will be unchanged
+  * My attendance will be unchanged
+  * My credits will double (from semester 1)
+  * etc
+  
+Grade 9: Odds Ratio
+========================================================
+![](figure/Param9GM1.png)
+
+Grade 9: ROC
+========================================================
+![](figure/ROC9GM.png)
+
+Grade 9: Class Changes
+========================================================
+![](figure/9GMRv9GMTclasses.png)
+
+Grade 9 Disaggregated by High School
+========================================================
+![](figure/9GMlongestfreshman.png)
+
+Grade 9 Disaggregated by Race
+========================================================
+![](figure/RacePic9GM1.png)
+
+Grade 9 Race, No Classical
+========================================================
+![](figure/RacePic9GM2.png)
+
+Grade 9 Black/Latino Males
+========================================================
+![](Cache/blacklatinomale9.png)
+
+Currently: Grade 10
+========================================================
+**Challenges**
+* Many students repeat grade 9. Many do not attend grade 9 at PPSD.
+  * Cohort is defined as first-time 10th grade students, regardless of past.
+* Without grade 9 data for all, how can we measure prior retention?
+  * Use age when entering 10th grade for the first time as proxy.
+  
+Currently: Grade 10
+========================================================
+**Challenges**
+* Without grade 9 data, can we have accurate information on credits?
+  * Currently adding all credits earned in grade 9 or 10 for all years up to and including first time grade 10 year.
+  
+Grade 10 Model Comparisons
+========================================================
+
+![](Cache/10gmdotplot.png)
+
+Grade 10: Most Likely Specification
+========================================================
+![](figure/10GMOddsratio2.png)
+
+Grade 10: Specification Comparisons
+========================================================
+![](figure/ROC10GM.png)
+
+Grade 10: Specification Comparison
+========================================================
+![](figure/CompareCredit10GM.png)
