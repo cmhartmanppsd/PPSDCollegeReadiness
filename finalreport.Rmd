@@ -2691,11 +2691,11 @@ hs_new10 <- left_join(hs_new10, credits)
 hs_new10 <- subset(hs_new10, !schno_first %in% charters)
 valid_cases <- hs_new10[, c('sasid', 'attendance', 'gpa10th', 
                             'retained', 'age10', 'core_cred',
-                            'graduated')]
+                            'graduated', 'fails', 'moves')]
 valid_cases <- na.omit(valid_cases)
 hs_new10 <- subset(hs_new10, sasid %in% valid_cases$sasid)
 hs_new10$predict10GM <- predict(model.10, newdata = hs_new10, type='prob')$Y
-hs_new10$predict10GMt <- predict(model.10t, newdata = hs_new10, type='prob')$Y
+hs_new10$predict10GMf <- predict(model.10f, newdata = hs_new10, type='prob')$Y
 hs_new10$classification10GM <- cut(hs_new10$predict10GM, 
                                   breaks=rev(c(1, thresholds10GM$threshold, 0)), 
                                   include.lowest=TRUE, 
@@ -2705,22 +2705,22 @@ hs_new10$classification10GM <-
   factor(hs_new10$classification10GM, 
          levels = rev(levels(hs_new10$classification10GM)), 
          ordered=TRUE)
-hs_new10$classification10GMt <- cut(hs_new10$predict10GMt, 
-                                  breaks=rev(c(1, thresholds10GMt$threshold, 0)), 
+hs_new10$classification10GMf <- cut(hs_new10$predict10GMf, 
+                                  breaks=rev(c(1, thresholds10GMf$threshold, 0)), 
                                   include.lowest=TRUE, 
                                   labels=rev(c('On-track', 
-                                        as.character(thresholds10GMt$classification))))
-hs_new10$classification10GMt <- 
-  factor(hs_new10$classification10GMt, 
-         levels = rev(levels(hs_new10$classification10GMt)), 
+                                        as.character(thresholds10GMf$classification))))
+hs_new10$classification10GMf <- 
+  factor(hs_new10$classification10GMf, 
+         levels = rev(levels(hs_new10$classification10GMf)), 
          ordered=TRUE)
 ```
 
 ```{r CompareCredit10GM, results='asis'}
 heatmap <- as.data.frame(with(hs_new10, 
-                              table(classification10GM, classification10GMt)))
+                              table(classification10GM, classification10GMf)))
 ggplot(data = heatmap, 
-       aes(classification10GM, classification10GMt, fill=Freq)) +
+       aes(classification10GM, classification10GMf, fill=Freq)) +
 geom_tile() +
 scale_fill_gradient(low="#EFF3FF", high="#08519C") +
 geom_text(aes(fill = heatmap$Freq, label = heatmap$Freq))
