@@ -2543,13 +2543,11 @@ thresholds10GMf$coverage <- round(thresholds10GMf$coverage, digits=3)
 
 ```{r TenGMOutOfSample}
 hs_new10 <- first10th %.%
-            filter(schoolyear %in% c('2011_2012', '2012_2013')) %.%
-            select(sasid, schoolyear)
+            filter(schoolyear %in% c('2011_2012', '2012_2013'))
 hs_new10 <- left_join(hs_new10, person)
 hs_new10$sasid <- as.character(hs_new10$sasid)
 hs_new10 <- left_join(hs_new10,
-                      first9th %.%
-                      select(sasid, schoolyear_9))
+                      subset(first9th, select=c('sasid', 'schoolyear_9')))
 hs_new10 <- subset(hs_new10, !is.na(schoolyear))
 hs_new10$schoolyear_9 <- with(hs_new10,
                               ifelse(is.na(schoolyear_9),
