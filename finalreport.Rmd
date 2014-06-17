@@ -7,6 +7,9 @@ opts_chunk$set(echo=FALSE,
                dev='quartz_png', 
                dev.args=list(family='Open Sans'), 
                fig.height=5.375, fig.width=8.75)
+oldimages <- list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/figure/', 
+                          pattern='*.png$', full.names=TRUE, ignore.case=TRUE)
+invisible(sapply(oldimages, file.remove))
 ```
 Since 2003, the Rhode Island Board of Regents has developed, refined, and implemented regulations for Proficiency-Based Graduation Requirements (PBGRs) to ensure that each diploma recipient has attained an acceptable level of achievement in each of six core academic areas in order to be successful in college and careers (R.I. Admin. Code 21-2-46).
 
@@ -48,9 +51,10 @@ We have generated new models for identifying which students are at risk of faili
 setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
 source('dependencies.R')
 require(sjPlot)
-file.sources <- list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
-                          pattern='*.R$', full.names=TRUE, ignore.case=TRUE)
-invisible(sapply(file.sources, source, .GlobalEnv))
+require(caret)
+# file.sources <- list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
+#                           pattern='*.R$', full.names=TRUE, ignore.case=TRUE)
+# invisible(sapply(file.sources, source, .GlobalEnv))
 # invisible(source('load.R'))
 # invisible(source('buildTables.R'))
 # tables2005_2006$course$studentid <- as.character(tables2005_2006$course$studentid)
@@ -629,11 +633,11 @@ race <- left_join(race, race_n)
 
 ggplot(race, aes(race, Freq, fill = classification)) + 
 geom_bar(stat = 'identity', position = 'stack') + 
-geom_text(aes(label = n, y = Freq, ymax = 1), 
-          position = 'stack',
-          vjust = 1.66,
-          fontface = 'bold',
-          color = '#3f4c55') + 
+# geom_text(aes(label = n, y = Freq, ymax = 1), 
+#           position = 'stack',
+#           vjust = 1.66,
+#           fontface = 'bold',
+#           color = '#3f4c55') + 
 scale_y_continuous('', labels = percent_format(), breaks=seq(0,1,.1)) +
 scale_x_discrete('') +
 scale_fill_manual('',
@@ -2336,9 +2340,10 @@ predictors <- c('attendance', 'gpa10th', 'retained9th', 'ageHS', 'suspended',
                 'fails', 'moves', 'retained', 'total_cred', 'math_cred', 
                 'sci_cred', 'eng_cred', 'soc_cred', 'core_cred', 'age10')
 set.seed(101)
-model.10glm <- train(hscohort[, c('attendance', 'gpa10th', 'suspended', 'fails',
+model.10glm <- train(hscohort_train[, c('attendance', 'gpa10th', 
+                                        'suspended', 'fails',
                                   'moves', 'age10')],
-                     hscohort[, c('graduated')],
+                     hscohort_train[, c('graduated')],
                      method='glmStepAIC',
                      tuneLenght = 5,
                      trControl = trainControl(method = "repeatedcv", number = 10,
@@ -2402,21 +2407,21 @@ model.10f <- train(graduated ~ I(attendance*10) + gpa10th*fails + moves +
 ```{r ROC10GM, results='asis', fig.width=7, fig.height=7}
 hscohort_test <- hscohort_test[, c('sasid', 'attendance', 'gpa10th', 
                                    'retained', 'age10', 'core_cred',
-                                   'graduated')]
+                                   'graduated', 'moves', 'fails')]
 hscohort_test <- na.omit(hscohort_test)
 grade_10_comps <- subset(bowersEWS, grade==10)
 roc_10 <- roc(hscohort_test$graduated, 
               predict(model.10, newdata=hscohort_test, type='prob')$Y,
               auc=TRUE, ci=TRUE)
-roc_10t <- roc(hscohort_test$graduated,
-               predict(model.10c, newdata=hscohort_test, type='prob')$Y,
+roc_10f <- roc(hscohort_test$graduated,
+               predict(model.10f, newdata=hscohort_test, type='prob')$Y,
                auc=TRUE, ci=TRUE)
 rocobj1 <- plot.roc(roc_10, 
                     main="10GM ROC",
                     col="#1c61b6",
                     print.auc=TRUE,
                     legacy.axes=TRUE)
-rocobj2 <- lines.roc(roc_10t, col="#008600")  
+rocobj2 <- lines.roc(roc_10f, col="#008600")  
 testobj <- roc.test(rocobj1, rocobj2)
 # lines.roc(roc_reta, col='gray')
 points(x=grade_10_comps$specificity, 
@@ -2439,7 +2444,7 @@ sjp.glm(model.10$finalModel,
 #                          'Overage by 1 year prior to 10th grade',
 #                          'Overage by 2 or more years prior to 10th grade'))
 
-sjp.glm(model.10c$finalModel, 
+sjp.glm(model.10f$finalModel, 
         title='10GM Odds Ratios', 
         showModelSummary = FALSE,
         theme = 'bw',
@@ -2462,12 +2467,12 @@ We have tested the model with and without the 10th grade retention indicator lik
 ```{r 10GMThresholds}
 hscohort_predictions <- hscohort_train[, c('sasid', 'attendance', 'gpa10th', 
                                            'retained', 'age10', 'core_cred',
-                                           'graduated')]
+                                           'graduated', 'fails', 'moves')]
 hscohort_predictions <- na.omit(hscohort_predictions)
 hscohort_predictions$predict10GM <- predict(model.10, 
                                             newdata = hscohort_predictions, 
                                             type = 'prob')$Y
-hscohort_predictions$predict10GMc <- predict(model.10c, 
+hscohort_predictions$predict10GMf <- predict(model.10f, 
                                              newdata = hscohort_predictions, 
                                              type = 'prob')$Y
 
@@ -2503,37 +2508,37 @@ thresholds10GM[thresholds10GM$classification == 'Watch', ]$coverage <-
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 thresholds10GM$coverage <- round(thresholds10GM$coverage, digits=3)
 
-m1_matrix <- cutoff_matrix(hscohort_predictions, 'predict10GMc', 'graduated')
-thresholds10GMc <- data.frame(classification = as.factor(c('Watch', 
+m1_matrix <- cutoff_matrix(hscohort_predictions, 'predict10GMf', 'graduated')
+thresholds10GMf <- data.frame(classification = as.factor(c('Watch', 
                                                           'Warning', 'Action')),
   threshold = c(m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .6)),]$cutoff,
                 m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .7)),]$cutoff,
                 m1_matrix[which.min(abs(m1_matrix$true_neg_rate - .8)),]$cutoff))
 
 # Compute coverage: what proportion of those who fail to graduate are identified
-thresholds10GMc$coverage <- NA
+thresholds10GMf$coverage <- NA
 coverage <- as.data.frame(table(
   hscohort_predictions$graduated, 
-  hscohort_predictions$predict10GMc <= subset(thresholds10GMc, 
+  hscohort_predictions$predict10GMf <= subset(thresholds10GMf, 
                                      classification=='Action')$threshold))
-thresholds10GMc[thresholds10GMc$classification == 'Action', ]$coverage <- 
+thresholds10GMf[thresholds10GMf$classification == 'Action', ]$coverage <- 
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 coverage <- as.data.frame(table(
   hscohort_predictions$graduated, 
-  hscohort_predictions$predict10GMc <= subset(thresholds10GMc, 
+  hscohort_predictions$predict10GMf <= subset(thresholds10GMf, 
                                      classification=='Warning')$threshold))
-thresholds10GMc[thresholds10GMc$classification == 'Warning', ]$coverage <- 
+thresholds10GMf[thresholds10GMf$classification == 'Warning', ]$coverage <- 
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 coverage <- as.data.frame(table(
   hscohort_predictions$graduated, 
-  hscohort_predictions$predict10GMc <= subset(thresholds10GMc, 
+  hscohort_predictions$predict10GMf <= subset(thresholds10GMf, 
                                      classification=='Watch')$threshold))
-thresholds10GMc[thresholds10GMc$classification == 'Watch', ]$coverage <- 
+thresholds10GMf[thresholds10GMf$classification == 'Watch', ]$coverage <- 
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
-thresholds10GMc$coverage <- round(thresholds10GMc$coverage, digits=3)
+thresholds10GMf$coverage <- round(thresholds10GMf$coverage, digits=3)
 ```
 
 ```{r TenGMOutOfSample}
