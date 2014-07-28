@@ -52,9 +52,9 @@ setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
 source('dependencies.R')
 require(sjPlot)
 require(caret)
-# file.sources <- list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
-#                           pattern='*.R$', full.names=TRUE, ignore.case=TRUE)
-# invisible(sapply(file.sources, source, .GlobalEnv))
+file.sources <- list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/R', 
+                          pattern='*.R$', full.names=TRUE, ignore.case=TRUE)
+invisible(sapply(file.sources, source, .GlobalEnv))
 # invisible(source('load.R'))
 # invisible(source('buildTables.R'))
 # tables2005_2006$course$studentid <- as.character(tables2005_2006$course$studentid)
@@ -78,17 +78,19 @@ require(caret)
 #                                     person[, c('sasid', 'studentid')])
 # tables2010_2011$course <- left_join(tables2010_2011$course,
 #                                     person[, c('sasid', 'studentid')])
-# tables2011_2012$course <- left_join(tables2011_2012$course,
-#                                     person[, c('sasid', 'studentid')])
-# tables2012_2013$course <- left_join(tables2012_2013$course,
-#                                     person[, c('sasid', 'studentid')])
+# # tables2011_2012$course <- left_join(tables2011_2012$course,
+# #                                     person[, c('sasid', 'studentid')])
+# # tables2012_2013$course <- left_join(tables2012_2013$course,
+# #                                     person[, c('sasid', 'studentid')])
 # 
 # invisible(source('attendance.R'))
 # attendance$sasid <- as.character(attendance$sasid)
 # charters <- c(114, 117, 189, 185)
 # rm(list=c('reg0405', 'reg0506', 'reg0607', 'reg0708', 
 #           'reg0809', 'reg0910', 'reg1011'))
+suspension <- read.csv('data/suspension.csv')
 load('Cache/initialEnv.RData')
+suspension$date_suspended <- as.character(suspension$date_suspended)
 theme_set(theme_jb())
 ```
 
@@ -649,13 +651,13 @@ The figure above shows the classification of incoming ninth graders in the fall 
 
 #### Suspension
 ```{r SuspendPic, results='asis', fig.height=7, fig.width=7}
-suspension <- as.data.frame(with(hs_new, prop.table(table(suspend8th>0,classification),1)))
-names(suspension)[1] <- 'suspension'
-suspension$suspension <- as.factor(suspension$suspension)
-levels(suspension$suspension) <- c('Has not been suspended', 
+suspension8th <- as.data.frame(with(hs_new, prop.table(table(suspend8th>0,classification),1)))
+names(suspension8th)[1] <- 'suspension'
+suspension8th$suspension <- as.factor(suspension8th$suspension)
+levels(suspension8th$suspension) <- c('Has not been suspended', 
                                    'Suspended one or more days')
 
-ggplot(suspension, aes(suspension, Freq, fill=classification)) + 
+ggplot(suspension8th, aes(suspension, Freq, fill=classification)) + 
 geom_bar(stat='identity', position='stack') + 
 scale_y_continuous('', labels = percent_format(), breaks=seq(0,1,.1)) +
 scale_x_discrete('') +
@@ -668,15 +670,15 @@ Whether or not a student is suspended even one time leads to substantial separat
 
 ```{r SuspendPic2, results='asis'}
 suspend_labels <- c('None', as.character(seq(1,4,1)), '5 or more')
-suspension <- as.data.frame(prop.table(table(cut(hs_new$suspend8th, 
+suspension8th <- as.data.frame(prop.table(table(cut(hs_new$suspend8th, 
                                                  breaks = c(seq(0, 5, 1), 1000),
                                                  include.lowest = TRUE, 
                                                  labels = suspend_labels,
                                                  right = FALSE), 
                                              hs_new$classification),
                                        1))
-names(suspension) <- c('suspensions', 'classification', 'Freq')
-ggplot(suspension, aes(suspensions, Freq, fill=classification)) + 
+names(suspension8th) <- c('suspensions', 'classification', 'Freq')
+ggplot(suspension8th, aes(suspensions, Freq, fill=classification)) + 
 geom_bar(stat='identity', position='stack') + 
 scale_y_continuous('', labels = percent_format(), breaks=seq(0,1,.1)) +
 scale_x_discrete('Days') +
@@ -880,7 +882,7 @@ fails_qtr1_0910 <- tables2009_2010$course %.%
                    filter(gpa <= 1.0 & variable == 'cum_qtr1') %.% 
                    summarize(fails_qtr1 = n())
 
-suspension <- read.csv('data/suspension.csv')
+# suspension <- read.csv('data/suspension.csv')
 suspension$date_suspended <- as.Date(suspension$date_suspended, 
                                      format='%m/%d/%Y')
 names(suspension)[1] <- 'studentid'
