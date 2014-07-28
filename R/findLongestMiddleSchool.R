@@ -38,3 +38,22 @@ findFreshmanHS <- function(df, schoolyear_first){
   names(hs)[-1] <- paste(names(hs[-1]), 'hs_f9_long', sep = '_')
   hs
 }
+
+find10thHS <- function(df, schoolyear_first){
+  hs <- df %>%
+    filter(grade == 10) %>%
+    group_by(sasid, schno, school) %>%
+    summarize(total_adm = sum(adm))
+  hs <- ungroup(hs) %>%
+    group_by(sasid) %>%
+    filter(total_adm == max(total_adm)) %>%
+    select(sasid, schno, school, total_adm)
+  # Resolve multiple schools with the same total_adm
+  hs <- hs %>%
+    group_by(sasid) %>%
+    filter(rank(total_adm, ties.method="first")==1) %>%
+    select(sasid, schno, school)
+  # 'hs_f9_long' = high school first-time 9th grade longest
+  names(hs)[-1] <- paste(names(hs[-1]), 'hs_10_long', sep = '_')
+  hs
+}
