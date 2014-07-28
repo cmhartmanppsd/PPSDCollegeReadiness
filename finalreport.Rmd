@@ -2106,11 +2106,11 @@ race_sex <- rbind(bh, wa)
 
 ggplot(race_sex, aes(sex, Freq, fill = classification9GMt)) + 
 geom_bar(stat = 'identity', position = 'stack') + 
-geom_text(aes(label = percent(Freq), y = Freq, ymax = 1), 
-          position = 'stack',
-          fontface = 'bold',
-          vjust = 1.66,
-          color = '#3f4c55') + 
+# geom_text(aes(label = percent(Freq), y = Freq, ymax = 1), 
+#           position = 'stack',
+#           fontface = 'bold',
+#           vjust = 1.66,
+#           color = '#3f4c55') + 
 scale_y_continuous('', 
                    labels = percent_format(), 
                    breaks=seq(0,1,.1),
@@ -2726,4 +2726,66 @@ ggplot(data = heatmap,
 geom_tile() +
 scale_fill_gradient(low="#EFF3FF", high="#08519C") +
 geom_text(aes(fill = heatmap$Freq, label = heatmap$Freq))
+```
+
+```{r After10GM, results='asis'}
+hs1011_10th <- find10thHS(all_years_enr, '2010_2011')
+hs1112_10th <- find10thHS(all_years_enr, '2012')
+hs1213_10th <- find10thHS(all_years_enr, '2013')
+hs_new10 <- left_join(hs_new10, 
+                     rbind(hs1011_10th, hs1112_10th, hs1213_10th))
+# Combine all of the Hope High Schools
+hs_new10$schno_hs_10_long <- with(hs_new10, 
+                            ifelse(as.character(schno_hs_10_long) %in% 
+                                     c('181', '183'),
+                                  '149', as.character(schno_hs_10_long)))
+
+# Combine PAIS with HSTA & PAIS
+hs_new10$schno_hs_10_long <- with(hs_new10, 
+                            ifelse(as.character(schno_hs_10_long) %in% 
+                                     c('173'),
+                                  '175', as.character(schno_hs_10_long)))
+school_10 <- as.data.frame(with(hs_new10, 
+                                prop.table(table(schno_hs_10_long, 
+                                                 classification10GMf), 1)))
+school_10 <- na.omit(school_10)
+school_10 <- filter(school_10, 
+                    !schno_hs_10_long %in% c('185', '147', '114', 
+                                             '117', '189', '131'))
+#school_ms <- filter(school_ms,
+#                            !schno_first %in% c('185', '147'))
+#school_lookup <- unique(hs_new[, c('schno_ms_long', 'school_ms_long')])
+#school_lookup$schno_ms_long <- as.character(school_lookup$schno_ms_long)
+#school_ms$schno_ms_long <- as.character(school_ms$school_ms_long)
+school_lookup <- data.frame(schno_hs_10_long = as.character(c(139, 149, 150, 
+                                                               164, 167, 169, 
+                                                               175, 193)), 
+                            school_hs_10_long = c('Central', 'Hope', 
+                                                   'Mount Pleasant', 'Classical',
+                                                   'E-Cubed', 'Alvarez', 
+                                                   'Sanchez', 'Career & Tech'),
+                            stringsAsFactors = FALSE)
+school_10$schno_hs_10_long <- as.character(school_10$schno_hs_10_long)
+school_10 <- left_join(school_10, school_lookup)
+school_10_seq <- school_10 %.%
+                 filter(classification10GMf == 'On-track') %.%
+                 arrange(Freq)
+school_10$school_hs_10_long <- factor(school_10$school_hs_10_long,
+                                      levels = school_10_seq$school_hs_10_long)
+ggplot(data = na.omit(school_10), 
+       aes(school_hs_10_long, Freq, fill=classification10GMf)) + 
+geom_bar(stat='identity', position='stack') + 
+scale_y_continuous('', 
+                   labels = percent_format(), 
+                   breaks = seq(0,1,.1),
+                   limits = c(0, 1.05),
+                   expand = c(0, 0)) +
+scale_x_discrete('HS Attended Longest 10th Grade',
+                 labels = substr(x=levels(school_10$school_hs_10_long), 1, 13)) +
+scale_fill_manual('',
+                  values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                  breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+theme(axis.text.x = element_text(angle=90)) +
+ggtitle('Classifications by High School After 10th Grade')
+
 ```
