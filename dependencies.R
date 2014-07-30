@@ -1,4 +1,5 @@
 # Environment Setup
+library(MASS)
 library(foreign)
 library(lubridate)
 library(plyr)
@@ -13,6 +14,7 @@ library(knitr)
 library(xtable)
 library(sjPlot)
 library(caret)
+library(magrittr)
 library(dplyr)
 
 
