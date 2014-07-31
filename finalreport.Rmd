@@ -2603,6 +2603,16 @@ thresholds10GMf[thresholds10GMf$classification == 'Watch', ]$coverage <-
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 thresholds10GMf$coverage <- round(thresholds10GMf$coverage, digits=3)
+
+hscohort_predictions$classification <- cut(hscohort_predictions$predict10GMf, 
+                             breaks=rev(c(1, thresholds$threshold, 0)), 
+                             include.lowest=TRUE, 
+                             labels=rev(c('On-track', 
+                                        as.character(thresholds$classification))))
+hscohort_predictions$classification <- factor(hscohort_predictions$classification, 
+                                levels = rev(levels(hscohort_predictions$classification)), 
+                                ordered=TRUE)
+
 ```
 
 ```{r TenGMOutOfSample}
