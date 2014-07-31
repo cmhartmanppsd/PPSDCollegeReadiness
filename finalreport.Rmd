@@ -2404,57 +2404,57 @@ predictors <- c('attendance', 'gpa10th', 'retained9th', 'ageHS', 'suspended',
                 'fails', 'moves', 'retained', 'total_cred', 'math_cred', 
                 'sci_cred', 'eng_cred', 'soc_cred', 'core_cred', 'age10')
 set.seed(101)
-model.10glm <- train(hscohort_train[, c('attendance', 'gpa10th', 
-                                        'suspended', 'fails',
-                                  'moves', 'age10')],
-                     hscohort_train[, c('graduated')],
-                     method='glmStepAIC',
-                     tuneLenght = 5,
-                     trControl = trainControl(method = "repeatedcv", number = 10,
-                                          repeats = 10, classProbs=TRUE,
-                                          summaryFunction = twoClassSummary,
-                                          seeds = NA),
-                     metric='ROC')
-model.10 <- train(graduated ~ I(attendance*10) + gpa10th + 
-                              retained + I(age10>192) + core_cred, 
-                 data=hscohort_train,
-                 method='glm',
-                 tuneLength = 5,
-                 trControl = trainControl(method = "repeatedcv", number = 10,
-                                          repeats = 10, classProbs=TRUE,
-                                          summaryFunction = twoClassSummary,
-                                          seeds = NA),
-                 metric='ROC')
-model.10r <- train(graduated ~ I(attendance*10) + gpa10th + 
-                              retained + I(age10>192), 
-                 data=hscohort_train,
-                 method='glm',
-                 tuneLength = 5,
-                 trControl = trainControl(method = "repeatedcv", number = 10,
-                                          repeats = 10, classProbs=TRUE,
-                                          summaryFunction = twoClassSummary,
-                                          seeds = NA),
-                 metric='ROC')
-model.10c <- train(graduated ~ I(attendance*10) + gpa10th + 
-                               core_cred + I(age10>192), 
-                 data=hscohort_train,
-                 method='glm',
-                 tuneLength = 5,
-                 trControl = trainControl(method = "repeatedcv", number = 10,
-                                          repeats = 10, classProbs=TRUE,
-                                          summaryFunction = twoClassSummary,
-                                          seeds = NA),
-                 metric='ROC')
-model.10a <- train(graduated ~ I(attendance*10) + gpa10th + 
-                               I(age10>192), 
-                 data=hscohort_train,
-                 method='glm',
-                 tuneLength = 5,
-                 trControl = trainControl(method = "repeatedcv", number = 10,
-                                          repeats = 10, classProbs=TRUE,
-                                          summaryFunction = twoClassSummary,
-                                          seeds = NA),
-                 metric='ROC')
+# model.10glm <- train(hscohort_train[, c('attendance', 'gpa10th', 
+#                                         'suspended', 'fails',
+#                                   'moves', 'age10')],
+#                      hscohort_train[, c('graduated')],
+#                      method='glmStepAIC',
+#                      tuneLenght = 5,
+#                      trControl = trainControl(method = "repeatedcv", number = 10,
+#                                           repeats = 10, classProbs=TRUE,
+#                                           summaryFunction = twoClassSummary,
+#                                           seeds = NA),
+#                      metric='ROC')
+# model.10 <- train(graduated ~ I(attendance*10) + gpa10th + 
+#                               retained + I(age10>192) + core_cred, 
+#                  data=hscohort_train,
+#                  method='glm',
+#                  tuneLength = 5,
+#                  trControl = trainControl(method = "repeatedcv", number = 10,
+#                                           repeats = 10, classProbs=TRUE,
+#                                           summaryFunction = twoClassSummary,
+#                                           seeds = NA),
+#                  metric='ROC')
+# model.10r <- train(graduated ~ I(attendance*10) + gpa10th + 
+#                               retained + I(age10>192), 
+#                  data=hscohort_train,
+#                  method='glm',
+#                  tuneLength = 5,
+#                  trControl = trainControl(method = "repeatedcv", number = 10,
+#                                           repeats = 10, classProbs=TRUE,
+#                                           summaryFunction = twoClassSummary,
+#                                           seeds = NA),
+#                  metric='ROC')
+# model.10c <- train(graduated ~ I(attendance*10) + gpa10th + 
+#                                core_cred + I(age10>192), 
+#                  data=hscohort_train,
+#                  method='glm',
+#                  tuneLength = 5,
+#                  trControl = trainControl(method = "repeatedcv", number = 10,
+#                                           repeats = 10, classProbs=TRUE,
+#                                           summaryFunction = twoClassSummary,
+#                                           seeds = NA),
+#                  metric='ROC')
+# model.10a <- train(graduated ~ I(attendance*10) + gpa10th + 
+#                                I(age10>192), 
+#                  data=hscohort_train,
+#                  method='glm',
+#                  tuneLength = 5,
+#                  trControl = trainControl(method = "repeatedcv", number = 10,
+#                                           repeats = 10, classProbs=TRUE,
+#                                           summaryFunction = twoClassSummary,
+#                                           seeds = NA),
+#                  metric='ROC')
 model.10f <- train(graduated ~ I(attendance*10) + gpa10th*fails + moves + 
                                I(age10>192), 
                  data=hscohort_train,
