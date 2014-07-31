@@ -6,8 +6,9 @@ opts_chunk$set(echo=FALSE,
                message=FALSE, 
                results='hide', 
                dev='quartz_png', 
-               fig.height=5.375, fig.width=8.75)
-oldimages <- list.files('/Users/jason/Dropbox/code/PPSDCollegeReadiness/figure/', 
+               fig.height=5.375, fig.width=8.75,
+               fig.retina=2)
+oldimages <- list.files('/Users/jason/code/PPSDCollegeReadiness/figure/', 
                           pattern='*.png$', full.names=TRUE, ignore.case=TRUE)
 invisible(sapply(oldimages, file.remove))
 ```
@@ -48,7 +49,7 @@ Bowers, Sprott, and Taff (2013) have a thorough meta-analysis of 36 studies and 
 We have generated new models for identifying which students are at risk of failing to graduate based on this rich body of research using Providence Public Schools Data. Utilizing readily available administrative and student performance data, we can have multiple modeling techniques and combination of drop out indicators suggested by previous work on predicting high school graduation. Like Bower, Sprott, and Taff (2013), we use the Relative-operator characteristic (ROC) and confusion matrices as the primary tool for comparing the predictive properties of these models. Because of their work, we are also able to include the ROC properties of other models and indicator systems to compare against our locally developed models. As a result, we can assess the predictive qualities of these models compared to the leading research in predicting high school success nationwide.
 
 ```{r Initialization}
-setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
+setwd('/Users/jason/code/PPSDCollegeReadiness/')
 source('dependencies.R')
 require(sjPlot)
 require(caret)
@@ -407,26 +408,26 @@ trainIndex <- createDataPartition(hscohort$graduated,
 hscohort_train <- hscohort[trainIndex,]
 hscohort_test <- hscohort[-trainIndex,]
 set.seed(101)
-model.1 <- train(graduated ~ I(attendance8th*10) + gpa8th + matnormal + 
-                             reanormal + I(overage>168), 
+# model.2 <- train(graduated ~ I(attendance8th*10) + gpa8th + matnormal + 
+#                              reanormal + I(overage>168), 
+#                  data=hscohort_train,
+#                  method='glm',
+#                  tuneLength = 5,
+#                  trControl = trainControl(method = "repeatedcv", number = 10,
+#                                           repeats = 10, classProbs=TRUE,
+#                                           summaryFunction = twoClassSummary,
+#                                           seeds = NA),
+#                  metric='ROC')
+
+model.1 <- train(graduated~ I(attendance8th*10) + gpa8th + I(overage>168) +
+                            I(suspend8th>=1), 
                  data=hscohort_train,
                  method='glm',
                  tuneLength = 5,
                  trControl = trainControl(method = "repeatedcv", number = 10,
                                           repeats = 10, classProbs=TRUE,
-                                          summaryFunction = twoClassSummary,
-                                          seeds = NA),
+                                          summaryFunction = twoClassSummary),
                  metric='ROC')
-
-# model.2 <- train(graduated~ attendnormal + gpa8th + I(ageHS>190) + 
-#                             I(schno_first=='164') + + matnormal + reanormal, 
-#                  data=hscohort_train,
-#                  method='ctree',
-#                  tuneLength = 5,
-#                  trControl = trainControl(method = "repeatedcv", number = 10,
-#                                           repeats = 10, classProbs=TRUE,
-#                                           summaryFunction = twoClassSummary),
-#                  metric='ROC')
 
 ```
 
@@ -468,8 +469,9 @@ sjp.glm(model.1$finalModel,
         showModelSummary = FALSE,
         theme = 'bw',
         borderColor = 'white',
-        axisLabels.y = c('Attendance * 10', '8th Grade GPA', 'NECAP Math',
-                         'NECAP Reading', 'Overage Entering 8th Grade'))
+        axisLabels.y = c('Attendance * 10', '8th Grade GPA', 
+                         'Overage Entering 8th Grade', 
+                         'Suspended at least 1 day.'))
 ```
 
 ### Classification Methods
@@ -3217,7 +3219,7 @@ names(year_filter) <- c('sasid', 'eleventhyear')
 credits <- inner_join(credits, year_filter)
 # Now each instance of a student has the first year of tenth grade in tenthyear
 credits$schoolyear <- as.numeric(substr(credits$schoolyear, 1, 4))
-credits$tenthyear <- as.numeric(substr(credits$tenthyear, 1, 4))
+credits$tenthyear <- as.numeric(substr(credits$eleventhyear, 1, 4))
 credits <- subset(credits, schoolyear <= eleventhyear)
 credits <- credits %.%
            group_by(sasid, type) %.%
