@@ -514,6 +514,20 @@ thresholds[thresholds$classification == 'Watch', ]$coverage <-
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 thresholds$coverage <- round(thresholds$coverage, digits=1)
+
+hscohort_test$predict8th <- predict(model.1, 
+                                     newdata = hscohort_test, 
+                                     type = 'prob')$Y
+
+hscohort_test$classification <- cut(hscohort_test$predict8th, 
+                             breaks=rev(c(1, thresholds$threshold, 0)), 
+                             include.lowest=TRUE, 
+                             labels=rev(c('On-track', 
+                                        as.character(thresholds$classification))))
+hscohort_test$classification <- factor(hscohort_test$classification, 
+                                levels = rev(levels(hscohort_test$classification)), 
+                                ordered=TRUE)
+
 ```
 
 For the 8GM, our thresholds can be seen in the table below.
@@ -1032,7 +1046,7 @@ set.seed(101)
 #                                           seeds = NA),
 #                  metric='ROC')
 model.qtr1 <- train(graduated ~ I(attendance8th*10) + gpa8th + I(overage>168) +
-                      gpa_qtr1_9th*fails, 
+                      gpa_qtr1_9th*fails + I(suspend8th>=1), 
                  data=hscohort_train,
                  method='glm',
                  tuneLength = 5,
@@ -1041,6 +1055,18 @@ model.qtr1 <- train(graduated ~ I(attendance8th*10) + gpa8th + I(overage>168) +
                                           summaryFunction = twoClassSummary,
                                           seeds = NA),
                  metric='ROC')
+
+# model.qtr1_2 <- train(graduated ~ I(attendance8th*10) + gpa8th + I(overage>168) +
+#                       gpa_qtr1_9th*fails + I(suspend8th>=1) + 
+#                       I(suspended_qtr1>=1),
+#                       data=hscohort_train,
+#                       method='glm',
+#                       tuneLength = 5,
+#                       trControl = trainControl(method = "repeatedcv", number = 10,
+#                                                repeats = 10, classProbs=TRUE,
+#                                                summaryFunction = twoClassSummary,
+#                                                seeds = NA),
+#                       metric='ROC')
 ```
 
 ```{r ROCPlotsQtr1, results='asis', fig.width=7, fig.height=7}
@@ -1075,7 +1101,7 @@ sjp.glm(model.qtr1$finalModel,
         borderColor = 'white',
         axisLabels.y = c('Attendance * 10', '8th Grade GPA', 
                          'Overage Entering High School', '9th Grade GPA Quarter 1',
-                         'Course Failing Grades Quarter 1', 
+                         'Course Failing Grades Quarter 1', 'Ever Suspended in 8th',
                          'Interaction: GPA*Failing'),
         axisLabelSize = 0.7)
 ```
@@ -1118,6 +1144,30 @@ thresholds[thresholds$classification == 'Watch', ]$coverage <-
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 thresholds$coverage <- round(thresholds$coverage, digits=3)
+
+hscohort_test$predict9qtr1 <- predict(model.qtr1, 
+                                     newdata = hscohort_test, 
+                                     type = 'prob')$Y
+
+hscohort_test$classification <- cut(hscohort_test$predict9qtr1, 
+                             breaks=rev(c(1, thresholds$threshold, 0)), 
+                             include.lowest=TRUE, 
+                             labels=rev(c('On-track', 
+                                        as.character(thresholds$classification))))
+hscohort_test$classification <- factor(hscohort_test$classification, 
+                                levels = rev(levels(hscohort_test$classification)), 
+                                ordered=TRUE)
+
+hscohort_predictions$classification <- cut(hscohort_train$predictqtr1, 
+                             breaks=rev(c(1, thresholds$threshold, 0)), 
+                             include.lowest=TRUE, 
+                             labels=rev(c('On-track', 
+                                        as.character(thresholds$classification))))
+hscohort_train$classification <- factor(hscohort_train$classification, 
+                                levels = rev(levels(hscohort_train$classification)), 
+                                ordered=TRUE)
+
+
 ```
 We use the same method as with the 8GM to produce new thresholds for our classifications based on the QTR1 model, seen below.
 ```{r QTRThresholdTablePrint, results='asis'}
@@ -1737,6 +1787,16 @@ thresholds9GMr[thresholds9GMr$classification == 'Watch', ]$coverage <-
   coverage[coverage$Var2==TRUE & coverage$Var1 == 'N', 'Freq'] / 
   sum(coverage[coverage$Var1 == 'N', ]$Freq)
 thresholds9GMr$coverage <- round(thresholds9GMr$coverage, digits=3)
+
+hscohort_train$classification <- cut(hscohort_train$predict9GMt, 
+                             breaks=rev(c(1, thresholds$threshold, 0)), 
+                             include.lowest=TRUE, 
+                             labels=rev(c('On-track', 
+                                        as.character(thresholds$classification))))
+hscohort_train$classification <- factor(hscohort_train$classification, 
+                                levels = rev(levels(hscohort_train$classification)), 
+                                ordered=TRUE)
+
 ```
 
 
