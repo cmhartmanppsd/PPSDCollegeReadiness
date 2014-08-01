@@ -147,7 +147,8 @@ ggplot(data = melt(prop.table(table(hs_new9$classification9GMt,
 prop.table(table(hs_new9$classification9GMt, 
                  hs_new9$attendance7th<.9 & 
                  hs_new9$gpa7th<2.5 & 
-                 hs_new9$suspended7th>=1),
+                 hs_new9$suspended7th>=1 &
+#                 hs_new9$age7th>156),
            2)
 #####
 gpa6th <- ungroup(gpa) %>%
@@ -162,10 +163,22 @@ attendance6th <- attendance %>%
 names(attendance6th)[c(2, 3, 4)] <- paste0(names(attendance6th)[c(2, 3, 4)],
                                            '6th')
 
+age6th <- age %>%
+  filter(grade == 6) %>%
+  mutate(age = age_calc(dob, 
+                        as.Date(paste(substr(x = schoolyear,1,4),
+                                      '09', '01', sep = '-')), 
+                        units='months')) %>%
+  select(sasid, age6th = age)
+
+
 hs_new9 <- left_join(hs_new9, gpa6th)
 rm(gpa6th)
 hs_new9 <- left_join(hs_new9, attendance6th)
 rm(attendance6th)
+hs_new9 <- left_join(hs_new9, age6th)
+rm(age6th)
+
 
 ggplot(data = hs_new9, aes(classification9GMt, gpa6th)) +
 stat_summary(fun.data="box_quant", 
@@ -208,10 +221,27 @@ scale_y_continuous('',
 scale_x_discrete('Suspended in 6th Grade',
                  labels = c('No', 'Yes')) 
 
+ggplot(data = melt(prop.table(table(hs_new9$classification9GMt,
+                                    hs_new9$age6th>144), 2)),
+       aes(Var2, value, fill=Var1)) +
+  geom_bar(stat='identity', position='stack') +
+  scale_fill_manual('',
+                    values=c('#0571B0', '#FFCC00', '#FF9942', '#CA0020'),
+                    breaks=c('Action', 'Warning', 'Watch', 'On-track')) +
+  scale_y_continuous('', 
+                     labels = percent_format(), 
+                     breaks = seq(0,1,.1),
+                     limits = c(0, 1.05),
+                     expand = c(0, 0)) +
+  scale_x_discrete('Over age in 6th Grade',
+                   labels = c('No', 'Yes')) 
+
+
 
 prop.table(table(hs_new9$classification9GMt, 
                  hs_new9$attendance6th<.92 & 
-                 hs_new9$gpa6th<2.5),# & 
-                 #hs_new9$suspended6th>=1), 
+                 hs_new9$gpa6th<2.5 & 
+                 hs_new9$suspended6th>=1 &
+                 hs_new9$age6th > 144), 
            2)
 
