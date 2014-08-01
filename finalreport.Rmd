@@ -1046,7 +1046,7 @@ set.seed(101)
 #                                           seeds = NA),
 #                  metric='ROC')
 model.qtr1 <- train(graduated ~ I(attendance8th*10) + gpa8th + I(overage>168) +
-                      gpa_qtr1_9th*fails + I(suspend8th>=1), 
+                    gpa_qtr1_9th*fails + I(suspend8th>=1), 
                  data=hscohort_train,
                  method='glm',
                  tuneLength = 5,
@@ -1946,7 +1946,7 @@ mobile1112$sasid <- as.character(mobile1112$sasid)
 mobile1213$sasid <- as.character(mobile1213$sasid)
 hs1011 <- merge(hs1011, mobile1011, all.x=TRUE)
 hs1112 <- merge(hs1112, mobile1112, all.x=TRUE)
-hs1213 <- merge(hs1213, mobile1213, all.x=TRUE)
+hs1213  <- merge(hs1213, mobile1213, all.x=TRUE)
 hs_new9 <- rbind(hs1011, hs1112, hs1213)
 hs_new9 <- subset(hs_new9, !schno_first %in% charters)
 hs_new9 <- mutate(hs_new9, 
