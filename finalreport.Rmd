@@ -49,7 +49,7 @@ Bowers, Sprott, and Taff (2013) have a thorough meta-analysis of 36 studies and 
 We have generated new models for identifying which students are at risk of failing to graduate based on this rich body of research using Providence Public Schools Data. Utilizing readily available administrative and student performance data, we can have multiple modeling techniques and combination of drop out indicators suggested by previous work on predicting high school graduation. Like Bower, Sprott, and Taff (2013), we use the Relative-operator characteristic (ROC) and confusion matrices as the primary tool for comparing the predictive properties of these models. Because of their work, we are also able to include the ROC properties of other models and indicator systems to compare against our locally developed models. As a result, we can assess the predictive qualities of these models compared to the leading research in predicting high school success nationwide.
 
 ```{r Initialization}
-setwd('/Users/jason/code/PPSDCollegeReadiness/')
+setwd('/Users/jason/Dropbox/code/PPSDCollegeReadiness/')
 source('dependencies.R')
 require(sjPlot)
 require(caret)
