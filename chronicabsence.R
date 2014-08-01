@@ -28,8 +28,8 @@ overall <- ggplot(data = rosann_frame %>%
                                                   '2011_2012', '2012_2013')) %>%
                          group_by(level, schoolyear) %>%
                          summarize(chrabs = sum(chrabs, na.rm = TRUE),
-                                   n = n(),
-                                   pchrabs = sum(chrabs)/n()), 
+                                   n = n()) %>%
+                         mutate(pchrabs = chrabs/n), 
                   aes(schoolyear, pchrabs, group=level, color=level)) +
            geom_line() +
            geom_text(mapping = aes(schoolyear, pchrabs, 
